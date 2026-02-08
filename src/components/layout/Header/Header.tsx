@@ -5,24 +5,33 @@ import LogoSVG from "@assets/dokai.svg";
 import SearchSVG from "@assets/icons/search.svg";
 import { useState } from "react";
 import HamburgerXSVG from "@assets/icons/hamburger-x.svg";
-import * as Style from "./Header.css";
+import * as Styles from "./Header.css";
+import MenuBGSVG from "@assets/icons/menu-bg.svg";
 
 const Header = () => {
   const [openDrawer, setOpenDrawer] = useState(false);
 
   return (
-    <header className={Style.Layout}>
-      <Link href="/">
-        <LogoSVG />
+    <header className={Styles.Layout}>
+      <Link href="/" className={Styles.LogoContainer}>
+        <LogoSVG className={Styles.LogoImage} />
       </Link>
-      <nav className="flex items-center gap-4">
-        <Link href="/about">About</Link>
-        <Link href="/works">Works</Link>
-        <SearchSVG style={{ stroke: "red" }} />
-        <HamburgerXSVG
-          data-open={openDrawer}
+      <nav className={Styles.NavContainer}>
+        <Link href="/about" className={Styles.NavLabel}>
+          About
+        </Link>
+        <Link href="/works" className={Styles.NavLabel}>
+          Works
+        </Link>
+        <SearchSVG className={Styles.NavIcon} />
+
+        <div
+          className={Styles.MenuButton}
           onClick={() => setOpenDrawer(!openDrawer)}
-        />
+        >
+          <MenuBGSVG className={Styles.MenuDeco} />
+          <HamburgerXSVG className={Styles.NavIcon} data-open={openDrawer} />
+        </div>
       </nav>
     </header>
   );

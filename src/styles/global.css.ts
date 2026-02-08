@@ -8,7 +8,7 @@ globalStyle("*, *::before, *::after", {
 globalStyle("html, body", {
   margin: 0,
   padding: 0,
-  fontSize: "16px",
+  fontSize: "1.111111vw",
 });
 
 globalStyle("body", {
