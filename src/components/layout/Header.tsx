@@ -17,7 +17,7 @@ const Header = () => {
       <nav className="flex items-center gap-4">
         <Link href="/about">About</Link>
         <Link href="/works">Works</Link>
-        <SearchSVG />
+        <SearchSVG style={{ stroke: "red" }} />
         <HamburgerXSVG
           data-open={openDrawer}
           onClick={() => setOpenDrawer(!openDrawer)}
