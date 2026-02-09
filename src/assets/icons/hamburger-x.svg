@@ -4,20 +4,21 @@
   data-open="false"
   aria-hidden="true"
   stroke="gray"
+  id="hamburger-x"
 >
   <style>
-    svg path {
+    #hamburger-x path {
       stroke-dasharray: 20;
       transition: transform 0.1s cubic-bezier(0, .2, .7, 1), stroke-dashoffset 0.2s cubic-bezier(0, .2, .7, 1);
     }
 
-    svg[data-open="false"] path {transform: rotate(0deg) translateX(0px) }
-    svg[data-open="true"] .left-top {transform: rotate(45deg) translateX(1.5px) !important;}
-    svg[data-open="true"] .right-top {transform: rotate(-45deg) translateX(-1.5px) !important;}
-    svg[data-open="true"] .left-bottom {transform: rotate(-45deg) translateX(1.5px) !important;}
-    svg[data-open="true"] .right-bottom {transform: rotate(45deg) translateX(-1.5px) !important;}
-    svg[data-open="true"] .left-center {stroke-dashoffset: -9.5 !important;}
-    svg[data-open="true"] .right-center {stroke-dashoffset: -9.5 !important;}
+    #hamburger-x[data-open="false"] path {transform: rotate(0deg) translateX(0px) }
+    #hamburger-x[data-open="true"] .left-top {transform: rotate(45deg) translateX(1.5px) !important;}
+    #hamburger-x[data-open="true"] .right-top {transform: rotate(-45deg) translateX(-1.5px) !important;}
+    #hamburger-x[data-open="true"] .left-bottom {transform: rotate(-45deg) translateX(1.5px) !important;}
+    #hamburger-x[data-open="true"] .right-bottom {transform: rotate(45deg) translateX(-1.5px) !important;}
+    #hamburger-x[data-open="true"] .left-center {stroke-dashoffset: -9.5 !important;}
+    #hamburger-x[data-open="true"] .right-center {stroke-dashoffset: -9.5 !important;}
   </style>
   <g
     stroke-width="1.5"

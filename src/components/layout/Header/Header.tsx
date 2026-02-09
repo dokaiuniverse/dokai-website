@@ -3,7 +3,7 @@
 import Link from "next/link";
 import LogoPNG from "@assets/dokai.png";
 import SearchSVG from "@assets/icons/search.svg";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import HamburgerXSVG from "@assets/icons/hamburger-x.svg";
 import * as Styles from "./Header.css";
 import MenuBGSVG from "@assets/icons/menu-bg.svg";
@@ -11,14 +11,33 @@ import DrawerMenu from "../Drawer/Drawer";
 import useLockBodyScroll from "@hooks/useLockBodyScroll";
 import useIsPastSentinel from "@hooks/useIsPastSentinel";
 import Image from "next/image";
+import Search from "../Search/Search";
 
 const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  useLockBodyScroll(isDrawerOpen);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  useLockBodyScroll(isDrawerOpen || isSearchOpen);
 
   const { sentinelRef, isPast: isFloatingMenu } = useIsPastSentinel();
 
-  const handleClose = useCallback(() => setIsDrawerOpen(false), []);
+  const handleCloseDrawer = useCallback(() => setIsDrawerOpen(false), []);
+
+  const handleOpenSearch = useCallback(() => setIsSearchOpen(true), []);
+
+  const handleCloseSearch = useCallback(() => setIsSearchOpen(false), []);
+
+  useEffect(() => {
+    const onPopState = () => {
+      setIsDrawerOpen(false);
+      setIsSearchOpen(false);
+    };
+
+    window.addEventListener("popstate", onPopState);
+
+    return () => {
+      window.removeEventListener("popstate", onPopState);
+    };
+  }, []);
 
   return (
     <header className={Styles.Layout}>
@@ -38,7 +57,10 @@ const Header = () => {
         >
           About
         </Link>
-        <SearchSVG className={`${Styles.NavIcon} ${Styles.Clickable}`} />
+        <SearchSVG
+          className={`${Styles.NavIcon} ${Styles.Clickable}`}
+          onClick={handleOpenSearch}
+        />
         <button
           type="button"
           className={Styles.MenuButton}
@@ -54,7 +76,12 @@ const Header = () => {
           <HamburgerXSVG className={Styles.NavIcon} data-open={isDrawerOpen} />
         </button>
       </nav>
-      <DrawerMenu isOpen={isDrawerOpen} handleClose={handleClose} />
+      <DrawerMenu
+        isOpen={isDrawerOpen}
+        handleClose={handleCloseDrawer}
+        handleOpenSearch={handleOpenSearch}
+      />
+      <Search isOpen={isSearchOpen} handleClose={handleCloseSearch} />
     </header>
   );
 };

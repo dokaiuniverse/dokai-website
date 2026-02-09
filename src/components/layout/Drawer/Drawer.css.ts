@@ -10,10 +10,10 @@ export const Overlay = style({
   justifyContent: "space-between",
   backgroundColor: "var(--drawer-bg)",
   color: "black",
-  transform: "translateY(100%)",
+  transform: "translateY(75%)",
   opacity: 0,
   pointerEvents: "none",
-  transition: "transform 400ms ease, opacity 500ms ease",
+  transition: "transform 250ms ease, opacity 250ms ease",
   willChange: "transform",
 
   selectors: {

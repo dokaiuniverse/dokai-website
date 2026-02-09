@@ -19,7 +19,7 @@ export const Layout = style({
 
 export const LogoContainer = style({
   position: "relative",
-  zIndex: "2",
+  zIndex: "3",
   display: "flex",
   width: "7.5rem",
   height: "auto",
@@ -100,7 +100,6 @@ export const MenuButton = style({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  zIndex: "2",
   border: "none",
   background: "transparent",
   margin: "0",
@@ -108,6 +107,7 @@ export const MenuButton = style({
 
   transition: "opacity .2s ease-in-out",
   cursor: "pointer",
+  zIndex: "2",
 
   selectors: {
     "&:hover": {
@@ -119,6 +119,7 @@ export const MenuButton = style({
       margin: "2rem 3rem",
       top: "0",
       right: "0",
+      zIndex: "3",
     },
   },
 });

@@ -3,6 +3,7 @@ export const grayscale = {
   gray900: "#424242",
   gray700: "#767676",
   gray500: "#9B9B9B",
+  gray300: "#D9D9D9",
   white: "#FFFFFF",
 } as const;
 

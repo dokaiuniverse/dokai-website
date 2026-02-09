@@ -54,3 +54,11 @@ globalStyle(".underline", {
 globalStyle(".letter-spacing-4", {
   letterSpacing: "0.04em",
 });
+
+globalStyle("button", {
+  cursor: "pointer",
+  border: "none",
+  outline: "none",
+  background: "transparent",
+  padding: "0",
+});

@@ -1,14 +1,18 @@
+"use client";
+
 import ExternalLinks from "@ts/external_links";
 import { getRandomLightColor } from "@utils/Color";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useRef } from "react";
 import * as Styles from "./Drawer.css";
 
 import ArrowRightSVG from "@assets/icons/arrow-right.svg";
+import SearchSVG from "@assets/icons/search.svg";
 
 type DrawerMenuProps = {
   isOpen: boolean;
   handleClose: () => void;
+  handleOpenSearch: () => void;
 };
 
 const drawerMenuItems = [
@@ -18,25 +22,28 @@ const drawerMenuItems = [
   { label: "Careers", href: "" },
 ];
 
-import SearchSVG from "@assets/icons/search.svg";
+const DrawerMenu = ({
+  isOpen,
+  handleClose,
+  handleOpenSearch,
+}: DrawerMenuProps) => {
+  const overlayRef = useRef<HTMLDivElement | null>(null);
 
-const DrawerMenu = ({ isOpen, handleClose }: DrawerMenuProps) => {
-  const drawerBg = useMemo(() => getRandomLightColor(), []);
+  useEffect(() => {
+    if (!isOpen) return;
+    overlayRef.current?.style.setProperty("--drawer-bg", getRandomLightColor());
+  }, [isOpen]);
 
   return (
     <div
+      ref={overlayRef}
       className={Styles.Overlay}
       data-open={isOpen}
-      style={
-        {
-          "--drawer-bg": drawerBg,
-        } as React.CSSProperties
-      }
       aria-hidden={!isOpen}
     >
       <div className={Styles.SectionGrid}>
         <div className={Styles.MenuColumn}>
-          <SearchSVG className={Styles.MenuSearch} />
+          <SearchSVG className={Styles.MenuSearch} onClick={handleOpenSearch} />
           {drawerMenuItems.map((menu) => (
             <Link
               key={`DRAWER_MENU_${menu.label}`}
