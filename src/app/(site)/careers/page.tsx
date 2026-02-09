@@ -1,5 +1,7 @@
+import CareersPageClient from "./client";
+
 const CareersPage = () => {
-  return <div>CareersPage</div>;
+  return <CareersPageClient />;
 };
 
 export default CareersPage;
