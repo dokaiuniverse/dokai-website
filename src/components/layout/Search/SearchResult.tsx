@@ -180,7 +180,6 @@ const SearchResult = ({ queries }: { queries: string[] }) => {
           <div className={Styles.ResultItemGroup}>
             {result.items.map((item) => {
               const bg = getRandomColor();
-              const fg = getReadableTextColor(bg);
 
               return (
                 <button
@@ -194,6 +193,7 @@ const SearchResult = ({ queries }: { queries: string[] }) => {
                     src={item.image}
                     alt={item.title}
                     caption={item.summary}
+                    bg={bg}
                   />
                   <p className={Styles.ResultItemText}>{item.title}</p>
                 </button>
