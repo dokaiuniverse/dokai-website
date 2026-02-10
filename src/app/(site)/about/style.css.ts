@@ -91,9 +91,11 @@ export const ServicesQuadrant = style({
   letterSpacing: "-0.03em",
 
   "@media": {
+    [media.tablet]: {
+      gridColumn: "1 / -1",
+    },
     [media.mobile]: {
       gridTemplateColumns: "repeat(1, 1fr)",
-      gridColumn: "1 / -1",
     },
   },
 });
@@ -141,7 +143,7 @@ export const ServicesQuadrantList = style({
   margin: "0",
 
   "@media": {
-    [media.mobile]: {
+    [media.tablet]: {
       fontSize: vars.fontSize.xs,
     },
   },

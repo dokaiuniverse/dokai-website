@@ -70,6 +70,7 @@ export const HeaderPrimaryMeta = style({
   display: "flex",
   flexDirection: "column",
   fontSize: vars.fontSize.md,
+  // fontSize: "20px",
   fontWeight: "500",
   flexShrink: "0",
 
@@ -188,7 +189,8 @@ export const CreditsContainer = style({
     },
     [media.mobile]: {
       gridTemplateColumns: "1fr auto",
-      fontSize: vars.fontSize.xs,
+      // fontSize: vars.fontSize.xs,
+      fontSize: "14px",
     },
   },
 });
@@ -203,7 +205,8 @@ export const CreditsTeamCell = style({
 
   "@media": {
     [media.tablet]: {
-      fontSize: vars.fontSize.md,
+      // fontSize: vars.fontSize.md,
+      fontSize: "16px",
       gridColumn: "1 / span 2",
     },
   },
@@ -225,12 +228,6 @@ export const CreditsNameCell = style({
   display: "flex",
   flexWrap: "wrap",
   columnGap: "1rem",
-
-  "@media": {
-    [media.mobile]: {
-      marginTop: "1rem",
-    },
-  },
 });
 
 export const CreditsDivider = style({

@@ -11,7 +11,7 @@ globalStyle("html, body", {
 });
 
 globalStyle("html", {
-  fontSize: "clamp(13px, 1.111111vw, 2vw)",
+  fontSize: "clamp(16px, 1.4889vw, 40px)",
 });
 
 globalStyle("body", {
@@ -26,7 +26,6 @@ globalStyle("body", {
   minHeight: "100dvh",
   display: "flex",
   flexDirection: "column",
-  justifyContent: "space-between",
 });
 
 globalStyle("img, picture, video, canvas, svg", {

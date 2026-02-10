@@ -27,7 +27,7 @@ export const LogoContainer = style({
 
   "@media": {
     [media.tablet]: {
-      width: "6rem",
+      width: "4rem",
     },
     [media.mobile]: {
       width: "4rem",
