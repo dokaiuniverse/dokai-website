@@ -6,6 +6,7 @@ export const Container = style({
   flexDirection: "column",
   height: "100%",
   flexGrow: "1",
+  gap: "3rem",
   justifyContent: "space-between",
 });
 

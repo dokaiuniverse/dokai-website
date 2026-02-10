@@ -33,7 +33,7 @@ const Footer = () => {
   }, [pathname]);
 
   return (
-    <footer ref={footerRef} className={Styles.Layout}>
+    <footer ref={footerRef} className={`${Styles.Layout} layout-wrapper`}>
       <div className={Styles.Content}>
         <p className={Styles.ContentTitle}>Contact</p>
         <div className={Styles.ContentWrapper}>

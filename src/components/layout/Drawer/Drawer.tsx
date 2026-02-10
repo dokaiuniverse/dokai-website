@@ -22,7 +22,7 @@ const DrawerMenu = ({ isOpen, handleOpenSearch }: DrawerMenuProps) => {
       ref={overlayRef}
       className={`${Styles.Overlay} layout-wrapper`}
       data-open={isOpen}
-      aria-hidden={!isOpen}
+      inert={!isOpen}
     >
       <DrawerNav handleOpenSearch={handleOpenSearch} />
       <DrawerFooter />
