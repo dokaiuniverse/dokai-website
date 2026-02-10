@@ -1,3 +1,5 @@
+"use client";
+
 import { CareersDetail } from "./fetch";
 import CareerDetailProfile from "./Profile";
 import * as Styles from "./style.css";

@@ -2,9 +2,8 @@
 
 import { Career } from "./fetch";
 import * as Styles from "./style.css";
-import { getReadableTextColor } from "@utils/Color";
 import Link from "next/link";
-import MediaCard from "@components/ui/Media/MediaCard";
+import MediaHoverOverlay from "@components/ui/Media/HoverOverlay/HoverOverlay";
 
 type CareersPageClientProps = {
   careers: Career[];
@@ -31,22 +30,15 @@ const CareersPageClient = ({ careers }: CareersPageClientProps) => {
             className={Styles.ProfileItem}
             key={`CAREERS_${idx}`}
           >
-            <MediaCard
+            <MediaHoverOverlay
               media={career.media}
               className={Styles.ProfileItemImage}
-            />
-            <div
-              className={Styles.ProfileItemOverlay}
-              style={
-                {
-                  "--bg-color": career.bgColor,
-                  "--fg-color": getReadableTextColor(career.bgColor),
-                } as React.CSSProperties
-              }
             >
-              <p>{career.role}</p>
-              <p>{career.name}</p>
-            </div>
+              <div className={Styles.ProfileItemOverlay}>
+                <p>{career.role}</p>
+                <p>{career.name}</p>
+              </div>
+            </MediaHoverOverlay>
           </Link>
         ))}
       </div>

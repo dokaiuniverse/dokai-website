@@ -13,10 +13,25 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "DOKAI",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || ""),
+  title: {
+    default: "DOKAI",
+    template: "%s | DOKAI",
+  },
   description: "Image Beyond AI. Create with Humanity",
   icons: {
     icon: "/dokai.svg",
+  },
+  openGraph: {
+    title: "DOKAI",
+    description: "Image Beyond AI. Create with Humanity",
+    locale: "ko_KR",
+    type: "website",
+    images: "/og-image.png",
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: "/og-image.png",
   },
 };
 

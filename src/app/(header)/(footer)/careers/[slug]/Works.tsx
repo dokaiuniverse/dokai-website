@@ -1,7 +1,6 @@
 import { Work } from "./fetch";
 import * as Styles from "./style.css";
-import { getReadableTextColor } from "@utils/Color";
-import MediaCard from "@components/ui/Media/MediaCard";
+import MediaHoverOverlay from "@components/ui/Media/HoverOverlay/HoverOverlay";
 
 const CareerDetailWorks = ({ works }: { works: Work[] }) => {
   return (
@@ -10,18 +9,14 @@ const CareerDetailWorks = ({ works }: { works: Work[] }) => {
       <div className={Styles.WorksGrid}>
         {works.map((work, idx) => (
           <button key={`WORKS_${idx}`} className={Styles.WorksItem}>
-            <MediaCard media={work.media} className={Styles.WorksItemImage} />
-            <div
-              className={Styles.WorksItemOverlay}
-              style={
-                {
-                  "--bg-color": work.bgColor,
-                  "--fg-color": getReadableTextColor(work.bgColor),
-                } as React.CSSProperties
-              }
+            <MediaHoverOverlay
+              media={work.media}
+              className={Styles.WorksItemImage}
             >
-              <p>{work.title}</p>
-            </div>
+              <div className={Styles.WorksItemOverlay}>
+                <p>{work.title}</p>
+              </div>
+            </MediaHoverOverlay>
           </button>
         ))}
       </div>

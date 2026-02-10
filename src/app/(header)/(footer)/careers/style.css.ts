@@ -72,22 +72,7 @@ export const ProfileItemImage = style({
 });
 
 export const ProfileItemOverlay = style({
-  position: "absolute",
-  inset: "0",
   padding: "1rem",
 
-  backgroundColor: "var(--bg-color)",
-  color: "var(--fg-color)",
-  opacity: "0",
-  transform: "translateY(30%)",
-  backdropFilter: "blur(10px)",
   fontSize: vars.fontSize.lg,
-  textAlign: "left",
-
-  transition: "opacity 0.2s ease-in-out, transform 0.2s ease-in-out",
-});
-
-globalStyle(`${ProfileItem}:hover ${ProfileItemOverlay}`, {
-  opacity: "1",
-  transform: "translateY(0)",
 });

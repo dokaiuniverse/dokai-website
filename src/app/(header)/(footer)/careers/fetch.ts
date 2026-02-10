@@ -1,12 +1,10 @@
 import { MediaSource } from "@components/ui/Media/types";
-import { getRandomColor } from "@utils/Color";
 
 export type Career = {
   media: MediaSource;
   profileId: string;
   name: string;
   role: string;
-  bgColor: string;
 };
 
 export const fetchCareers = async (): Promise<Career[]> => {
@@ -21,7 +19,6 @@ export const fetchCareers = async (): Promise<Career[]> => {
         profileId: "profileId",
         name: "name",
         role: "role",
-        bgColor: getRandomColor(),
       };
     }),
   );
