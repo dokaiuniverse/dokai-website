@@ -3,7 +3,7 @@ import { DM_Sans } from "next/font/google";
 import "@styles/global.css";
 import { themeClass } from "@styles/theme.css";
 import Providers from "./providers";
-import { usePathname } from "next/navigation";
+import NextTopLoader from "nextjs-toploader";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -28,6 +28,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${dmSans.variable} ${themeClass}`}>
+        <NextTopLoader
+          showSpinner={false}
+          height={4}
+          crawl={true}
+          crawlSpeed={200}
+          easing="ease"
+          speed={200}
+          color="#ed8435"
+        />
         <Providers>{children}</Providers>
       </body>
     </html>
