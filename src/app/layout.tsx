@@ -29,7 +29,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${dmSans.variable} ${themeClass}`}>
         <NextTopLoader
-          showSpinner={false}
+          showSpinner={true}
           height={4}
           crawl={true}
           crawlSpeed={200}

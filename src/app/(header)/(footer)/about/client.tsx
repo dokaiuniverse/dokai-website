@@ -6,6 +6,7 @@ import AboutPageServices from "./Services";
 import AboutPageTeam from "./Team";
 import AboutPageWorkflow from "./Workflow";
 import MediaCard from "@components/ui/Media/MediaCard";
+import MediaSlider from "@components/ui/Media/MediaSlider/MediaSlider";
 
 type AboutPageClientProps = {
   aboutInfo: AboutInfo;
@@ -16,30 +17,66 @@ const AboutPageClient = ({ aboutInfo }: AboutPageClientProps) => {
     <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
       <AboutPageIntro text={aboutInfo.intro} />
       <AboutPageManifesto manifesto={aboutInfo.manifesto} />
-      <MediaCard
-        media={{
-          type: "IMAGE",
-          src: "/pantheon.png",
-          alt: "pantheon",
-        }}
+      <MediaSlider
+        mediaList={[
+          {
+            type: "IMAGE",
+            src: "/pantheon.png",
+            alt: "pantheon",
+          },
+          {
+            type: "IMAGE",
+            src: "/pantheon.png",
+            alt: "pantheon",
+          },
+          {
+            type: "IMAGE",
+            src: "/pantheon.png",
+            alt: "pantheon",
+          },
+        ]}
         className={Styles.ImageRight}
       />
       <AboutPageServices services={aboutInfo.services} />
-      <MediaCard
-        media={{
-          type: "IMAGE",
-          src: "/pantheon.png",
-          alt: "pantheon",
-        }}
+      <MediaSlider
+        mediaList={[
+          {
+            type: "IMAGE",
+            src: "/pantheon.png",
+            alt: "pantheon",
+          },
+          {
+            type: "IMAGE",
+            src: "/pantheon.png",
+            alt: "pantheon",
+          },
+          {
+            type: "IMAGE",
+            src: "/pantheon.png",
+            alt: "pantheon",
+          },
+        ]}
         className={Styles.ImageLeft}
       />
       <AboutPageWorkflow workflow={aboutInfo.workflow} />
-      <MediaCard
-        media={{
-          type: "IMAGE",
-          src: "/pantheon.png",
-          alt: "pantheon",
-        }}
+      <MediaSlider
+        mediaList={[
+          {
+            type: "IMAGE",
+            src: "/pantheon.png",
+            alt: "pantheon",
+          },
+          {
+            type: "IMAGE",
+            src: "/pantheon.png",
+            alt: "pantheon",
+          },
+          {
+            type: "IMAGE",
+            src: "/pantheon.png",
+            alt: "pantheon",
+          },
+        ]}
         className={Styles.ImageRight}
       />
       <AboutPageTeam team={aboutInfo.team} />

@@ -4,7 +4,7 @@ import { style } from "@vanilla-extract/css";
 export const Container = style({
   display: "grid",
   gridTemplateColumns: "repeat(8, 1fr)",
-  rowGap: "9rem",
+  rowGap: "6rem",
   columnGap: "1rem",
   padding: "2rem",
   marginBottom: "10rem",

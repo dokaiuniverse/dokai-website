@@ -59,7 +59,7 @@ export const IntroContainer = style({
   whiteSpace: "pre-line",
 
   fontSize: vars.fontSize.md,
-  marginBottom: "6rem",
+  marginBottom: "4rem",
 
   "@media": {
     [media.desktop]: {
