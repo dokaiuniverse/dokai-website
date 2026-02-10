@@ -10,6 +10,7 @@ import LogoPNG from "@assets/dokai.png";
 import ArrowRightSVG from "@assets/icons/arrow-right.svg";
 import SearchSVG from "@assets/icons/search.svg";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 type DrawerMenuProps = {
   isOpen: boolean;
@@ -29,7 +30,12 @@ const DrawerMenu = ({
   handleClose,
   handleOpenSearch,
 }: DrawerMenuProps) => {
+  const pathname = usePathname();
   const overlayRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    handleClose();
+  }, [pathname]);
 
   useEffect(() => {
     if (!isOpen) return;

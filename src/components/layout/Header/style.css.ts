@@ -23,13 +23,10 @@ export const Layout = style({
   },
 });
 
+// Logo
+
 export const LogoContainer = style({
   position: "relative",
-  zIndex: "103",
-  display: "flex",
-  width: "5rem",
-  height: "auto",
-  aspectRatio: "1 / 1",
 
   "@media": {
     [media.tablet]: {
@@ -43,29 +40,13 @@ export const LogoContainer = style({
 
 export const LogoImage = style({
   position: "absolute",
-  top: "0",
-  left: "0",
-  width: "100%",
+  zIndex: "103",
+  width: "5rem",
   height: "auto",
   aspectRatio: "1 / 1",
 });
 
-export const Clickable = style({
-  transition: "opacity .2s ease-in-out",
-  cursor: "pointer",
-
-  selectors: {
-    "&:hover": {
-      opacity: 0.5,
-    },
-  },
-
-  "@media": {
-    [media.mobile]: {
-      display: "none",
-    },
-  },
-});
+// Nav
 
 export const NavContainer = style({
   gridColumn: "7 / -1",
@@ -81,7 +62,6 @@ export const NavContainer = style({
       gridColumn: "5 / -1",
     },
     [media.mobile]: {
-      gridColumn: "8 / -1",
       justifyContent: "flex-end",
     },
   },
@@ -90,36 +70,63 @@ export const NavContainer = style({
 export const NavLabel = style({
   fontSize: vars.fontSize.md,
   fontWeight: "300",
-  lineHeight: "1.83em",
-  letterSpacing: "-0.03em",
+  transition: "opacity .2s ease-in-out",
+  boxSizing: "content-box",
+
+  selectors: {
+    "&:hover": {
+      opacity: 0.5,
+    },
+  },
+
+  "@media": {
+    [media.mobile]: {
+      display: "none",
+    },
+  },
 });
 
 export const NavIcon = style({
   position: "relative",
-  height: "1.6875rem",
-  width: "auto",
+  width: "1.5rem",
+  height: "auto",
   aspectRatio: "1 / 1",
+
   stroke: vars.color.fg,
-  boxSizing: "content-box",
-  padding: "0 0.8125rem",
 });
 
-export const MenuButton = style({
-  height: "3.375rem",
-  width: "auto",
-  aspectRatio: "1 / 1",
+export const NavSearchButton = style({
+  transition: "opacity .2s ease-in-out",
+
+  selectors: {
+    "&:hover": {
+      opacity: 0.5,
+    },
+  },
+
+  "@media": {
+    [media.mobile]: {
+      display: "none",
+    },
+  },
+});
+
+export const pop = keyframes({
+  "0%": { transform: "scale(1)" },
+  "33%": { transform: "scale(1.33)" },
+  "100%": { transform: "scale(1)" },
+});
+
+export const NavMenuButton = style({
   position: "relative",
+  zIndex: "102",
+
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  border: "none",
-  background: "transparent",
-  margin: "0",
-  padding: "0",
 
-  transition: "opacity .2s ease-in-out",
-  cursor: "pointer",
-  zIndex: "102",
+  transformOrigin: "center",
+  transition: "opacity .2s ease-in-out, transform .2s ease-in-out",
 
   selectors: {
     "&:hover": {
@@ -132,24 +139,14 @@ export const MenuButton = style({
       top: "0",
       right: "0",
       zIndex: "103",
+      animation: `${pop} .2s ease-out`,
     },
   },
-});
-
-export const pop = keyframes({
-  "0%": { transform: "scale(1)" },
-  "33%": { transform: "scale(1.33)" },
-  "100%": { transform: "scale(1)" },
 });
 
 export const MenuDeco = style({
   position: "absolute",
   width: "100%",
-  height: "100%",
-
-  selectors: {
-    '&[data-floating="true"]': {
-      animation: `${pop} .2s ease-out`,
-    },
-  },
+  aspectRatio: "1 / 1",
+  transform: "scale(2)",
 });
