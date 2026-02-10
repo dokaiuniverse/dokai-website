@@ -6,7 +6,6 @@ export const Container = style({
   gridTemplateColumns: "repeat(9, 1fr)",
   rowGap: "6rem",
   columnGap: "1rem",
-  padding: "2rem",
 
   fontSize: vars.fontSize.md,
   fontWeight: "300",

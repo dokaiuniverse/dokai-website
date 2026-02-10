@@ -1,17 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const useLockBodyScroll = (locked: boolean) => {
+  const [hasOpened, setHasOpened] = useState(false);
+
   useEffect(() => {
-    if (locked) return;
+    if (locked || !hasOpened) return;
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  }, [locked]);
+  }, [locked, hasOpened]);
 
   useEffect(() => {
     if (!locked) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setHasOpened(true);
     const scrollY = window.scrollY;
 
     const prev = {
@@ -22,7 +26,6 @@ const useLockBodyScroll = (locked: boolean) => {
     };
 
     const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
-    console.log(scrollbarW);
     document.body.style.paddingRight = `${scrollbarW}px`;
 
     document.body.style.position = "fixed";

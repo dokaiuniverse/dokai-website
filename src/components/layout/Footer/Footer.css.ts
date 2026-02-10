@@ -210,4 +210,5 @@ export const FooterIcon = style({
   width: "3.25rem",
   height: "auto",
   aspectRatio: "1 / 1",
+  filter: "invert(var(--footer-logo-invert, 0))",
 });

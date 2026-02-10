@@ -1,10 +1,11 @@
 import { media, vars } from "@styles/theme.css";
 import { style } from "@vanilla-extract/css";
+import { recipe } from "@vanilla-extract/recipes";
 
 export const Container = style({
   display: "grid",
   gridTemplateColumns: "repeat(8, 1fr)",
-  rowGap: "7.5rem",
+  rowGap: "6rem",
   columnGap: "1rem",
   marginBottom: "10rem",
   marginTop: "-10rem",
@@ -35,76 +36,98 @@ export const Title = style({
   },
 });
 
-export const ItemContainer = style({
-  display: "flex",
-  flexDirection: "column",
-  gap: "1rem",
-  cursor: "pointer",
-  height: "fit-content",
-  transition: "opacity 0.2s ease-in-out",
-
-  selectors: {
-    "&[data-first-row='true'][data-is-wide='true']": {
-      gridColumn: "1 / span 5",
-    },
-    "&[data-first-row='true'][data-is-wide='false']": {
-      gridColumn: "1 / span 3",
-    },
-    "&[data-first-row='false'][data-is-wide='true']": {
-      gridColumn: "4 / span 5",
-    },
-    "&[data-first-row='false'][data-is-wide='false']": {
-      gridColumn: "6 / span 3",
-    },
-
-    "&:hover": {
-      opacity: 0.5,
-    },
-  },
-
-  "@media": {
-    [media.tablet]: {
-      gridColumn: "span 4 !important",
-    },
-    [media.mobile]: {
-      gridColumn: "1 / -1 !important",
-    },
-  },
+export const WorksContainer = style({
+  gridColumn: "1 / -1",
+  display: "grid",
+  gridTemplateColumns: "repeat(8, 1fr)",
+  rowGap: "6rem",
+  columnGap: "1rem",
 });
 
-export const ItemImageContainer = style({
-  position: "relative",
+export const ItemContainer = recipe({
+  base: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
+    cursor: "pointer",
+    height: "fit-content",
+    transition: "opacity 0.2s ease-in-out",
+
+    selectors: {
+      "&:hover": { opacity: 0.5 },
+    },
+
+    "@media": {
+      [media.tablet]: {
+        gridColumn: "span 4",
+        gap: "0.5rem",
+      },
+      [media.mobile]: {
+        gridColumn: "1 / -1",
+      },
+    },
+  },
+
+  variants: {
+    row: {
+      odd: {},
+      even: {},
+    },
+    width: {
+      narrow: {},
+      wide: {},
+    },
+  },
+
+  compoundVariants: [
+    {
+      variants: { row: "odd", width: "narrow" },
+      style: { gridColumn: "1 / span 3" },
+    },
+    {
+      variants: { row: "odd", width: "wide" },
+      style: { gridColumn: "1 / span 5" },
+    },
+    {
+      variants: { row: "even", width: "narrow" },
+      style: { gridColumn: "6 / span 3" },
+    },
+    {
+      variants: { row: "even", width: "wide" },
+      style: { gridColumn: "4 / span 5" },
+    },
+  ],
+});
+
+export const ItemMedia = style({
   width: "100%",
   aspectRatio: "16 / 9",
 });
 
-export const ItemImage = style({
-  objectFit: "cover",
-});
+export const ItemTextContainer = recipe({
+  base: {
+    display: "grid",
+    gap: "1rem",
+    fontSize: vars.fontSize.md,
+    lineHeight: "1.33",
+    fontWeight: "300",
+    textAlign: "left",
 
-export const ItemTextContainer = style({
-  display: "grid",
-  gap: "1rem",
-  fontSize: vars.fontSize.md,
-  fontWeight: "300",
-  textAlign: "left",
-
-  selectors: {
-    "&[data-is-wide='true']": {
-      gridTemplateColumns: "repeat(1, 1fr)",
-    },
-    "&[data-is-wide='false']": {
-      gridTemplateColumns: "repeat(2, 1fr)",
+    "@media": {
+      [media.tablet]: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.5rem",
+      },
+      // [media.mobile]: {
+      //   fontSize: vars.fontSize.sm,
+      // },
     },
   },
-
-  "@media": {
-    [media.tablet]: {
-      display: "flex",
-      flexDirection: "column",
-    },
-    [media.mobile]: {
-      fontSize: vars.fontSize.sm,
+  variants: {
+    width: {
+      wide: { gridTemplateColumns: "repeat(1, 1fr)" },
+      narrow: { gridTemplateColumns: "repeat(2, 1fr)" },
     },
   },
 });
@@ -114,6 +137,13 @@ export const ItemTextContent = style({
   display: "flex",
   flexDirection: "column",
   gap: "0.5rem",
+
+  "@media": {
+    [media.tablet]: {
+      fontSize: vars.fontSize.sm,
+      gap: "0rem",
+    },
+  },
 });
 
 export const ItemTextSummary = style({

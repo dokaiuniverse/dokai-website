@@ -6,7 +6,7 @@ import Link from "next/link";
 import * as Styles from "./style.css";
 import { useEffect, useMemo, useState } from "react";
 import { WorkItem } from "@ts/work_item";
-import MoreButton from "@components/ui/MoreButton/MoreButton";
+import MoreButton from "@components/ui/Button/More";
 import MediaHoverOverlay from "@components/ui/Media/HoverOverlay/HoverOverlay";
 
 const WorkPageClient = ({ workItems }: { workItems: WorkItem[] }) => {
@@ -71,7 +71,9 @@ const WorkPageClient = ({ workItems }: { workItems: WorkItem[] }) => {
           </Link>
         ))}
       </div>
-      <MoreButton />
+      <div className={Styles.MoreButtonContainer}>
+        <MoreButton />
+      </div>
     </div>
   );
 };

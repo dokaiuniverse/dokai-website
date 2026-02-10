@@ -42,7 +42,8 @@ export const HeaderMetaColumn = style({
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
-  gap: "2rem",
+  rowGap: "3rem",
+  columnGap: "1rem",
 
   "@media": {
     [media.desktop]: {
@@ -63,12 +64,11 @@ export const HeaderPrimaryMeta = style({
   display: "flex",
   flexDirection: "column",
   fontSize: vars.fontSize.md,
-  // fontSize: "20px",
   fontWeight: "500",
   flexShrink: "0",
 
   "@media": {
-    [media.tablet]: {
+    [media.mobile]: {
       justifyContent: "center",
       alignItems: "center",
       flexGrow: "1",
@@ -79,7 +79,7 @@ export const HeaderPrimaryMeta = style({
 export const HeaderDivider = style({
   borderBottom: "1px solid black",
   width: "6rem",
-  marginTop: "1rem",
+  marginTop: "0.775rem",
 });
 
 export const HeaderExtraInfoList = style({

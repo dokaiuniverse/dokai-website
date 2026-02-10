@@ -13,14 +13,17 @@ const profile: Profile = {
     {
       name: "Instagram",
       value: "@dokai123_",
+      href: "https://www.instagram.com/dokai123_",
     },
     {
       name: "Behance",
       value: "dokai123_",
+      href: "https://www.behance.net/dokai123_",
     },
     {
       name: "Email",
       value: "dokai.solart@gmail.com",
+      href: "mailto:dokai.solart@gmail.com",
     },
   ],
 };
@@ -74,6 +77,7 @@ export type Profile = {
   contact: {
     name: string;
     value: string;
+    href: string;
   }[];
 };
 

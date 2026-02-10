@@ -4,7 +4,7 @@ import { style } from "@vanilla-extract/css";
 export const Container = style({
   display: "grid",
   gridTemplateColumns: "repeat(8, 1fr)",
-  rowGap: "3rem",
+  rowGap: "4rem",
   columnGap: "1rem",
   padding: "2rem",
   marginBottom: "10rem",
@@ -15,7 +15,7 @@ export const ContentContainer = style({
   whiteSpace: "pre-line",
   display: "grid",
   gridTemplateColumns: "repeat(8, 1fr)",
-  rowGap: "2rem",
+  rowGap: "1rem",
   columnGap: "1rem",
 
   fontSize: vars.fontSize.md,
@@ -157,6 +157,7 @@ export const WorkflowToolIconContainer = style({
       display: "flex",
       alignItems: "center",
       height: "4rem",
+      marginTop: "2rem",
     },
   },
 });
@@ -171,6 +172,7 @@ export const WorkflowToolTextContainer = style({
   flexDirection: "column",
   fontSize: vars.fontSize.md,
   gap: "0.5rem",
+  margin: "0.5rem 0",
 
   "@media": {
     [media.mobile]: {
@@ -197,10 +199,11 @@ export const TeamContainer = style({
   gridColumn: "3 / -1",
   display: "grid",
   gridTemplateColumns: "auto 1fr",
-  columnGap: "2rem",
+  columnGap: "1.5rem",
   fontSize: vars.fontSize.sm,
   lineHeight: "1.83",
   letterSpacing: "-0.03em",
+  marginTop: "1rem",
 
   "@media": {
     [media.mobile]: {
@@ -212,12 +215,14 @@ export const TeamContainer = style({
 
 export const TeamRole = style({
   fontWeight: "500",
-  paddingRight: "2rem",
+  paddingRight: "1.5rem",
+  paddingBottom: "0.5rem",
   borderRight: `1px solid ${vars.color.fg}`,
 });
 
 export const TeamNames = style({
   fontWeight: "300",
+  paddingBottom: "0.5rem",
   display: "flex",
   columnGap: "1rem",
   rowGap: "0",

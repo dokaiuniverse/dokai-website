@@ -14,6 +14,7 @@ export const Layout = style({
 
 export const LogoContainer = style({
   position: "relative",
+  gridColumn: "1 / span 2",
 });
 
 export const LogoImage = style({

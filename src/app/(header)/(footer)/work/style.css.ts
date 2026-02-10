@@ -6,8 +6,9 @@ export const Container = style({
   gridTemplateColumns: "repeat(8, 1fr)",
   rowGap: "7.5rem",
   columnGap: "1rem",
-  padding: "2rem",
-  marginBottom: "10rem",
+  paddingBottom: "6rem",
+  marginBottom: "4rem",
+  position: "relative",
 
   "@media": {
     [media.mobile]: {
@@ -144,4 +145,11 @@ export const WorkItemText = style({
 
 globalStyle(`${WorkItem}:hover ${WorkItemText}`, {
   opacity: 0.5,
+});
+
+export const MoreButtonContainer = style({
+  position: "absolute",
+  bottom: "0",
+  left: "50%",
+  transform: "translateX(-50%)",
 });
