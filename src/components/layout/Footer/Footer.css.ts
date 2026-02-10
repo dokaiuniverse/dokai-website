@@ -112,7 +112,6 @@ export const ItemMapContainer = style({
   marginTop: "1rem",
   width: "100%",
   aspectRatio: "8 / 3",
-  background: "lightgray",
 
   "@media": {
     [media.tablet]: {
