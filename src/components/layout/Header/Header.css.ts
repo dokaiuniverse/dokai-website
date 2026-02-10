@@ -14,6 +14,12 @@ export const Layout = style({
     [media.desktop]: {
       position: "static",
     },
+    [media.tablet]: {
+      padding: "24px",
+    },
+    [media.mobile]: {
+      padding: "20px",
+    },
   },
 });
 
@@ -21,7 +27,7 @@ export const LogoContainer = style({
   position: "relative",
   zIndex: "103",
   display: "flex",
-  width: "7.5rem",
+  width: "5rem",
   height: "auto",
   aspectRatio: "1 / 1",
 
@@ -30,7 +36,7 @@ export const LogoContainer = style({
       width: "4rem",
     },
     [media.mobile]: {
-      width: "4rem",
+      width: "3rem",
     },
   },
 });

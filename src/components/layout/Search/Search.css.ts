@@ -17,6 +17,7 @@ export const Overlay = style({
   minHeight: "100dvh",
   display: "flex",
   flexDirection: "column",
+  scrollbarGutter: "stable",
 
   selectors: {
     '&[data-open="true"]': {

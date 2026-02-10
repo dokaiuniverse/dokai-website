@@ -26,6 +26,7 @@ globalStyle("body", {
   minHeight: "100dvh",
   display: "flex",
   flexDirection: "column",
+  overflowY: "scroll",
 });
 
 globalStyle("img, picture, video, canvas, svg", {

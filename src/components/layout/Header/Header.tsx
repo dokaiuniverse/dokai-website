@@ -54,10 +54,12 @@ const Header = () => {
         >
           About
         </Link>
-        <SearchSVG
-          className={`${Styles.NavIcon} ${Styles.Clickable}`}
-          onClick={handleOpenSearch}
-        />
+        <button>
+          <SearchSVG
+            className={`${Styles.NavIcon} ${Styles.Clickable}`}
+            onClick={handleOpenSearch}
+          />
+        </button>
         <button
           type="button"
           className={Styles.MenuButton}
