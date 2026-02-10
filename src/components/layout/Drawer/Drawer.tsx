@@ -1,27 +1,16 @@
 import { getRandomLightColor } from "@utils/Color";
 import { useEffect, useRef } from "react";
-import * as Styles from "./Drawer.css";
-import { usePathname } from "next/navigation";
+import * as Styles from "./style.css";
 import DrawerNav from "./Nav";
 import DrawerFooter from "./Footer";
 
 type DrawerMenuProps = {
   isOpen: boolean;
-  handleClose: () => void;
   handleOpenSearch: () => void;
 };
 
-const DrawerMenu = ({
-  isOpen,
-  handleClose,
-  handleOpenSearch,
-}: DrawerMenuProps) => {
-  const pathname = usePathname();
+const DrawerMenu = ({ isOpen, handleOpenSearch }: DrawerMenuProps) => {
   const overlayRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    handleClose();
-  }, [pathname, handleClose]);
 
   useEffect(() => {
     if (!isOpen) return;

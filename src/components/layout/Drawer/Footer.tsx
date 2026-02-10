@@ -1,4 +1,4 @@
-import * as Styles from "./Drawer.css";
+import * as Styles from "./style.css";
 import Link from "next/link";
 import Image from "next/image";
 import LogoPNG from "@assets/dokai.png";

@@ -1,5 +1,5 @@
 import SearchSVG from "@assets/icons/search.svg";
-import * as Styles from "./Drawer.css";
+import * as Styles from "./style.css";
 import Link from "next/link";
 import ArrowRightSVG from "@assets/icons/arrow-right.svg";
 

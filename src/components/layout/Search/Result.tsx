@@ -1,4 +1,4 @@
-import * as Styles from "./Search.css";
+import * as Styles from "./style.css";
 import Image from "next/image";
 import { getRandomColor, getReadableTextColor } from "@utils/Color";
 import categories from "@ts/categories";
@@ -146,8 +146,8 @@ const SearchResult = ({ queries }: { queries: string[] }) => {
   if (!queries.length) return;
 
   return (
-    <div className={Styles.Result}>
-      <p className={Styles.FilterTitle}>Filter</p>
+    <div className={Styles.ResultContainer}>
+      <p className={Styles.FilterTitle}>Filter by</p>
       <div className={Styles.FilterGroup}>
         {categories.map((filter, idx) => {
           const count =
@@ -155,14 +155,17 @@ const SearchResult = ({ queries }: { queries: string[] }) => {
               ? searchResults.reduce((acc, r) => acc + r.items.length, 0)
               : searchResults.find((r) => r.filter === filter)?.items.length ||
                 0;
+          const defaultChecked = idx === 0;
+          const disabled = count === 0;
+
           return (
             <label key={`SEARCH_FILTER_${filter}`} className={Styles.Filter}>
               <input
                 type="radio"
                 name="filter"
                 className={Styles.FilterInput}
-                defaultChecked={idx === 0}
-                disabled={count === 0}
+                defaultChecked={defaultChecked}
+                disabled={disabled}
               />
               <p className={Styles.FilterText}>
                 {toTitleCase(filter)} ({count})

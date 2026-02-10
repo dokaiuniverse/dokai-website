@@ -9,7 +9,6 @@ export const Overlay = style({
   flexDirection: "column",
   justifyContent: "space-between",
   backgroundColor: "var(--drawer-bg)",
-  color: "black",
   transform: "translateY(75%)",
   opacity: 0,
   pointerEvents: "none",

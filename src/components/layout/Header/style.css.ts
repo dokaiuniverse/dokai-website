@@ -2,18 +2,11 @@ import { media, vars } from "@styles/theme.css";
 import { keyframes, style } from "@vanilla-extract/css";
 
 export const Layout = style({
-  position: "absolute",
   columnGap: "1rem",
   display: "grid",
   gridTemplateColumns: "repeat(8, minmax(0px, 1fr))",
   width: "100%",
   alignItems: "start",
-
-  "@media": {
-    [media.desktop]: {
-      position: "static",
-    },
-  },
 });
 
 // Logo

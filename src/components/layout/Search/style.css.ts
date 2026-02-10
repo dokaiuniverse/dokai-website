@@ -1,11 +1,9 @@
 import { media, vars } from "@styles/theme.css";
-import { globalStyle, style } from "@vanilla-extract/css";
+import { globalStyle, keyframes, style } from "@vanilla-extract/css";
 
 export const Overlay = style({
   position: "fixed",
   inset: 0,
-  backgroundColor: "var(--drawer-bg)",
-  color: "black",
   transform: "translateY(25%)",
   opacity: 0,
   pointerEvents: "none",
@@ -15,8 +13,6 @@ export const Overlay = style({
   background: "white",
   overflow: "auto",
   minHeight: "100dvh",
-  display: "flex",
-  flexDirection: "column",
   scrollbarGutter: "stable",
 
   selectors: {
@@ -34,75 +30,75 @@ export const Overlay = style({
   },
 });
 
-export const Header = style({
-  padding: "2rem",
-  columnGap: "1rem",
+export const Grid = style({
   display: "grid",
   gridTemplateColumns: "repeat(8, minmax(0px, 1fr))",
+  columnGap: "1rem",
+  marginBottom: "auto",
+});
+
+// Header
+
+export const Header = style({
+  gridColumn: "3 / -1",
+  display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
   boxSizing: "border-box",
 
   "@media": {
     [media.mobile]: {
-      marginTop: "8rem",
+      gridColumn: "1 / -1",
+      marginTop: "4rem",
     },
   },
 });
 
 export const HeaderTitle = style({
-  gridColumn: "3",
-  fontSize: vars.fontSize.sm,
+  fontSize: vars.fontSize.md,
   fontWeight: "300",
   letterSpacing: "0.04rem",
-
-  "@media": {
-    [media.mobile]: {
-      gridColumn: "1",
-    },
-  },
 });
 
 export const HeaderCloseButton = style({
-  gridColumn: "8",
-  marginLeft: "auto",
-  height: "2rem",
-  width: "auto",
+  width: "2rem",
+  height: "auto",
   aspectRatio: "1 / 1",
-  cursor: "pointer",
-  background: "transparent",
-  border: "none",
+  transition: "opacity 0.2s ease-in-out",
+
+  selectors: {
+    "&:hover": {
+      opacity: "0.5",
+    },
+  },
+
+  "@media": {
+    [media.mobile]: {
+      display: "none",
+    },
+  },
 });
 
 export const HeaderCloseIcon = style({
   stroke: vars.color.fg,
 });
 
+// Input
+
 export const InputContainer = style({
-  padding: "2rem",
+  position: "relative",
+  gridColumn: "3 / span 4",
   columnGap: "1rem",
   display: "grid",
-  gridTemplateColumns: "repeat(8, minmax(0px, 1fr))",
-  transition: "margin 0.3s ease-in-out",
-  marginTop: `calc((100dvh - 7rem) / 2 - var(--input-container-height) / 2)`,
+  gridTemplateColumns: "repeat(4, minmax(0px, 1fr))",
+  transition: "margin 0.4s ease-in-out",
+  marginTop: `max((100dvh - 10rem) / 2 - var(--input-container-height) / 2, 6rem)`,
 
   selectors: {
     '&[data-has-query="true"]': {
-      marginTop: "0",
+      marginTop: "6rem",
     },
   },
-});
-
-// Input
-
-export const InputForm = style({
-  gridColumn: "3 / span 4",
-  display: "flex",
-  alignItems: "center",
-  borderBottom: `1px solid ${vars.color.border}`,
-  paddingBottom: "0.75rem",
-  gap: "0.75rem",
-  flexWrap: "wrap",
 
   "@media": {
     [media.tablet]: {
@@ -110,8 +106,26 @@ export const InputForm = style({
     },
     [media.mobile]: {
       gridColumn: "1 / -1",
+
+      marginTop: `max((100dvh - 10rem) / 2 - var(--input-container-height) / 2, 2rem)`,
+      selectors: {
+        '&[data-has-query="true"]': {
+          marginTop: "2rem",
+        },
+      },
     },
   },
+});
+
+export const InputForm = style({
+  gridColumn: "1 / -1",
+  display: "flex",
+  alignItems: "center",
+  borderBottom: `1px solid ${vars.color.border}`,
+  paddingBottom: "0.75rem",
+  gap: "0.75rem",
+  flexWrap: "wrap",
+  marginBottom: "2rem",
 });
 
 export const InputLabel = style({
@@ -122,12 +136,13 @@ export const InputLabel = style({
 });
 
 export const Input = style({
-  width: "100%",
   fontSize: vars.fontSize.md,
   fontWeight: "300",
   letterSpacing: "0.04rem",
   border: "none",
   outline: "none",
+  flexShrink: "1",
+  width: "7rem",
   flexGrow: "1",
 });
 
@@ -187,14 +202,25 @@ export const QueryIcon = style({
 // Tag
 
 export const TagContainer = style({
-  gridColumn: "3 / span 4",
+  gridColumn: "1 / -1",
   display: "flex",
   flexWrap: "wrap",
   gap: "0.5rem",
-  padding: "2rem 0",
+  transition: "opacity 0.5s ease-in-out",
+
+  selectors: {
+    '&[data-has-query="true"]': {
+      opacity: "0",
+      pointerEvents: "none",
+      height: "0",
+    },
+  },
 
   "@media": {
-    [media.mobile]: {
+    [media.desktop]: {
+      gridColumn: "1 / -2",
+    },
+    [media.tablet]: {
       gridColumn: "1 / -1",
     },
   },
@@ -237,39 +263,58 @@ export const TagIcon = style({
 
 // Result
 
-export const Result = style({
-  display: "grid",
-  gridTemplateColumns: "repeat(8, minmax(0px, 1fr))",
-  padding: "2rem",
-  columnGap: "1rem",
-  rowGap: "4rem",
+const up = keyframes({
+  from: {
+    opacity: "0",
+    transform: "translateY(10rem)",
+  },
+  to: {
+    opacity: "1",
+    transform: "translateY(0)",
+  },
 });
 
-export const FilterTitle = style({
-  gridColumn: "3",
-  fontSize: vars.fontSize.sm,
-  fontWeight: "300",
-  letterSpacing: "0.04rem",
+export const ResultContainer = style({
+  gridColumn: "3 / -1",
+  display: "grid",
+  gridTemplateColumns: "repeat(6, minmax(0px, 1fr))",
+  columnGap: "1rem",
+  rowGap: "4rem",
+  marginTop: "4rem",
+  animation: `${up} .5s ease-in-out`,
 
   "@media": {
     [media.mobile]: {
-      gridColumn: "1 / span 2",
+      gridColumn: "1 / -1",
+    },
+  },
+});
+
+// Filter
+
+export const FilterTitle = style({
+  gridColumn: "1 / span 2",
+  fontSize: vars.fontSize.sm,
+  fontWeight: "300",
+  letterSpacing: "0.04rem",
+  color: vars.color.border,
+
+  "@media": {
+    [media.mobile]: {
+      // gridColumn: "1 / span 1",
     },
   },
 });
 
 export const FilterGroup = style({
-  gridColumn: "4 / -1",
+  gridColumn: "3 / -1",
   display: "flex",
   flexWrap: "wrap",
-  gap: "1rem",
+  gap: "0.5rem",
 
   "@media": {
     [media.desktop]: {
-      gridColumn: "5 / span 2",
-    },
-    [media.tablet]: {
-      gridColumn: "5 / -1",
+      gridColumn: "3 / span 2",
     },
     [media.mobile]: {
       gridColumn: "3 / -1",
@@ -323,10 +368,10 @@ export const FilterText = style({
 // ResultGroup
 
 export const ResultGroup = style({
-  gridColumn: "3 / -1",
+  gridColumn: "1 / -1",
   display: "flex",
   flexDirection: "column",
-  gap: "2rem",
+  gap: "1rem",
 
   "@media": {
     [media.mobile]: {
