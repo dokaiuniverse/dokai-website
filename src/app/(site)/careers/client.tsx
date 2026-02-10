@@ -4,6 +4,7 @@ import { Career } from "./fetch";
 import ImageCard from "@components/ui/ImageCard";
 import * as Styles from "./style.css";
 import { getReadableTextColor } from "@utils/Color";
+import Link from "next/link";
 
 type CareersPageClientProps = {
   careers: Career[];
@@ -25,7 +26,11 @@ const CareersPageClient = ({ careers }: CareersPageClientProps) => {
       </p>
       <div className={Styles.ProfileContainer}>
         {careers.map((career, idx) => (
-          <button className={Styles.ProfileItem} key={`CAREERS_${idx}`}>
+          <Link
+            href={"/careers/" + career.profileId}
+            className={Styles.ProfileItem}
+            key={`CAREERS_${idx}`}
+          >
             <ImageCard
               src={career.media.src}
               alt={career.media.alt}
@@ -47,7 +52,7 @@ const CareersPageClient = ({ careers }: CareersPageClientProps) => {
               <p>{career.role}</p>
               <p>{career.name}</p>
             </div>
-          </button>
+          </Link>
         ))}
       </div>
     </div>
