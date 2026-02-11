@@ -119,9 +119,6 @@ export const ItemTextContainer = recipe({
         flexDirection: "column",
         gap: "0.5rem",
       },
-      // [media.mobile]: {
-      //   fontSize: vars.fontSize.sm,
-      // },
     },
   },
   variants: {
