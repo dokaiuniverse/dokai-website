@@ -99,6 +99,38 @@ export const Content = style({
       paddingRight: "6px",
     },
   },
+
+  selectors: {
+    "&::-webkit-scrollbar": {
+      width: "0.5rem",
+
+      "@media": {
+        [media.tablet]: {
+          width: "8px",
+        },
+      },
+    },
+    "&::-webkit-scrollbar-track": {
+      background: "transparent",
+      margin: "2rem 0",
+
+      "@media": {
+        [media.tablet]: {
+          margin: "24px 0",
+        },
+        [media.mobile]: {
+          margin: "20px 0",
+        },
+      },
+    },
+    "&::-webkit-scrollbar-thumb": {
+      background: "#D9D9D9",
+      borderRadius: "999px",
+    },
+    "&::-webkit-scrollbar-thumb:hover": {
+      background: vars.color.border,
+    },
+  },
 });
 
 export const CloseButton = style({
@@ -110,37 +142,4 @@ export const CloseButtonIcon = style({
   width: "1.5rem",
   height: "auto",
   aspectRatio: "1 / 1",
-});
-
-globalStyle(`${Content}::-webkit-scrollbar`, {
-  width: "0.5rem",
-
-  "@media": {
-    [media.tablet]: {
-      width: "8px",
-    },
-  },
-});
-
-globalStyle(`${Content}::-webkit-scrollbar-track`, {
-  background: "transparent",
-  margin: "2rem 0",
-
-  "@media": {
-    [media.tablet]: {
-      margin: "24px 0",
-    },
-    [media.mobile]: {
-      margin: "20px 0",
-    },
-  },
-});
-
-globalStyle(`${Content}::-webkit-scrollbar-thumb`, {
-  background: "#D9D9D9",
-  borderRadius: "999px",
-});
-
-globalStyle(`${Content}::-webkit-scrollbar-thumb:hover`, {
-  background: vars.color.border,
 });
