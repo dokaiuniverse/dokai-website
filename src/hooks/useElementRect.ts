@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 type UseElementRectOptions = {
   preferBorderBox?: boolean;
   round?: boolean;
+  deps?: boolean[];
 };
 
 type ElementRect = {
@@ -11,7 +12,11 @@ type ElementRect = {
 };
 
 const useElementRect = <T extends HTMLElement>(
-  options: UseElementRectOptions = { preferBorderBox: true, round: false },
+  options: UseElementRectOptions = {
+    preferBorderBox: true,
+    round: false,
+    deps: [],
+  },
 ) => {
   const elementRef = useRef<T | null>(null);
   const [rect, setRect] = useState<ElementRect>({ width: 0, height: 0 });
@@ -58,7 +63,7 @@ const useElementRect = <T extends HTMLElement>(
     ro.observe(element);
 
     return () => ro.disconnect();
-  }, [options.preferBorderBox, options.round]);
+  }, [options.preferBorderBox, options.round, ...(options.deps ?? [])]);
 
   return { elementRef, ...rect };
 };
