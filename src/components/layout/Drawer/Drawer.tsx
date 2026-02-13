@@ -1,3 +1,5 @@
+"use client";
+
 import { getRandomLightColor } from "@utils/Color";
 import { useEffect, useRef } from "react";
 import * as Styles from "./style.css";

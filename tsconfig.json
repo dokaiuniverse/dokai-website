@@ -28,7 +28,8 @@
       "@hooks/*": ["./src/hooks/*"],
       "@lib/*": ["./src/lib/*"],
       "@domain/*": ["./src/domain/*"],
-      "@server/*": ["./src/server/*"]
+      "@server/*": ["./src/server/*"],
+      "@controllers/*": ["./src/controllers/*"]
     }
   },
   "include": [

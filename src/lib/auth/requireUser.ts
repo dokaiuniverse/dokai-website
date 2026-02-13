@@ -6,6 +6,8 @@ export async function requireUser(req: NextRequest) {
 
   const { data, error } = await supabase.auth.getUser();
 
+  console.log(1, data, error);
+
   if (error || !data.user) {
     return { user: null, supabase, applyCookies };
   }
