@@ -1,21 +1,39 @@
 "use client";
 
-import { CareersDetail } from "./fetch";
-import CareerDetailProfile from "./Profile";
+import CareerDetailProfile from "@components/pages/careers/Profile/Profile";
 import * as Styles from "./style.css";
-import CareerDetailWorks from "./Works";
-import CareerDetailExperiences from "./Experiences";
+import CareerDetailProjects from "@components/pages/careers/Projects/Projects";
+import CareerDetailExperiences from "@components/pages/careers/Experiences/Experiences";
+import { ProfileDetail } from "@domain/careers";
 
 const CareersDetailPageClient = ({
-  careersDetailInfo,
+  profileDetail,
 }: {
-  careersDetailInfo: CareersDetail;
+  profileDetail: ProfileDetail;
 }) => {
+  if (!profileDetail) return null;
+
   return (
     <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
-      <CareerDetailProfile profile={careersDetailInfo.profile} />
-      <CareerDetailWorks works={careersDetailInfo.works} />
-      <CareerDetailExperiences experiences={careersDetailInfo.experiences} />
+      <CareerDetailProfile profile={profileDetail} />
+      <CareerDetailProjects
+        email={profileDetail.email}
+        projects={profileDetail.projects}
+      />
+      <CareerDetailExperiences experiences={profileDetail.experiences} />
+      {/* <AdminButtons
+        adminButtons={[
+          {
+            role: "STAFF",
+            type: "EDIT",
+            click: {
+              type: "HREF",
+              href: `/admin/careers?email=${encodeURIComponent(profileDetail.email)}`,
+            },
+            email: decodeURIComponent(profileDetail.email),
+          },
+        ]}
+      /> */}
     </div>
   );
 };

@@ -5,7 +5,8 @@ export function normalizeWork(input: Partial<Work>): Work {
 
   return {
     title: w.title ?? "",
-    media: w.media,
+    mainMedia: w.mainMedia,
+    thumbnail: w.thumbnail,
     summary: w.summary ?? "",
     category: w.category,
     publishedAt: w.publishedAt ?? new Date().toISOString().slice(0, 10),

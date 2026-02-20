@@ -61,7 +61,12 @@ export async function middleware(req: NextRequest) {
     return res;
   }
 
-  if (allowed.role !== "admin") {
+  // admin은 모든 페이지 접근 가능
+  // staff는 careers 페이지만 접근 가능
+  if (
+    allowed.role !== "admin" &&
+    !(url.pathname.startsWith("/admin/careers") && allowed.role === "staff")
+  ) {
     res.headers.set("x-admin-guard", "forbidden");
     return res;
   }

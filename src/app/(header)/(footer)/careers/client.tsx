@@ -1,18 +1,19 @@
 "use client";
 
-import { Career } from "./fetch";
 import * as Styles from "./style.css";
 import Link from "next/link";
 import MediaHoverOverlay from "@components/ui/Media/HoverOverlay/HoverOverlay";
-
-type CareersPageClientProps = {
-  careers: Career[];
-};
+import { useProfileListQuery } from "@controllers/careers/query";
+import AdminButtons from "@components/ui/AdminButtons/AdminButtons";
 
 const careersCopy =
   "BUCK is always looking for dynamic, passionate, and talented artists to join our team.Below is a list of our current vacancies - if you don't see anything, check back again soon. If you don't see any positions that match your skills, feel free to send an email with a link to your work.";
 
-const CareersPageClient = ({ careers }: CareersPageClientProps) => {
+const CareersPageClient = () => {
+  const { data: profiles, isLoading } = useProfileListQuery();
+
+  if (!profiles || isLoading) return null;
+
   return (
     <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
       <p className={Styles.Title}>Careers</p>
@@ -24,24 +25,36 @@ const CareersPageClient = ({ careers }: CareersPageClientProps) => {
         }
       </p>
       <div className={Styles.ProfileContainer}>
-        {careers.map((career, idx) => (
+        {profiles?.items?.map((profile) => (
           <Link
-            href={"/careers/" + career.profileId}
+            href={`/careers/${encodeURIComponent(profile.email)}`}
             className={Styles.ProfileItem}
-            key={`CAREERS_${idx}`}
+            key={`CAREERS_${profile.email}`}
           >
             <MediaHoverOverlay
-              media={career.media}
+              media={profile.avatar}
               className={Styles.ProfileItemImage}
             >
               <div className={Styles.ProfileItemOverlay}>
-                <p>{career.role}</p>
-                <p>{career.name}</p>
+                <p>{profile.role}</p>
+                <p>{profile.name}</p>
               </div>
             </MediaHoverOverlay>
           </Link>
         ))}
       </div>
+      <AdminButtons
+        adminButtons={[
+          {
+            role: "STAFF",
+            type: "ADD",
+            click: {
+              type: "HREF",
+              href: "/admin/careers",
+            },
+          },
+        ]}
+      />
     </div>
   );
 };

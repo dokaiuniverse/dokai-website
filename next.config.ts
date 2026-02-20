@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "i.vimeocdn.com",
+        hostname: "**",
         pathname: "/**",
       },
     ],

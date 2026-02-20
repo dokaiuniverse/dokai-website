@@ -1,14 +1,14 @@
 "use client";
 
-import AboutPageIntro from "./Intro";
 import * as Styles from "./style.css";
-import MediaSlider from "@components/ui/Media/MediaSlider/MediaSlider";
 import { About } from "@domain/about";
-import AboutPageTextSection from "./Text";
-import AboutPageGroupSection from "./Group";
-import AboutPageCardSection from "./Card";
-import AboutPageTeamSection from "./Team";
 import { useAboutQuery } from "./query";
+import AboutPageIntro from "@components/pages/about/Intro/Intro";
+import AboutPageMedia from "@components/pages/about/Media/Media";
+import AboutPageTextSection from "@components/pages/about/Text/Text";
+import AboutPageGroupSection from "@components/pages/about/Group/Group";
+import AboutPageCardSection from "@components/pages/about/Card/Card";
+import AboutPageTeamSection from "@components/pages/about/Team/Team";
 
 type AboutPageClientProps = {
   aboutInfo?: About;
@@ -26,48 +26,29 @@ const AboutPageClient = ({}: AboutPageClientProps) => {
   return (
     <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
       <AboutPageIntro text={aboutInfo.intro} />
-      {aboutInfo.contents.map((content, index) =>
-        content.type === "MEDIAS" ? (
-          <MediaSlider
-            key={`ABOUT_CONTENT_${index}`}
-            mediaList={content.value.medias}
-            className={
-              content.value.align === "LEFT"
-                ? Styles.ImageLeft
-                : Styles.ImageRight
-            }
-          />
-        ) : content.value.contentType === "TEXT" ? (
-          <AboutPageTextSection
-            key={`ABOUT_CONTENT_${index}`}
-            name={content.name}
-            text={content.value.text}
-          />
-        ) : content.value.contentType === "GROUP" ? (
-          <AboutPageGroupSection
-            key={`ABOUT_CONTENT_${index}`}
-            name={content.name}
-            text={content.value.text}
-            content={content.value.content}
-          />
-        ) : content.value.contentType === "CARD" ? (
-          <AboutPageCardSection
-            key={`ABOUT_CONTENT_${index}`}
-            name={content.name}
-            text={content.value.text}
-            content={content.value.content}
-          />
-        ) : content.value.contentType === "TEAM" ? (
-          <AboutPageTeamSection
-            key={`ABOUT_CONTENT_${index}`}
-            name={content.name}
-            text={content.value.text}
-            content={content.value.content}
-          />
-        ) : (
-          ""
-        ),
-      )}
+      {aboutInfo.contents.map((content, index) => (
+        <div
+          key={`ABOUT_CONTENT_${index}`}
+          className={Styles.Content({
+            align:
+              content.type === "MEDIAS" && content.align === "LEFT"
+                ? "LEFT"
+                : "RIGHT",
+          })}
+        >
+          {content.type === "MEDIAS" ? (
+            <AboutPageMedia content={content} />
+          ) : content.type === "TEXT" ? (
+            <AboutPageTextSection content={content} />
+          ) : content.type === "GROUP" ? (
+            <AboutPageGroupSection content={content} />
+          ) : content.type === "CARD" ? (
+            <AboutPageCardSection content={content} />
+          ) : content.type === "TEAM" ? (
+            <AboutPageTeamSection content={content} />
+          ) : null}
+        </div>
+      ))}
     </div>
   );
 };

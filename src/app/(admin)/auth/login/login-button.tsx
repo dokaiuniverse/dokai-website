@@ -1,6 +1,8 @@
 "use client";
 
 import { createSupabaseBrowserClient } from "@lib/supabase/browser";
+import GoogleSVG from "@assets/google.svg";
+import * as Styles from "./style.css";
 
 export default function LoginButton() {
   const handleLogin = async () => {
@@ -32,16 +34,15 @@ export default function LoginButton() {
   };
 
   return (
-    <button
-      onClick={handleLogin}
-      style={{
-        padding: "10px 14px",
-        border: "1px solid #ddd",
-        borderRadius: 8,
-        cursor: "pointer",
-      }}
-    >
-      Google로 로그인
+    <button onClick={handleLogin} className={Styles.Button}>
+      <GoogleSVG
+        style={{
+          width: "1.5rem",
+          height: "auto",
+          aspectRatio: "1 / 1",
+        }}
+      />
+      <p className={Styles.ButtonText}>Sign in with Google</p>
     </button>
   );
 }

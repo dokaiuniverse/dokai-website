@@ -6,6 +6,8 @@ export type ProjectData = Omit<Project, "id">;
 
 export function normalizeProfileData(input: Partial<ProfileData>): ProfileData {
   return {
+    name: typeof input.name === "string" ? input.name : "",
+    role: typeof input.role === "string" ? input.role : "",
     avatar: (input.avatar ?? null) as MediaSource | null,
     bio: typeof input.bio === "string" ? input.bio : "",
     contacts: Array.isArray(input.contacts)

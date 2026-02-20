@@ -9,7 +9,6 @@ const SearchResult = ({ queries }: { queries: string[] }) => {
 
   const handleItemClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const item = e.currentTarget.name;
-    console.log(item);
   };
 
   if (!queries.length) return;

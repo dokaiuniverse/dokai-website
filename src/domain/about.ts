@@ -16,42 +16,50 @@ export type AboutTeam = {
   names: string[];
 };
 
-export type AboutMedias = {
+export type AboutContentTeam = {
+  type: "TEAM";
+  name: string;
+  text: string;
+  content: AboutTeam[];
+};
+
+export type AboutContentCard = {
+  type: "CARD";
+  name: string;
+  text: string;
+  content: AboutCard[];
+};
+
+export type AboutContentGroup = {
+  type: "GROUP";
+  name: string;
+  text: string;
+  content: AboutGroup[];
+};
+
+export type AboutContentText = {
+  type: "TEXT";
+  name: string;
+  text: string;
+};
+
+export type AboutContentMedias = {
+  type: "MEDIAS";
   align: "LEFT" | "RIGHT";
   medias: MediaSource[];
 };
 
-export type AboutSection =
-  | {
-      contentType: "TEXT";
-      text: string;
-    }
-  | {
-      contentType: "GROUP";
-      text: string;
-      content: AboutGroup[];
-    }
-  | {
-      contentType: "CARD";
-      text: string;
-      content: AboutCard[];
-    }
-  | {
-      contentType: "TEAM";
-      text: string;
-      content: AboutTeam[];
-    };
-
 export type AboutContent =
-  | {
-      type: "MEDIAS";
-      value: AboutMedias;
-    }
-  | {
-      type: "SECTION";
-      name: string; // 섹션 라벨(표시용)
-      value: AboutSection;
-    };
+  | AboutContentText
+  | AboutContentGroup
+  | AboutContentCard
+  | AboutContentTeam
+  | AboutContentMedias;
+
+export type IndexedAboutContent = {
+  id: number;
+  content: AboutContent;
+};
 
 export type About = {
   intro: string;

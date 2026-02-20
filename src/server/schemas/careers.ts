@@ -1,8 +1,4 @@
-export const careersSchemas = {
-  /** -----------------------------
-   *  Atomic / Reusable
-   *  ----------------------------- */
-
+export const careerSchemas = {
   ContactLink: {
     type: "object",
     required: ["name", "value", "href"],
@@ -31,7 +27,10 @@ export const careersSchemas = {
     properties: {
       type: { type: "string", enum: ["LIST"] },
       name: { type: "string" },
-      value: { type: "array", items: { type: "string" } },
+      value: {
+        type: "array",
+        items: { type: "string" },
+      },
     },
     additionalProperties: false,
   },
@@ -41,26 +40,23 @@ export const careersSchemas = {
       { $ref: "#/components/schemas/ContentText" },
       { $ref: "#/components/schemas/ContentList" },
     ],
-    discriminator: {
-      propertyName: "type",
-      mapping: {
-        TEXT: "#/components/schemas/ContentText",
-        LIST: "#/components/schemas/ContentList",
-      },
-    },
   },
-
-  /** -----------------------------
-   *  Core Domain Schemas
-   *  - Profile: DB row concept (projects excluded)
-   *  - Project: DB row concept
-   *  ----------------------------- */
 
   Profile: {
     type: "object",
-    required: ["email", "avatar", "bio", "contacts", "experiences"],
+    required: [
+      "email",
+      "name",
+      "role",
+      "avatar",
+      "bio",
+      "contacts",
+      "experiences",
+    ],
     properties: {
-      email: { type: "string" },
+      email: { type: "string", format: "email" },
+      name: { type: "string" },
+      role: { type: "string" },
       avatar: {
         oneOf: [{ $ref: "#/components/schemas/MediaSource" }, { type: "null" }],
       },
@@ -69,7 +65,10 @@ export const careersSchemas = {
         type: "array",
         items: { $ref: "#/components/schemas/ContactLink" },
       },
-      experiences: { type: "array", items: { type: "string" } },
+      experiences: {
+        type: "array",
+        items: { type: "string" },
+      },
     },
     additionalProperties: false,
   },
@@ -78,7 +77,7 @@ export const careersSchemas = {
     type: "object",
     required: ["id", "title", "thumbnail", "contents", "medias"],
     properties: {
-      id: { type: "string", description: "uuid" },
+      id: { type: "string" },
       title: { type: "string" },
       thumbnail: {
         oneOf: [{ $ref: "#/components/schemas/MediaSource" }, { type: "null" }],
@@ -95,15 +94,13 @@ export const careersSchemas = {
     additionalProperties: false,
   },
 
-  /** -----------------------------
-   *  View / API DTO Schemas
-   *  ----------------------------- */
-
   ProfileListItem: {
     type: "object",
-    required: ["email", "avatar"],
+    required: ["email", "name", "role", "avatar"],
     properties: {
-      email: { type: "string" },
+      email: { type: "string", format: "email" },
+      name: { type: "string" },
+      role: { type: "string" },
       avatar: {
         oneOf: [{ $ref: "#/components/schemas/MediaSource" }, { type: "null" }],
       },
@@ -115,7 +112,7 @@ export const careersSchemas = {
     type: "object",
     required: ["id", "title", "thumbnail"],
     properties: {
-      id: { type: "string", description: "uuid" },
+      id: { type: "string" },
       title: { type: "string" },
       thumbnail: {
         oneOf: [{ $ref: "#/components/schemas/MediaSource" }, { type: "null" }],
@@ -125,32 +122,25 @@ export const careersSchemas = {
   },
 
   ProfileDetail: {
-    type: "object",
-    required: ["email", "avatar", "bio", "contacts", "experiences", "projects"],
-    properties: {
-      email: { type: "string" },
-      avatar: {
-        oneOf: [{ $ref: "#/components/schemas/MediaSource" }, { type: "null" }],
+    allOf: [
+      { $ref: "#/components/schemas/Profile" },
+      {
+        type: "object",
+        required: ["projects"],
+        properties: {
+          projects: {
+            type: "array",
+            items: { $ref: "#/components/schemas/ProjectCard" },
+          },
+        },
+        additionalProperties: false,
       },
-      bio: { type: "string" },
-      contacts: {
-        type: "array",
-        items: { $ref: "#/components/schemas/ContactLink" },
-      },
-      experiences: { type: "array", items: { type: "string" } },
-      projects: {
-        type: "array",
-        items: { $ref: "#/components/schemas/ProjectCard" },
-      },
-    },
-    additionalProperties: false,
+    ],
   },
 
-  /** -----------------------------
-   *  Response Envelopes
-   *  ----------------------------- */
+  // ===== Responses =====
 
-  ProfilesListResponse: {
+  CareerProfileListResponse: {
     type: "object",
     required: ["items"],
     properties: {
@@ -162,63 +152,55 @@ export const careersSchemas = {
     additionalProperties: false,
   },
 
-  ProfileDetailResponse: {
+  CareerProfileDetailResponse: {
     type: "object",
-    required: ["data", "updatedAt"],
+    required: ["isPublished", "data", "updatedAt"],
     properties: {
-      data: { $ref: "#/components/schemas/ProfileDetail" },
-      updatedAt: { type: "string", nullable: true },
-    },
-    additionalProperties: false,
-  },
-
-  ProjectResponse: {
-    type: "object",
-    required: ["data", "updatedAt"],
-    properties: {
-      data: { $ref: "#/components/schemas/Project" },
-      updatedAt: { type: "string", nullable: true },
-    },
-    additionalProperties: false,
-  },
-
-  /** -----------------------------
-   *  Request Bodies (Admin CUD)
-   *  ----------------------------- */
-
-  ProfileUpsertRequest: {
-    type: "object",
-    required: ["data"],
-    properties: {
-      data: {
-        type: "object",
-        description:
-          "Profile fields only (avatar, bio, contacts, experiences). Projects are managed separately.",
-        properties: {
-          avatar: {
-            oneOf: [
-              { $ref: "#/components/schemas/MediaSource" },
-              { type: "null" },
-            ],
-          },
-          bio: { type: "string" },
-          contacts: {
-            type: "array",
-            items: { $ref: "#/components/schemas/ContactLink" },
-          },
-          experiences: { type: "array", items: { type: "string" } },
-        },
-        additionalProperties: false,
-      },
       isPublished: { type: "boolean" },
+      data: { $ref: "#/components/schemas/ProfileDetail" },
+      updatedAt: { type: "string" },
     },
     additionalProperties: false,
   },
 
-  ProjectCreateRequest: {
+  CareerProjectDetailResponse: {
     type: "object",
-    required: ["data"],
+    required: ["isPublished", "data", "updatedAt"],
     properties: {
+      isPublished: { type: "boolean" },
+      data: { $ref: "#/components/schemas/Project" },
+      updatedAt: { type: "string" },
+    },
+    additionalProperties: false,
+  },
+
+  // ===== Requests =====
+
+  CareerCreateProfileRequest: {
+    type: "object",
+    required: ["isPublished", "data"],
+    properties: {
+      isPublished: { type: "boolean" },
+      data: { $ref: "#/components/schemas/Profile" },
+    },
+    additionalProperties: false,
+  },
+
+  CareerUpdateProfileRequest: {
+    type: "object",
+    properties: {
+      isPublished: { type: "boolean" },
+      data: { $ref: "#/components/schemas/Profile" },
+    },
+    additionalProperties: false,
+  },
+
+  CareerCreateProjectRequest: {
+    type: "object",
+    required: ["ownerEmail", "isPublished", "data"],
+    properties: {
+      ownerEmail: { type: "string", format: "email" },
+      isPublished: { type: "boolean" },
       data: {
         type: "object",
         required: ["title", "thumbnail", "contents", "medias"],
@@ -241,39 +223,34 @@ export const careersSchemas = {
         },
         additionalProperties: false,
       },
-      orderIndex: { type: "number" },
-      isPublished: { type: "boolean" },
     },
     additionalProperties: false,
   },
 
-  ProjectPatchRequest: {
+  CareerUpdateProjectRequest: {
     type: "object",
     properties: {
-      data: {
-        type: "object",
-        description: "Partial project data (without id)",
-        properties: {
-          title: { type: "string" },
-          thumbnail: {
-            oneOf: [
-              { $ref: "#/components/schemas/MediaSource" },
-              { type: "null" },
-            ],
-          },
-          contents: {
-            type: "array",
-            items: { $ref: "#/components/schemas/Content" },
-          },
-          medias: {
-            type: "array",
-            items: { $ref: "#/components/schemas/MediaSource" },
-          },
-        },
-        additionalProperties: false,
-      },
-      orderIndex: { type: "number" },
       isPublished: { type: "boolean" },
+      data: { $ref: "#/components/schemas/Project" },
+    },
+    additionalProperties: false,
+  },
+
+  // ===== Mutation mini responses =====
+  CareerEmailResponse: {
+    type: "object",
+    required: ["email"],
+    properties: {
+      email: { type: "string", format: "email" },
+    },
+    additionalProperties: false,
+  },
+
+  CareerIdResponse: {
+    type: "object",
+    required: ["id"],
+    properties: {
+      id: { type: "string" },
     },
     additionalProperties: false,
   },

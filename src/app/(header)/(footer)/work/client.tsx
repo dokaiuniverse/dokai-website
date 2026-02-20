@@ -8,8 +8,12 @@ import { useEffect, useMemo, useState } from "react";
 import { WorkItem } from "@ts/work_item";
 import MoreButton from "@components/ui/Button/More";
 import MediaHoverOverlay from "@components/ui/Media/HoverOverlay/HoverOverlay";
+import { useWorkListQuery } from "@controllers/work/query";
+import AdminButtons from "@components/ui/AdminButtons/AdminButtons";
 
 const WorkPageClient = ({ workItems }: { workItems: WorkItem[] }) => {
+  const { data: works } = useWorkListQuery();
+
   const [selectedCategory, setSelectedCategory] =
     useState<Category>("EVERYTHING");
 
@@ -20,10 +24,6 @@ const WorkPageClient = ({ workItems }: { workItems: WorkItem[] }) => {
       ),
     [],
   );
-
-  useEffect(() => {
-    console.log(selectedCategory);
-  }, [selectedCategory]);
 
   return (
     <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
@@ -53,14 +53,14 @@ const WorkPageClient = ({ workItems }: { workItems: WorkItem[] }) => {
         ))}
       </div>
       <div className={Styles.WorkItemsContainer}>
-        {workItems.map((item) => (
+        {works?.items?.map((item) => (
           <Link
-            key={`WORK_ITEM_${item.id}`}
+            key={`WORK_ITEM_${item.slug}`}
             className={Styles.WorkItem}
-            href={item.href}
+            href={`/work/${item.slug}`}
           >
             <MediaHoverOverlay
-              media={item.media}
+              media={item.thumbnail!}
               className={Styles.WorkItemMedia}
             >
               <div className={Styles.WorkItemMediaOverlay}>
@@ -74,6 +74,18 @@ const WorkPageClient = ({ workItems }: { workItems: WorkItem[] }) => {
       <div className={Styles.MoreButtonContainer}>
         <MoreButton />
       </div>
+      <AdminButtons
+        adminButtons={[
+          {
+            role: "ADMIN",
+            type: "ADD",
+            click: {
+              type: "HREF",
+              href: "/admin/work",
+            },
+          },
+        ]}
+      />
     </div>
   );
 };

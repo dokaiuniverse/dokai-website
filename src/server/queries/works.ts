@@ -19,7 +19,7 @@ export type WorkCard = {
   category: WorkCategory;
   publishedAt: string;
   productionType: string;
-  media: Work["media"];
+  thumbnail: Work["thumbnail"];
   isPublished: boolean;
 };
 
@@ -82,7 +82,7 @@ export async function fetchWorks(
       category: w.category,
       publishedAt: w.publishedAt,
       productionType: w.productionType,
-      media: w.media,
+      thumbnail: w.thumbnail,
       isPublished: !!r.is_published,
     };
   });

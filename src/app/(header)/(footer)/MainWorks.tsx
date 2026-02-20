@@ -1,3 +1,5 @@
+"use client";
+
 import { MockMainItems } from "@ts/mock";
 import Link from "next/link";
 import * as Styles from "./style.css";

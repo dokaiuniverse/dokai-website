@@ -21,8 +21,6 @@ export type CareerWork = {
 };
 
 const fetchCareerWork = (careerWorkId: string): Promise<CareerWork> => {
-  console.log(careerWorkId);
-
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({

@@ -11,7 +11,7 @@ export type WorkCategory =
 
 export type WorkMetaField = {
   name: string;
-  value: string;
+  values: string[];
 };
 
 export type Credit = {
@@ -24,12 +24,22 @@ export type Credit = {
 
 export type Work = {
   title: string;
-  media: MediaSource;
+  thumbnail: MediaSource | null;
   summary: string;
   category: WorkCategory;
   publishedAt: string;
   productionType: string;
   meta: WorkMetaField[];
+  mainMedia: MediaSource | null;
   keyVisuals: MediaSource[];
   credits: Credit[];
+};
+
+export type WorkCard = {
+  slug: string;
+  title: string;
+  thumbnail: MediaSource | null;
+  summary: string;
+  category: WorkCategory;
+  fixedAt: string | null;
 };

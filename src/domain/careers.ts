@@ -22,6 +22,8 @@ export type Content = ContentText | ContentList;
 
 export type Profile = {
   email: string;
+  name: string;
+  role: string;
   avatar: MediaSource | null;
   bio: string;
   contacts: ContactLink[];
@@ -36,6 +38,9 @@ export type Project = {
   medias: MediaSource[];
 };
 
-export type ProfileListItem = Pick<Profile, "email" | "avatar">;
+export type ProfileListItem = Pick<
+  Profile,
+  "email" | "avatar" | "name" | "role"
+>;
 export type ProjectCard = Pick<Project, "id" | "title" | "thumbnail">;
 export type ProfileDetail = Profile & { projects: ProjectCard[] };

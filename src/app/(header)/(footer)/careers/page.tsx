@@ -1,10 +1,7 @@
 import CareersPageClient from "./client";
-import { fetchCareers } from "./fetch";
 
 const CareersPage = async () => {
-  const careers = await fetchCareers();
-
-  return <CareersPageClient careers={careers} />;
+  return <CareersPageClient />;
 };
 
 export default CareersPage;

@@ -16,7 +16,6 @@ export type SearchResultResponse = {
 export const fetchSearchResults = async (
   queries: string[],
 ): Promise<SearchResultResponse[]> => {
-  console.log(queries);
   return await Promise.resolve([
     {
       filter: "ANIMATE",

@@ -1,3 +1,5 @@
+export type MediaType = "IMAGE" | "VIDEO" | "LOOP";
+
 export type LoopConfig = { start?: number; end?: number };
 
 type MediaBase = { src: string; alt: string };

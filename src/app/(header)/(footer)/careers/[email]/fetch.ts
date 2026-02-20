@@ -1,15 +1,55 @@
-import { MediaSource } from "@components/ui/Media/types";
-import { getRandomColor } from "@utils/Color";
+import { Profile, ProfileDetail, ProjectCard } from "@domain/careers";
+
+const projects: ProjectCard[] = [
+  {
+    thumbnail: {
+      type: "IMAGE",
+      src: "/nhi_0.png",
+      alt: "nhi_0",
+    },
+    title: "title",
+    id: "projectId",
+  },
+  {
+    thumbnail: {
+      type: "IMAGE",
+      src: "/nhi_0.png",
+      alt: "nhi_0",
+    },
+    title: "title",
+    id: "projectId",
+  },
+  {
+    thumbnail: {
+      type: "IMAGE",
+      src: "/nhi_0.png",
+      alt: "nhi_0",
+    },
+    title: "title",
+    id: "projectId",
+  },
+  {
+    thumbnail: {
+      type: "IMAGE",
+      src: "/nhi_0.png",
+      alt: "nhi_0",
+    },
+    title: "title",
+    id: "projectId",
+  },
+];
 
 const profile: Profile = {
-  media: {
+  email: "jadest13x03@gmail.com",
+  name: "name",
+  role: "Developer",
+  avatar: {
     type: "IMAGE",
     src: "/nhi_0.png",
     alt: "nhi_0",
   },
-  introduce:
-    "BUCK is always looking for dynamic, passionate, and talented artists to join our team.\nBelow is a list of our current vacancies - if you don't see anything, check back again soon. If you don't see any positions that match your skills, feel free to send an email with a link to your work.",
-  contact: [
+  bio: "BUCK is always looking for dynamic, passionate, and talented artists to join our team.\nBelow is a list of our current vacancies - if you don't see anything, check back again soon. If you don't see any positions that match your skills, feel free to send an email with a link to your work.",
+  contacts: [
     {
       name: "Instagram",
       value: "@dokai123_",
@@ -26,87 +66,19 @@ const profile: Profile = {
       href: "mailto:dokai.solart@gmail.com",
     },
   ],
-};
-
-const works: Work[] = [
-  {
-    media: {
-      type: "IMAGE",
-      src: "/nhi_0.png",
-      alt: "nhi_0",
-    },
-    title: "title",
-    bgColor: getRandomColor(),
-    workId: "workId",
-  },
-  {
-    media: {
-      type: "IMAGE",
-      src: "/nhi_0.png",
-      alt: "nhi_0",
-    },
-    title: "title",
-    bgColor: getRandomColor(),
-    workId: "workId",
-  },
-  {
-    media: {
-      type: "IMAGE",
-      src: "/nhi_0.png",
-      alt: "nhi_0",
-    },
-    title: "title",
-    bgColor: getRandomColor(),
-    workId: "workId",
-  },
-  {
-    media: {
-      type: "IMAGE",
-      src: "/nhi_0.png",
-      alt: "nhi_0",
-    },
-    title: "title",
-    bgColor: getRandomColor(),
-    workId: "workId",
-  },
-];
-
-export type Profile = {
-  media: MediaSource;
-  introduce: string;
-  contact: {
-    name: string;
-    value: string;
-    href: string;
-  }[];
-};
-
-export type Work = {
-  media: MediaSource;
-  title: string;
-  bgColor: string;
-  workId: string;
-};
-
-export type CareersDetail = {
-  profile: Profile;
-  works: Work[];
-  experiences: string[];
+  experiences: [
+    "2020.10.12 Media art project ~",
+    "2020.10.12 Media art project ~",
+    "2020.10.12 Media art project ~",
+    "2020.10.12 Media art project ~",
+  ],
 };
 
 export const fetchCareersDetail = async (
   profileId: string,
-): Promise<CareersDetail> => {
-  console.log(profileId);
-
+): Promise<ProfileDetail> => {
   return await Promise.resolve({
-    profile: profile,
-    works: works,
-    experiences: [
-      "2020.10.12 Media art project ~",
-      "2020.10.12 Media art project ~",
-      "2020.10.12 Media art project ~",
-      "2020.10.12 Media art project ~",
-    ],
+    ...profile,
+    projects,
   });
 };

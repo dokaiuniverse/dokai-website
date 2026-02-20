@@ -30,19 +30,6 @@ export const aboutSchemas = {
     additionalProperties: false,
   },
 
-  AboutMedias: {
-    type: "object",
-    required: ["align", "medias"],
-    properties: {
-      align: { type: "string", enum: ["LEFT", "RIGHT"] },
-      medias: {
-        type: "array",
-        items: { $ref: "#/components/schemas/MediaSource" },
-      },
-    },
-    additionalProperties: false,
-  },
-
   AboutSection: {
     oneOf: [
       {
@@ -100,10 +87,66 @@ export const aboutSchemas = {
     oneOf: [
       {
         type: "object",
-        required: ["type", "value"],
+        required: ["type", "align", "medias"],
         properties: {
           type: { type: "string", enum: ["MEDIAS"] },
-          value: { $ref: "#/components/schemas/AboutMedias" },
+          align: { type: "string", enum: ["LEFT", "RIGHT"] },
+          medias: {
+            type: "array",
+            items: { $ref: "#/components/schemas/MediaSource" },
+          },
+        },
+        additionalProperties: false,
+      },
+      {
+        type: "object",
+        required: ["type", "name", "text"],
+        properties: {
+          type: { type: "string", enum: ["TEXT"] },
+          name: { type: "string" },
+          text: { type: "string" },
+        },
+        additionalProperties: false,
+      },
+      {
+        type: "object",
+        required: ["type", "name", "text", "content"],
+        properties: {
+          type: { type: "string", enum: ["GROUP"] },
+          name: { type: "string" },
+          text: { type: "string" },
+          content: {
+            type: "array",
+            items: { $ref: "#/components/schemas/AboutGroup" },
+          },
+        },
+        additionalProperties: false,
+      },
+      {
+        type: "object",
+        required: ["type", "name", "text", "content"],
+        properties: {
+          type: { type: "string", enum: ["CARD"] },
+          name: { type: "string" },
+          text: { type: "string" },
+          content: {
+            type: "array",
+            items: { $ref: "#/components/schemas/AboutCard" },
+          },
+        },
+        additionalProperties: false,
+      },
+      {
+        type: "object",
+        required: ["type", "name", "text", "content"],
+        properties: {
+          type: { type: "string", enum: ["TEAM"] },
+          name: { type: "string" },
+          text: { type: "string" },
+          content: {
+            type: "array",
+            items: { $ref: "#/components/schemas/AboutTeam" },
+          },
         },
         additionalProperties: false,
       },

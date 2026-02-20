@@ -1,16 +1,39 @@
+import AdminButtons from "@components/ui/AdminButtons/AdminButtons";
 import CareersDetailPageClient from "./client";
-import { fetchCareersDetail } from "./fetch";
+import { cookies } from "next/headers";
+import { fetchProfileDetail } from "@controllers/careers/fetch";
 
 const CareersDetailPage = async ({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ email: string }>;
 }) => {
-  const { slug } = await params;
+  const { email } = await params;
+  const cookieStore = await cookies(); // ✅ 여기
+  const cookie = cookieStore
+    .getAll()
+    .map(({ name, value }) => `${name}=${value}`)
+    .join("; ");
+  const profileDetail = await fetchProfileDetail(email, { cookie });
 
-  const careersDetailInfo = await fetchCareersDetail(slug);
-
-  return <CareersDetailPageClient careersDetailInfo={careersDetailInfo} />;
+  return (
+    <>
+      <CareersDetailPageClient profileDetail={profileDetail.data} />
+      <AdminButtons
+        adminButtons={[
+          {
+            role: "STAFF",
+            type: "EDIT",
+            click: {
+              type: "HREF",
+              href: `/admin/careers?email=${encodeURIComponent(email)}`,
+            },
+            email: decodeURIComponent(email),
+          },
+        ]}
+      />
+    </>
+  );
 };
 
 export default CareersDetailPage;

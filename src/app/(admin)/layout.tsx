@@ -1,12 +1,5 @@
-import LogoutButton from "@components/ui/LogoutButton/LogoutButton";
-
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <>
-      <LogoutButton />
-      {children}
-    </>
-  );
+  return <>{children}</>;
 };
 
 export default AdminLayout;

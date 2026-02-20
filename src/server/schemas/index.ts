@@ -1,6 +1,6 @@
 import { workSchemas } from "./work";
 import { aboutSchemas } from "./about";
-import { careersSchemas } from "./careers";
+import { careerSchemas } from "./careers";
 
 export const commonSchemas = {
   ErrorResponse: {
@@ -15,5 +15,5 @@ export const schemas = {
   ...workSchemas,
   ...aboutSchemas,
   ...commonSchemas,
-  ...careersSchemas,
+  ...careerSchemas,
 } as const;

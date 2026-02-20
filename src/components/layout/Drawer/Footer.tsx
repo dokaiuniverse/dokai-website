@@ -3,11 +3,29 @@ import Link from "next/link";
 import Image from "next/image";
 import LogoPNG from "@assets/dokai.png";
 import ExternalLinks from "@ts/external_links";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const DrawerFooter = () => {
+  const [count, setCount] = useState(0);
+  const router = useRouter();
+
   return (
     <footer className={Styles.Footer}>
-      <p className={Styles.FooterTitle}>© 2026 DOKAI. All Rights Reserved.</p>
+      <p className={Styles.FooterTitle}>
+        © 2026{" "}
+        <span
+          onClick={() => {
+            if (count === 10) {
+              router.push("/auth/login");
+            }
+            setCount((prev) => prev + 1);
+          }}
+        >
+          DOKAI
+        </span>
+        . All Rights Reserved.
+      </p>
       <nav className={Styles.SocialRow}>
         {ExternalLinks.map((link) => (
           <Link

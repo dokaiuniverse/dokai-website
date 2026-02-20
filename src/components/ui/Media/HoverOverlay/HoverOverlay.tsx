@@ -11,7 +11,7 @@ const MediaHoverOverlay = ({
 }: {
   children?: React.ReactNode;
   className?: string;
-  media: MediaSource;
+  media: MediaSource | null;
 }) => {
   const overlayRef = useRef<HTMLDivElement>(null);
 
@@ -26,7 +26,7 @@ const MediaHoverOverlay = ({
 
   return (
     <div className={`${Styles.Container} ${className}`}>
-      <MediaCard media={media} className={Styles.Media} />
+      {media && <MediaCard media={media} className={Styles.Media} />}
       <div ref={overlayRef} className={Styles.Overlay}>
         <span className={Styles.OverlayBackground} />
         <div className={Styles.OverlayContent}>{children}</div>

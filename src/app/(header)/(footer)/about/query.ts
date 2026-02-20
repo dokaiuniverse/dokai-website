@@ -4,7 +4,7 @@ import { fetchAbout } from "./fetch";
 export const queryOptions = {
   retry: 5,
   staleTime: 1000,
-  suspense: true,
+  suspense: false,
 };
 
 export const useAboutQuery = () => {

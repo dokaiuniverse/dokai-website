@@ -8,15 +8,27 @@ type Props = {
   videoId: string | number;
   className?: string;
   loop?: LoopConfig;
+  pointerEvents?: "auto" | "none";
+  onLoad?: () => void;
+  onError?: (message: string) => void;
 };
 
 const clampNonNeg = (n: number) => (Number.isFinite(n) ? Math.max(0, n) : 0);
 
-const VimeoPlayer = ({ videoId, className, loop }: Props) => {
+const VimeoPlayer = ({
+  videoId,
+  className,
+  loop,
+  pointerEvents,
+  onLoad,
+  onError,
+}: Props) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const [mounted, setMounted] = useState(false);
   const [ready, setReady] = useState(false);
+
+  const didLoadRef = useRef(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => setMounted(true), []);
@@ -41,6 +53,23 @@ const VimeoPlayer = ({ videoId, className, loop }: Props) => {
   }, [videoId, autoplay, muted, isLoop, loop?.start]);
 
   useEffect(() => {
+    didLoadRef.current = false;
+    setReady(false);
+  }, [videoId, src]);
+
+  const emitLoadOnce = () => {
+    if (didLoadRef.current) return;
+    didLoadRef.current = true;
+    setReady(true);
+    onLoad?.();
+  };
+
+  const emitError = (message: string) => {
+    // 에러 후에도 로딩 오버레이는 유지하는 게 보통 자연스러움
+    onError?.(message);
+  };
+
+  useEffect(() => {
     if (!mounted) return;
 
     const iframe = iframeRef.current;
@@ -49,18 +78,43 @@ const VimeoPlayer = ({ videoId, className, loop }: Props) => {
     const player = new Player(iframe);
     let cancelled = false;
 
-    const onLoaded = () => setReady(true);
+    const handleLoaded = () => {
+      if (cancelled) return;
+      if (isLoop) return; // loop는 play 이후로 load 처리
+      emitLoadOnce();
+    };
 
-    player.on("loaded", () => {
-      if (isLoop) return;
-      onLoaded();
-    });
-    player.on("play", onLoaded);
+    const handlePlay = () => {
+      if (cancelled) return;
+      emitLoadOnce();
+    };
+
+    const handleError = (e: string | { message: string; name: string }) => {
+      if (cancelled) return;
+      const msg =
+        typeof e === "string"
+          ? e
+          : e?.message || e?.name || "Failed to load Vimeo video";
+      emitError(msg);
+    };
+
+    player.on("loaded", handleLoaded);
+    player.on("play", handlePlay);
+    player.on("error", handleError);
 
     if (!isLoop) {
+      // non-loop는 이벤트만으로 충분
+      player
+        .ready()
+        .catch((e) =>
+          handleError(e?.message ? e : { message: "Player not ready" }),
+        );
+
       return () => {
-        player.off("loaded", onLoaded);
-        player.off("play", onLoaded);
+        cancelled = true;
+        player.off("loaded", handleLoaded);
+        player.off("play", handlePlay);
+        player.off("error", handleError);
         player.destroy();
       };
     }
@@ -70,31 +124,45 @@ const VimeoPlayer = ({ videoId, className, loop }: Props) => {
         const start = clampNonNeg(loop?.start ?? 0);
         const duration = await player.getDuration();
         const end = clampNonNeg(loop?.end ?? duration);
-
-        // start가 end보다 크면 안전하게 start로 맞추기
         const safeEnd = Math.max(end, start);
 
+        const EPS = 0.15;
+
         await player.setVolume(0);
-        await player.setCurrentTime(start);
+        player.setCurrentTime(start);
         await player.play();
 
-        // ready 처리(자동재생이 늦게 붙는 경우 대비)
-        onLoaded();
+        emitLoadOnce();
 
-        const onTime = async ({ seconds }: { seconds: number }) => {
+        const jumpToStart = async () => {
           if (cancelled) return;
-          if (seconds >= safeEnd) {
-            try {
-              await player.setCurrentTime(start);
-              await player.play();
-            } catch {}
+          try {
+            await player.setCurrentTime(start);
+            await player.play();
+          } catch {
+            // ignore
           }
         };
 
+        const onTime = async ({ seconds }: { seconds: number }) => {
+          if (seconds >= safeEnd - EPS) {
+            jumpToStart();
+          }
+        };
+
+        const onEnded = () => {
+          // Vimeo가 그냥 ended로 끝내버리는 케이스 대응
+          void jumpToStart();
+        };
+
         player.on("timeupdate", onTime);
+        player.on("ended", onEnded);
 
         // cleanup에서 off 하기 위해 반환
-        return () => player.off("timeupdate", onTime);
+        return () => {
+          player.off("timeupdate", onTime);
+          player.off("ended", onEnded);
+        };
       } catch {
         // ignore
       }
@@ -103,19 +171,23 @@ const VimeoPlayer = ({ videoId, className, loop }: Props) => {
 
     let offTime: undefined | (() => void);
 
-    player.ready().then(async () => {
-      if (cancelled) return;
-      offTime = await init();
-    });
+    player
+      .ready()
+      .then(async () => {
+        if (cancelled) return;
+        offTime = await init();
+      })
+      .catch(handleError);
 
     return () => {
       cancelled = true;
       offTime?.();
-      player.off("loaded", onLoaded);
-      player.off("play", onLoaded);
+      player.off("loaded", handleLoaded);
+      player.off("play", handlePlay);
+      player.off("error", handleError);
       player.destroy();
     };
-  }, [videoId, isLoop, loop?.start, loop?.end, mounted]);
+  }, [mounted, isLoop, loop?.start, loop?.end, videoId, src]);
 
   return (
     <div
@@ -135,6 +207,8 @@ const VimeoPlayer = ({ videoId, className, loop }: Props) => {
             inset: 0,
             width: "100%",
             height: "100%",
+            top: "0",
+            left: "0",
           }}
           frameBorder={0}
           allow={
@@ -153,7 +227,7 @@ const VimeoPlayer = ({ videoId, className, loop }: Props) => {
           transition: "opacity 300ms ease-in-out",
           background: "rgba(0,0,0,0.25)",
           backdropFilter: "blur(10px)",
-          pointerEvents: "none",
+          pointerEvents: pointerEvents || (ready ? "none" : "auto"),
         }}
       />
     </div>
