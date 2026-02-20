@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import EditModalLayout from "../Layout";
 import * as Styles from "./style.css";
-import InstagramSVG from "@assets/icons/instagram.svg";
-import XSVG from "@assets/icons/X.svg";
-import FacebookSVG from "@assets/icons/facebook.svg";
-import LinkedInSVG from "@assets/icons/linkedin.svg";
-import BehanceSVG from "@assets/icons/behance.svg";
-import EmailSVG from "@assets/icons/email.svg";
+import InstagramSVG from "@assets/social/Instagram.svg";
+import XSVG from "@assets/social/X.svg";
+import FacebookSVG from "@assets/social/Facebook.svg";
+import LinkedInSVG from "@assets/social/LinkedIn.svg";
+import BehanceSVG from "@assets/social/Behance.svg";
+import EmailSVG from "@assets/social/Email.svg";
 import URLSVG from "@assets/icons/url.svg";
 import type { ContactLink } from "@domain/careers";
 
