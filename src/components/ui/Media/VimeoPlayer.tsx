@@ -6,23 +6,14 @@ import { LoopConfig } from "./types";
 
 type Props = {
   videoId: string | number;
-  className?: string;
   loop?: LoopConfig;
-  pointerEvents?: "auto" | "none";
   onLoad?: () => void;
   onError?: (message: string) => void;
 };
 
 const clampNonNeg = (n: number) => (Number.isFinite(n) ? Math.max(0, n) : 0);
 
-const VimeoPlayer = ({
-  videoId,
-  className,
-  loop,
-  pointerEvents,
-  onLoad,
-  onError,
-}: Props) => {
+const VimeoPlayer = ({ videoId, loop, onLoad, onError }: Props) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const [mounted, setMounted] = useState(false);
@@ -189,51 +180,32 @@ const VimeoPlayer = ({
     };
   }, [mounted, isLoop, loop?.start, loop?.end, videoId, src]);
 
+  if (!mounted) return null;
+
   return (
-    <div
-      className={className}
+    <iframe
+      ref={iframeRef}
+      src={src}
       style={{
-        position: "relative",
+        position: "absolute",
+        inset: 0,
         width: "100%",
-        aspectRatio: "16 / 9",
+        height: "100%",
+        top: "0",
+        left: "0",
+        pointerEvents: "auto",
+        background: "transparent",
+        opacity: ready ? 1 : 0,
+        transition: "opacity 300ms ease-in-out",
       }}
-      onClick={() => console.log("iframe")}
-    >
-      {mounted && (
-        <iframe
-          ref={iframeRef}
-          src={src}
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            top: "0",
-            left: "0",
-            pointerEvents: "auto",
-            background: "transparent",
-          }}
-          frameBorder={0}
-          allow={
-            isLoop
-              ? "autoplay; fullscreen; picture-in-picture"
-              : "fullscreen; picture-in-picture"
-          }
-          title="Vimeo video"
-        />
-      )}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          opacity: ready ? 0 : 1,
-          transition: "opacity 300ms ease-in-out",
-          background: "rgba(0,0,0,0.25)",
-          backdropFilter: "blur(10px)",
-          pointerEvents: pointerEvents || (ready ? "none" : "auto"),
-        }}
-      />
-    </div>
+      frameBorder={0}
+      allow={
+        isLoop
+          ? "autoplay; fullscreen; picture-in-picture"
+          : "fullscreen; picture-in-picture"
+      }
+      title="Vimeo video"
+    />
   );
 };
 

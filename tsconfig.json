@@ -29,7 +29,8 @@
       "@lib/*": ["./src/lib/*"],
       "@domain/*": ["./src/domain/*"],
       "@server/*": ["./src/server/*"],
-      "@controllers/*": ["./src/controllers/*"]
+      "@controllers/*": ["./src/controllers/*"],
+      "@stores/*": ["./src/stores/*"]
     }
   },
   "include": [

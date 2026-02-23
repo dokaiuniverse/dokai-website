@@ -5,12 +5,24 @@ import * as Styles from "./style.css";
 import CareerDetailProjects from "@components/pages/careers/Projects/Projects";
 import CareerDetailExperiences from "@components/pages/careers/Experiences/Experiences";
 import { ProfileDetail } from "@domain/careers";
+import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useModalStackStore } from "@stores/modalStackStore";
 
 const CareersDetailPageClient = ({
   profileDetail,
 }: {
   profileDetail: ProfileDetail;
 }) => {
+  const searchParams = useSearchParams();
+  const { replaceTop } = useModalStackStore();
+
+  useEffect(() => {
+    if (searchParams.get("project")) {
+      replaceTop("PROJECT", { ownerEmail: profileDetail.email });
+    }
+  }, [searchParams]);
+
   if (!profileDetail) return null;
 
   return (
@@ -21,19 +33,6 @@ const CareersDetailPageClient = ({
         projects={profileDetail.projects}
       />
       <CareerDetailExperiences experiences={profileDetail.experiences} />
-      {/* <AdminButtons
-        adminButtons={[
-          {
-            role: "STAFF",
-            type: "EDIT",
-            click: {
-              type: "HREF",
-              href: `/admin/careers?email=${encodeURIComponent(profileDetail.email)}`,
-            },
-            email: decodeURIComponent(profileDetail.email),
-          },
-        ]}
-      /> */}
     </div>
   );
 };

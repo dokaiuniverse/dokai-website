@@ -1,19 +1,11 @@
-"use client";
-
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import * as Styles from "./style.css";
 import UnknownPNG from "@assets/Unknown.png";
 import ErrorPNG from "@assets/Error.png";
 import { IMAGE_SIZES } from "@ts/image";
 import Image from "next/image";
-
-const Header = dynamic(() => import("@components/layout/Header/Header"), {
-  ssr: false,
-});
-const Footer = dynamic(() => import("@components/layout/Footer/Footer"), {
-  ssr: false,
-});
+import Header from "@components/layout/Header/Header";
+import Footer from "@components/layout/Footer/Footer";
 
 export default function StatusPage({
   code,

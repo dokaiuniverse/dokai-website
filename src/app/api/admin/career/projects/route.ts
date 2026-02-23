@@ -74,6 +74,7 @@ export async function POST(req: NextRequest) {
   return auth.applyCookies(
     NextResponse.json(
       {
+        id: data.id,
         isPublished: !!data.is_published,
         data: { ...data.data, id: data.id },
         updatedAt: data.updated_at,

@@ -1,10 +1,9 @@
 "use client";
 
-import { MockMainItems } from "@ts/mock";
 import Link from "next/link";
 import * as Styles from "./style.css";
 import { toTitleCase } from "@utils/Text";
-import MediaCard from "@components/ui/Media/MediaCard";
+import MediaCard from "@components/ui/Media/MediaCard/MediaCard";
 import { useWorksInfiniteQuery } from "@controllers/work/query";
 
 const getLayout = (idx: number) => {
@@ -21,7 +20,7 @@ const getLayout = (idx: number) => {
 const MainWorks = () => {
   const { data: works } = useWorksInfiniteQuery({
     mode: "main",
-    category: "EVERYTHING",
+    pageSize: 16,
   });
 
   return (
@@ -37,7 +36,11 @@ const MainWorks = () => {
               className={Styles.ItemContainer({ row, width })}
               href={`/work/${item.slug}`}
             >
-              <MediaCard media={item.thumbnail!} className={Styles.ItemMedia} />
+              <MediaCard
+                media={item.thumbnail!}
+                className={Styles.ItemMedia}
+                blockInteractive
+              />
               <div className={Styles.ItemTextContainer({ width })}>
                 <p>{toTitleCase(item.category)}</p>
 

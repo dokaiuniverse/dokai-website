@@ -1,6 +1,6 @@
 import { MediaSource } from "@domain/media";
 import * as Styles from "./style.css";
-import MediaCard from "@components/ui/Media/MediaCard";
+import MediaCard from "@components/ui/Media/MediaCard/MediaCard";
 import EditIcon from "@assets/icons/edit.svg";
 import { useState } from "react";
 import PlusSVG from "@assets/icons/plus.svg";

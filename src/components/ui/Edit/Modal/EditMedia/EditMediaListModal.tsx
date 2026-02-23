@@ -1,6 +1,6 @@
 import { MediaSource, MediaType } from "@domain/media";
 import EditModalLayout from "../Layout";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import SideBar from "./SideBar/SideBar";
 import * as Styles from "./style.css";
 import EmptyMedia from "./Empty/Empty";
@@ -31,6 +31,32 @@ const EditMediaListModal = ({
     () => new Map(),
   );
   const [openUploadModal, setOpenUploadModal] = useState(false);
+  const nextIdRef = useRef(0);
+
+  const ownedBlobUrlsRef = useRef<Map<number, string>>(new Map());
+
+  const registerBlobUrl = (id: number, url: string) => {
+    // 기존에 등록된 blob이 있으면 revoke 후 교체
+    const prev = ownedBlobUrlsRef.current.get(id);
+    if (prev) URL.revokeObjectURL(prev);
+    ownedBlobUrlsRef.current.set(id, url);
+    console.log("register", id, url, "keys:", [
+      ...ownedBlobUrlsRef.current.keys(),
+    ]);
+  };
+
+  const revokeBlobUrl = (id: number) => {
+    const prev = ownedBlobUrlsRef.current.get(id);
+    if (prev) URL.revokeObjectURL(prev);
+    ownedBlobUrlsRef.current.delete(id);
+    console.log("revoke", id, "keys:", [...ownedBlobUrlsRef.current.keys()]);
+  };
+
+  const revokeAllBlobUrls = () => {
+    for (const url of ownedBlobUrlsRef.current.values())
+      URL.revokeObjectURL(url);
+    ownedBlobUrlsRef.current.clear();
+  };
 
   const blockedVideoType = useMemo(() => {
     if (blockedTypes.includes("VIDEO")) return "VIDEO" as const;
@@ -41,13 +67,26 @@ const EditMediaListModal = ({
   useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     if (!open) return;
-    setMedias(initial?.map((media, i) => ({ media, id: i })) ?? []);
+
+    nextIdRef.current = 0;
+
+    const list =
+      initial?.map((media) => ({
+        media,
+        id: nextIdRef.current++,
+      })) ?? [];
+
+    setMedias(list);
     setSelectedIndex(null);
     setPendingFiles(new Map());
     setOpenUploadModal(false);
+
+    ownedBlobUrlsRef.current.clear();
   }, [initial, open]);
 
   const deleteMedia = (id: number) => {
+    revokeBlobUrl(id);
+    setPendingFile(id)(null);
     setSelectedIndex(null);
     setMedias((prev) => prev.filter((item) => item.id !== id));
   };
@@ -55,27 +94,26 @@ const EditMediaListModal = ({
   const addMedia = (type: "IMAGE" | "VIDEO" | "NONE") => {
     if (type === "NONE") {
       setSelectedIndex(null);
-    } else {
-      const media: MediaSource =
-        type === "VIDEO" && blockedTypes.includes("VIDEO")
-          ? {
-              type: "LOOP",
-              src: "",
-              alt: "",
-              loop: { start: undefined, end: undefined },
-            }
-          : { type, src: "", alt: "" };
-
-      setMedias((prev) => [
-        ...prev,
-        {
-          media,
-          id: prev.length,
-        },
-      ]);
-
-      setSelectedIndex(medias.length);
+      return;
     }
+
+    const media: MediaSource =
+      type === "VIDEO" && blockedTypes.includes("VIDEO")
+        ? {
+            type: "LOOP",
+            src: "",
+            alt: "",
+            loop: { start: undefined, end: undefined },
+          }
+        : { type, src: "", alt: "" };
+
+    const newId = nextIdRef.current++;
+
+    setMedias((prev) => {
+      const next = [...prev, { media, id: newId }];
+      setSelectedIndex(next.length - 1); // ✅ 항상 정확
+      return next;
+    });
   };
 
   const updateMedia =
@@ -104,6 +142,7 @@ const EditMediaListModal = ({
       setProgress(file, i++, pendingFiles.size);
       const { url } = await uploadImage(file);
 
+      revokeBlobUrl(id);
       setPendingFile(id)(null);
       updateMedia(id)((prev) => ({ ...prev, src: url }));
     }
@@ -112,6 +151,12 @@ const EditMediaListModal = ({
 
   const handleCommit = () => {
     applyMedias?.(medias.map((item) => item.media));
+    revokeAllBlobUrls();
+    onClose();
+  };
+
+  const handleCancel = () => {
+    revokeAllBlobUrls();
     onClose();
   };
 
@@ -143,6 +188,10 @@ const EditMediaListModal = ({
               media={medias[selectedIndex].media}
               updateMedia={updateMedia(medias[selectedIndex].id)}
               setPendingFile={setPendingFile(medias[selectedIndex].id)}
+              registerBlobUrl={(url) =>
+                registerBlobUrl(medias[selectedIndex].id, url)
+              }
+              revokeBlobUrl={() => revokeBlobUrl(medias[selectedIndex].id)}
             />
           ) : (
             <EditVideo
@@ -162,7 +211,7 @@ const EditMediaListModal = ({
           setSelectedIndex={setSelectedIndex}
         />
         <div className={Styles.ListButtonContainer}>
-          <button onClick={onClose} className={Styles.CancelButton}>
+          <button onClick={handleCancel} className={Styles.CancelButton}>
             Cancel
           </button>
           <button onClick={handleApply} className={Styles.ApplyButton}>

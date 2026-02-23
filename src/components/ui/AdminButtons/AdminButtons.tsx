@@ -2,8 +2,8 @@
 
 import { useSessionStatusQuery } from "@controllers/auth/session";
 import useMount from "@hooks/useMount";
-import PlusSVG from "@assets/icons/plus.svg";
 import * as Styles from "./style.css";
+import PlusSVG from "@assets/icons/plus.svg";
 import EditSVG from "@assets/icons/edit.svg";
 import SaveSVG from "@assets/icons/save.svg";
 import TrashSVG from "@assets/icons/trash.svg";
@@ -22,6 +22,7 @@ type AdminButton = {
         onClick: () => void;
       };
   email?: string;
+  text?: string;
 };
 
 const AdminButtons = ({
@@ -38,9 +39,15 @@ const AdminButtons = ({
   return (
     <div className={Styles.ButtonsContainer}>
       {adminButtons.map((button) => {
-        const { role, type, click, email } = button;
+        const { role, type, click, email, text } = button;
         if (role === "ADMIN" && session?.role !== "admin") return null;
-        if (role === "STAFF" && email && session?.email !== email) return null;
+        if (
+          role === "STAFF" &&
+          session?.role === "staff" &&
+          email &&
+          session?.email !== email
+        )
+          return null;
 
         return (
           <button
@@ -58,6 +65,7 @@ const AdminButtons = ({
             {type === "ADD" && <PlusSVG className={Styles.ButtonIcon} />}
             {type === "REMOVE" && <TrashSVG className={Styles.ButtonIcon} />}
             {type === "SAVE" && <SaveSVG className={Styles.ButtonIcon} />}
+            <div className={Styles.ButtonText}>{text ?? type}</div>
           </button>
         );
       })}

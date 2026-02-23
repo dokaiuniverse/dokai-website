@@ -11,4 +11,5 @@ export const Content = style({
   display: "flex",
   flexDirection: "column",
   flexGrow: "1",
+  justifyContent: "flex-end",
 });

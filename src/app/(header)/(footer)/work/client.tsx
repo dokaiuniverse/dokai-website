@@ -95,6 +95,7 @@ const WorkPageClient = () => {
               type: "HREF",
               href: "/admin/work",
             },
+            text: "Create New Work",
           },
         ]}
       />

@@ -18,7 +18,7 @@ export type ContentList = {
   value: string[];
 };
 
-export type Content = ContentText | ContentList;
+export type ProjectContent = ContentText | ContentList;
 
 export type Profile = {
   email: string;
@@ -34,7 +34,7 @@ export type Project = {
   id: string;
   title: string;
   thumbnail: MediaSource | null;
-  contents: Content[];
+  contents: ProjectContent[];
   medias: MediaSource[];
 };
 

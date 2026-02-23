@@ -1,6 +1,6 @@
 import { WorkCategory } from "@domain/work";
 import * as Styles from "./style.css";
-import MediaCard from "@components/ui/Media/MediaCard";
+import MediaCard from "@components/ui/Media/MediaCard/MediaCard";
 import { useEffect, useState } from "react";
 import { MediaSource } from "@domain/media";
 import PlusSVG from "@assets/icons/plus.svg";

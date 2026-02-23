@@ -63,7 +63,7 @@ function textToSafeHtmlWithBr(text: string) {
     .replace(/\n/g, "<br>");
 }
 
-function EditableInner({
+export function EditableInner({
   mode,
   value,
   onChange,

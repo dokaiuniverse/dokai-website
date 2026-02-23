@@ -12,12 +12,14 @@ export type ProfileListResponse = {
 };
 
 export type ProfileDetailResponse = {
+  id: string;
   isPublished: boolean;
   data: ProfileDetail;
   updatedAt: string;
 };
 
 export type ProjectDetailResponse = {
+  id: string;
   isPublished: boolean;
   data: Project;
   updatedAt: string;
@@ -34,19 +36,21 @@ export type CreateProfileRequest = {
 };
 
 export type UpdateProfileRequest = {
+  id: string;
   isPublished?: boolean;
   data?: Profile; // email 바꿀거면 별도 정책 필요(권장: email 변경 금지)
 };
 
 export type CreateProjectRequest = {
-  ownerEmail: string; // 어떤 프로필에 귀속되는지
+  ownerEmail: string;
   isPublished: boolean;
   data: Omit<Project, "id">; // id는 DB에서 생성하는게 일반적
 };
 
 export type UpdateProjectRequest = {
+  id: string;
   isPublished?: boolean;
-  data?: Project; // id 변경은 금지 권장
+  data?: Omit<Project, "id">; // id 변경은 금지 권장
 };
 
 // ===== Mutations common responses =====

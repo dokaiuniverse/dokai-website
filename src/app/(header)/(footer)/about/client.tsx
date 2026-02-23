@@ -1,28 +1,19 @@
-"use client";
-
 import * as Styles from "./style.css";
 import { About } from "@domain/about";
-import { useAboutQuery } from "./query";
-import AboutPageIntro from "@components/pages/about/Intro/Intro";
-import AboutPageMedia from "@components/pages/about/Media/Media";
-import AboutPageTextSection from "@components/pages/about/Text/Text";
-import AboutPageGroupSection from "@components/pages/about/Group/Group";
-import AboutPageCardSection from "@components/pages/about/Card/Card";
-import AboutPageTeamSection from "@components/pages/about/Team/Team";
+import AboutPageIntro from "@components/pages/about_tmp/Intro/Intro";
+import AboutPageMedia from "@components/pages/about_tmp/Media/Media";
+import AboutPageTextSection from "@components/pages/about_tmp/Text/Text";
+import AboutPageGroupSection from "@components/pages/about_tmp/Group/Group";
+import AboutPageCardSection from "@components/pages/about_tmp/Card/Card";
+import AboutPageTeamSection from "@components/pages/about_tmp/Team/Team";
+import AdminButtons from "@components/ui/AdminButtons/AdminButtons";
 
 type AboutPageClientProps = {
-  aboutInfo?: About;
+  aboutInfo: About;
 };
 
-const AboutPageClient = ({}: AboutPageClientProps) => {
-  const { data, isLoading, isError } = useAboutQuery();
-
-  const aboutInfo = data?.data;
-
-  if (isLoading) return <div>Loading...</div>;
-
-  if (isError || !aboutInfo) return <div>Error</div>;
-
+const AboutPageClient = ({ aboutInfo }: AboutPageClientProps) => {
+  console.log(aboutInfo);
   return (
     <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
       <AboutPageIntro text={aboutInfo.intro} />
@@ -49,6 +40,19 @@ const AboutPageClient = ({}: AboutPageClientProps) => {
           ) : null}
         </div>
       ))}
+      <AdminButtons
+        adminButtons={[
+          {
+            role: "ADMIN",
+            type: "EDIT",
+            click: {
+              type: "HREF",
+              href: "/admin/about",
+            },
+            text: "Edit About Page",
+          },
+        ]}
+      />
     </div>
   );
 };

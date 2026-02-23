@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
       data: body.data,
       is_published: !!body.isPublished,
     })
-    .select("email, data, is_published, updated_at")
+    .select("id, email, data, is_published, updated_at")
     .single();
 
   if (error) {
@@ -87,6 +87,7 @@ export async function POST(req: NextRequest) {
   return auth.applyCookies(
     NextResponse.json(
       {
+        id: data.id,
         isPublished: !!data.is_published,
         data: { ...data.data, projects: [] },
         updatedAt: data.updated_at,

@@ -16,13 +16,15 @@ export const Container = recipe({
         border: "1px solid black",
         borderRadius: "0 0.5rem 0.5rem 0.5rem",
         opacity: "0",
-        zIndex: "-1",
+        zIndex: "0",
+        background: "white",
       },
     },
   },
   variants: {
     isFocus: {
       true: {
+        zIndex: "1",
         selectors: {
           "&::before": {
             opacity: "1",
@@ -70,6 +72,7 @@ export const ToolbarContainer = style({
   borderRadius: "0.5rem 0.5rem 0 0",
   borderBottom: "none",
   overflow: "hidden",
+  background: "white",
 });
 
 export const ToolbarButton = style({

@@ -1,13 +1,8 @@
 "use client";
 
-import {
-  useAboutQuery,
-  useAboutUpdateMutation,
-} from "@controllers/about/query";
 import { useState } from "react";
 import * as AboutStyles from "@app/(header)/(footer)/about/style.css";
-import { AboutContent, IndexedAboutContent } from "@domain/about";
-import SaveSVG from "@assets/icons/save.svg";
+import { About, AboutContent, IndexedAboutContent } from "@domain/about";
 import PlusSVG from "@assets/icons/plus.svg";
 import * as Styles from "./style.css";
 import AddSectionModal from "@components/ui/Edit/Modal/AddSection/AddSectionModal";
@@ -21,16 +16,19 @@ import AboutPageGroupSection from "@components/pages/about/Group/Group";
 import AboutPageCardSection from "@components/pages/about/Card/Card";
 import AboutPageTeamSection from "@components/pages/about/Team/Team";
 import { useRouter } from "nextjs-toploader/app";
+import AdminButtons from "@components/ui/AdminButtons/AdminButtons";
+import { useModalStackStore } from "@stores/modalStackStore";
+import { fetchAboutUpdate } from "@controllers/about/fetch";
 
-const AboutPageClient = () => {
-  const navigator = useRouter();
-  const { data, isLoading } = useAboutQuery();
-  const { mutate: updateAbout } = useAboutUpdateMutation();
+const AboutPageClient = ({ aboutInfo }: { aboutInfo?: About }) => {
+  const router = useRouter();
 
-  const [aboutIntro, setAboutIntro] = useState(data?.data.intro ?? "");
+  const [aboutIntro, setAboutIntro] = useState(aboutInfo?.intro ?? "");
   const [aboutContents, setAboutContents] = useState<IndexedAboutContent[]>(
-    data?.data.contents.map((e, i) => ({ id: i, content: e })) ?? [],
+    aboutInfo?.contents.map((e, i) => ({ id: i, content: e })) ?? [],
   );
+
+  const push = useModalStackStore((s) => s.push);
 
   const updateIntro = (value: string) => {
     setAboutIntro(value);
@@ -80,7 +78,19 @@ const AboutPageClient = () => {
     closeAddSectionModal();
   };
 
-  if (isLoading || !data?.data) return null;
+  const handleUpdateAbout = async () => {
+    push("API", {
+      title: "Update About",
+      onFetch: async () =>
+        fetchAboutUpdate({
+          intro: aboutIntro,
+          contents: aboutContents.map((e) => e.content),
+        }),
+      onConfirm: () => {
+        router.replace(`/about`);
+      },
+    });
+  };
 
   return (
     <div className={`${AboutStyles.Container} page-wrapper layout-wrapper`}>
@@ -156,18 +166,6 @@ const AboutPageClient = () => {
         </div>
       ))}
       <button
-        className={Styles.Button}
-        onClick={async () => {
-          await updateAbout({
-            intro: aboutIntro,
-            contents: aboutContents.map((e) => e.content),
-          });
-          navigator.push("/about");
-        }}
-      >
-        <SaveSVG className={Styles.ButtonIcon} />
-      </button>
-      <button
         className={Styles.AddButton}
         onClick={() => setOpenAddSectionModal(true)}
       >
@@ -177,6 +175,19 @@ const AboutPageClient = () => {
         open={openAddSectionModal}
         onClose={closeAddSectionModal}
         addAboutContent={addAboutContent}
+      />
+      <AdminButtons
+        adminButtons={[
+          {
+            role: "ADMIN",
+            type: "SAVE",
+            click: {
+              type: "FUNCTION",
+              onClick: handleUpdateAbout,
+            },
+            text: "Update About Page",
+          },
+        ]}
       />
     </div>
   );

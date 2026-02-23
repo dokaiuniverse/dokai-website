@@ -41,13 +41,18 @@ export type FetchWorksParams = {
   q?: string[]; // repeatable
 };
 
-export async function fetchWorkList({
-  mode = "main",
-  page = 1,
-  pageSize = 12,
-  category = "EVERYTHING",
-  q = [],
-}: FetchWorksParams = {}) {
+type FetchOptions = { cookie?: string };
+
+export async function fetchWorkList(
+  {
+    mode = "main",
+    page = 1,
+    pageSize = 12,
+    category = "EVERYTHING",
+    q = [],
+  }: FetchWorksParams = {},
+  opts: FetchOptions = {},
+) {
   const sp = new URLSearchParams();
   sp.set("mode", mode);
   sp.set("page", String(page));
@@ -65,7 +70,10 @@ export async function fetchWorkList({
       method: "GET",
       // 캐시 정책은 취향/요구사항에 맞게
       cache: "no-store",
-      headers: { Accept: "application/json" },
+      headers: {
+        Accept: "application/json",
+        ...(opts?.cookie ? { cookie: opts.cookie } : {}),
+      },
     },
   );
 
@@ -150,6 +158,8 @@ export const fetchWorkCreate = async (
   if (!res.ok) {
     throw new Error(`Failed to create work: ${res.status}`);
   }
+
+  return await res.json();
 };
 
 export const fetchWorkDelete = async (id: string): Promise<void> => {

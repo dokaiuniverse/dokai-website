@@ -43,6 +43,7 @@ export const OverlayContent = style({
   opacity: "0",
   transform: "translateY(-2rem)",
   transition: "transform 0.3s ease, opacity 0.3s ease",
+  color: "white",
 });
 
 globalStyle(`${Container}:hover .${Media}`, {

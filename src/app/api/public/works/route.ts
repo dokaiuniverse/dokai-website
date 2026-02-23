@@ -170,11 +170,11 @@ export async function GET(req: NextRequest) {
     query = query.eq("category", category);
   }
 
-  const queries = url.searchParams.getAll("q");
+  const queries = url.searchParams.getAll("q").map((s) => s.toLowerCase());
 
   if (queries?.length) {
-    const shortQs = queries.filter((q) => q.length <= 2);
-    const longQs = queries.filter((q) => q.length > 2);
+    const shortQs = queries.filter((q) => q.length <= 5);
+    const longQs = queries.filter((q) => q.length > 5);
 
     for (const q of shortQs) {
       query = query.ilike("search_text", `%${q}%`);

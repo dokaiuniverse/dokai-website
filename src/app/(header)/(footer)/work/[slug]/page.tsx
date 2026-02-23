@@ -1,6 +1,5 @@
 import { fetchWorkDetail } from "@controllers/work/fetch";
 import WorkDetailPageClient from "./client";
-import AdminButtons from "@components/ui/AdminButtons/AdminButtons";
 import { cookies } from "next/headers";
 
 const WorkDetailPage = async ({
@@ -18,19 +17,7 @@ const WorkDetailPage = async ({
 
   return (
     <>
-      <WorkDetailPageClient work={workDetail.data} />
-      <AdminButtons
-        adminButtons={[
-          {
-            role: "ADMIN",
-            type: "EDIT",
-            click: {
-              type: "HREF",
-              href: `/admin/work?slug=${slug}`,
-            },
-          },
-        ]}
-      />
+      <WorkDetailPageClient work={workDetail.data} slug={slug} />
     </>
   );
 };

@@ -9,6 +9,7 @@ export const Layout = style({
   background: "var(--footer-bg)",
   color: "var(--footer-fg)",
   gap: "2rem",
+  transition: "background .2s ease",
 
   selectors: {
     "&::before": {

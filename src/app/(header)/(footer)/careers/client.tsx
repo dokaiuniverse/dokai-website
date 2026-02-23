@@ -3,14 +3,21 @@
 import * as Styles from "./style.css";
 import Link from "next/link";
 import MediaHoverOverlay from "@components/ui/Media/HoverOverlay/HoverOverlay";
-import { useProfileListQuery } from "@controllers/careers/query";
+import {
+  useHasProfileQuery,
+  useProfileListQuery,
+} from "@controllers/careers/query";
 import AdminButtons from "@components/ui/AdminButtons/AdminButtons";
+import { SessionStatus } from "@controllers/auth/session.type";
 
 const careersCopy =
   "BUCK is always looking for dynamic, passionate, and talented artists to join our team.Below is a list of our current vacancies - if you don't see anything, check back again soon. If you don't see any positions that match your skills, feel free to send an email with a link to your work.";
 
-const CareersPageClient = () => {
+const CareersPageClient = ({ session }: { session: SessionStatus }) => {
   const { data: profiles, isLoading } = useProfileListQuery();
+  const { data: hasProfile } = useHasProfileQuery({
+    enabled: session.loggedIn,
+  });
 
   if (!profiles || isLoading) return null;
 
@@ -46,13 +53,33 @@ const CareersPageClient = () => {
       <AdminButtons
         adminButtons={[
           {
-            role: "STAFF",
+            role: "ADMIN",
             type: "ADD",
             click: {
               type: "HREF",
-              href: "/admin/careers",
+              href: `/admin/careers`,
             },
+            text: "Create New Profile",
           },
+          hasProfile
+            ? {
+                role: "STAFF",
+                type: "EDIT",
+                click: {
+                  type: "HREF",
+                  href: `/admin/careers?email=${encodeURIComponent(session.email ?? "")}`,
+                },
+                text: "Update My Profile",
+              }
+            : {
+                role: "STAFF",
+                type: "ADD",
+                click: {
+                  type: "HREF",
+                  href: `/admin/careers`,
+                },
+                text: "Create My Profile",
+              },
         ]}
       />
     </div>

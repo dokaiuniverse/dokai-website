@@ -13,8 +13,35 @@ import {
   fetchProfileDelete,
   fetchProfileUpdate,
 } from "@controllers/careers/fetch";
-import CareerDetailInfo from "@components/pages/careers/Info/Info";
 import { useRouter } from "nextjs-toploader/app";
+import { useModalStackStore } from "@stores/modalStackStore";
+import { ProfileDetailResponse } from "@controllers/careers/types";
+import z from "zod";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import EditInfoSection from "../../../../../components/pages/careers/EditInfo/EditInfo";
+
+const schema = z.object({
+  email: z.string().email(),
+  name: z.string().min(1),
+  role: z.string().min(1),
+  isPublished: z.boolean(),
+  avatar: z.unknown().nullable(),
+  bio: z.string(),
+  contacts: z
+    .array(
+      z.object({
+        name: z.string().min(1),
+        value: z.string().min(1),
+        href: z.string().url().or(z.literal("")),
+      }),
+    )
+    .default([]),
+  experiences: z.array(z.string().min(1)).default([]),
+});
+
+export type ProfileFormInput = z.input<typeof schema>; // ✅ year: unknown
+type FormOutput = z.output<typeof schema>; // ✅ year: number
 
 const initalProfile: ProfileDetail = {
   email: "",
@@ -30,24 +57,34 @@ const initalProfile: ProfileDetail = {
 const AdminCareersPageClient = ({
   profileDetail,
 }: {
-  profileDetail?: ProfileDetail;
+  profileDetail?: ProfileDetailResponse;
 }) => {
+  const form = useForm<ProfileFormInput>({
+    mode: "onBlur",
+    resolver: zodResolver(schema),
+    defaultValues: {
+      ...initalProfile,
+      ...profileDetail?.data,
+      isPublished: profileDetail?.isPublished ?? false,
+    },
+  });
+
   const router = useRouter();
   const session = useSession();
-  const [profile, setProfile] = useState<ProfileDetail>(initalProfile);
-  const emailEditable = !!(session.me && session.me.role === "admin");
-  const [isPublic, setIsPublic] = useState(false);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    if (profileDetail) {
-      setProfile(profileDetail);
-      return;
-    }
-  }, [profileDetail]);
+  const [profileId, setProfileId] = useState(profileDetail?.id ?? null);
+  const [profile, setProfile] = useState<ProfileDetail>(
+    profileDetail?.data ?? initalProfile,
+  );
+  const emailEditable = !!(
+    !profileId &&
+    session.me &&
+    session.me.role === "admin"
+  );
+  const [isPublic, setIsPublic] = useState(profileDetail?.isPublished ?? false);
 
   useEffect(() => {
     if (!profileDetail && session.me) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       setProfile({
         ...initalProfile,
         email: session.me.email,
@@ -55,15 +92,64 @@ const AdminCareersPageClient = ({
     }
   }, [profileDetail, session.me]);
 
+  const push = useModalStackStore((s) => s.push);
+
+  const handleCreateProfile = async () => {
+    push("API", {
+      title: "Create New Profile",
+      onFetch: async () =>
+        fetchProfileCreate({
+          isPublished: isPublic,
+          data: profile,
+        }),
+      onSuccess: (data) => {
+        setProfileId(data.id);
+      },
+      onConfirm: () => {
+        router.replace(`/careers/${encodeURIComponent(profile.email)}`);
+      },
+    });
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!profileId) return;
+    push("API", {
+      title: "Update Profile",
+      onFetch: async () =>
+        fetchProfileUpdate({
+          id: profileId,
+          isPublished: isPublic,
+          data: profile,
+        }),
+      onConfirm: () => {
+        router.replace(`/careers/${encodeURIComponent(profile.email)}`);
+      },
+    });
+  };
+
+  const handleDeleteProfile = async () => {
+    if (!profileId) return;
+    push("CONFIRM", {
+      title: "Delete Profile",
+      content: "Are you sure to delete this profile?",
+      onConfirm: () => {
+        push("API", {
+          title: "Delete Profile",
+          onFetch: async () => fetchProfileDelete(profileId),
+          onConfirm: () => {
+            router.replace(`/careers`);
+          },
+        });
+      },
+    });
+  };
+
   return (
     <div className={`${CareersStyles.Container} page-wrapper layout-wrapper`}>
-      <CareerDetailInfo
-        profile={profile}
-        setProfile={setProfile}
-        emailEditable={emailEditable}
-        isPublic={isPublic}
-        togglePublic={() => setIsPublic(!isPublic)}
-      />
+      <FormProvider {...form}>
+        <EditInfoSection emailEditable={emailEditable} />
+        {/* <EditProfileSection /> */}
+      </FormProvider>
       <CareerDetailProfile
         profile={profile}
         editable
@@ -81,24 +167,17 @@ const AdminCareersPageClient = ({
       />
       <AdminButtons
         adminButtons={
-          !profileDetail
+          !profileId
             ? [
                 {
                   role: "STAFF",
                   type: "SAVE",
                   click: {
                     type: "FUNCTION",
-                    onClick: async () => {
-                      await fetchProfileCreate({
-                        isPublished: isPublic,
-                        data: profile,
-                      });
-                      router.replace(
-                        `/careers/${encodeURIComponent(profile.email)}`,
-                      );
-                    },
+                    onClick: handleCreateProfile,
                   },
                   email: profile.email,
+                  text: "Create New Profile",
                 },
               ]
             : [
@@ -107,30 +186,20 @@ const AdminCareersPageClient = ({
                   type: "SAVE",
                   click: {
                     type: "FUNCTION",
-                    onClick: async () => {
-                      await fetchProfileUpdate({
-                        email: profile.email,
-                        isPublished: isPublic,
-                        data: profile,
-                      });
-                      router.replace(
-                        `/careers/${encodeURIComponent(profile.email)}`,
-                      );
-                    },
+                    onClick: handleUpdateProfile,
                   },
                   email: profile.email,
+                  text: "Update Profile",
                 },
                 {
-                  role: "STAFF",
+                  role: "ADMIN",
                   type: "REMOVE",
                   click: {
                     type: "FUNCTION",
-                    onClick: async () => {
-                      await fetchProfileDelete(profile.email);
-                      router.replace("/careers");
-                    },
+                    onClick: handleDeleteProfile,
                   },
                   email: profile.email,
+                  text: "Delete Profile",
                 },
               ]
         }

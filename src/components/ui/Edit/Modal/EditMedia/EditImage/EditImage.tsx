@@ -4,45 +4,32 @@ import { MediaSource } from "@domain/media";
 import UploadSVG from "@assets/icons/upload.svg";
 import * as Styles from "./style.css";
 import { useEffect, useRef, useState } from "react";
-import MediaCard from "@components/ui/Media/MediaCard";
+import MediaCard from "@components/ui/Media/MediaCard/MediaCard";
 
 const EditImage = ({
   media,
   updateMedia,
   setPendingFile,
+  registerBlobUrl,
+  revokeBlobUrl,
 }: {
   media?: MediaSource;
   updateMedia: (updater: (curr: MediaSource) => MediaSource) => void;
   setPendingFile: (file: File | null) => void;
+  registerBlobUrl: (url: string) => void;
+  revokeBlobUrl: () => void;
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isFile, setIsFile] = useState(false);
 
-  const ownedBlobUrlRef = useRef<string | null>(null);
-
   const src = media?.src || "";
   const alt = media?.alt || "";
-
-  const cleanupOwnedBlob = () => {
-    if (ownedBlobUrlRef.current) {
-      URL.revokeObjectURL(ownedBlobUrlRef.current);
-      ownedBlobUrlRef.current = null;
-    }
-  };
-
-  useEffect(() => {
-    return () => {
-      cleanupOwnedBlob();
-    };
-  }, []);
 
   const handlePickFile = (file: File) => {
     if (!file.type.startsWith("image/")) return;
 
-    cleanupOwnedBlob();
-
     const blobUrl = URL.createObjectURL(file);
-    ownedBlobUrlRef.current = blobUrl;
+    registerBlobUrl(blobUrl);
 
     setPendingFile(file);
     setIsFile(true);
@@ -100,7 +87,7 @@ const EditImage = ({
   const handleClearData = () => {
     setPendingFile(null);
     setIsFile(false);
-    cleanupOwnedBlob();
+    revokeBlobUrl();
     updateMedia((prev) => ({ ...prev, src: "", alt: "" }));
   };
 

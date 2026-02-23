@@ -1,4 +1,9 @@
-import type { Profile, Project, Content, ContactLink } from "@domain/careers";
+import type {
+  Profile,
+  Project,
+  ProjectContent,
+  ContactLink,
+} from "@domain/careers";
 import type { MediaSource } from "@domain/media";
 
 export type ProfileData = Omit<Profile, "email">;
@@ -24,7 +29,7 @@ export function normalizeProjectData(input: Partial<ProjectData>): ProjectData {
     title: typeof input.title === "string" ? input.title : "",
     thumbnail: (input.thumbnail ?? null) as MediaSource | null,
     contents: Array.isArray(input.contents)
-      ? (input.contents as Content[])
+      ? (input.contents as ProjectContent[])
       : [],
     medias: Array.isArray(input.medias) ? (input.medias as MediaSource[]) : [],
   };

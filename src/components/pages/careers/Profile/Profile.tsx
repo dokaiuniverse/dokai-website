@@ -1,5 +1,5 @@
 import * as Styles from "./style.css";
-import MediaCard from "@components/ui/Media/MediaCard";
+import MediaCard from "@components/ui/Media/MediaCard/MediaCard";
 import Link from "next/link";
 import { ContactLink, Profile, ProfileDetail } from "@domain/careers";
 import EditSVG from "@assets/icons/edit.svg";

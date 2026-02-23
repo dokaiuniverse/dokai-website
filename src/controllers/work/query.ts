@@ -1,5 +1,5 @@
 // src/controllers/works/query.ts
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import type { FetchWorksParams, WorkListResponse } from "./fetch";
 import { fetchWorkList } from "./fetch";
 
@@ -32,9 +32,8 @@ export function useWorksInfiniteQuery(params: UseWorksInfiniteParams) {
       if (!lastPage.hasNext) return undefined;
       return lastPage.page + 1;
     },
-    // 네 API는 count: exact라 response.total이 있으므로
-    // staleTime 등은 상황에 맞게
     staleTime: 5_000,
     retry: 2,
+    placeholderData: keepPreviousData,
   });
 }

@@ -1,6 +1,6 @@
 import Editable from "@components/ui/Edit/Editable/Editable";
 import * as Styles from "./style.css";
-import MediaCard from "@components/ui/Media/MediaCard";
+import MediaCard from "@components/ui/Media/MediaCard/MediaCard";
 import { MediaSource } from "@domain/media";
 import { Work, WorkMetaField } from "@domain/work";
 import PlusSVG from "@assets/icons/plus.svg";

@@ -101,7 +101,7 @@ export async function GET(
   const admin = createSupabaseAdminClient();
   const { data: profile, error: pErr } = await admin
     .from("career_profiles")
-    .select("email, data, is_published, updated_at")
+    .select("id, email, data, is_published, updated_at")
     .eq("email", targetEmail)
     .maybeSingle();
 
@@ -153,6 +153,7 @@ export async function GET(
 
   return applyCookies(
     NextResponse.json({
+      id: profile.id,
       isPublished: !!profile.is_published,
       data: { ...profile.data, projects: projectCards },
       updatedAt: profile.updated_at,

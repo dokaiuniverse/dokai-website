@@ -16,7 +16,7 @@ const AdminCareersPage = async ({
     .join("; ");
   const profileDetail = email
     ? await fetchProfileDetail(email as string, { cookie })
-        .then((res) => res.data)
+        .then((res) => res)
         .catch(() => undefined)
     : undefined;
 

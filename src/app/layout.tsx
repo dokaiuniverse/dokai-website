@@ -5,6 +5,7 @@ import { themeClass } from "@styles/theme.css";
 import Providers from "./providers";
 import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
+import ModalStackRoot from "@components/modals/ModalStackRoot";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -54,6 +55,7 @@ export default function RootLayout({
           color="#ed8435"
         />
         <Providers>
+          <ModalStackRoot />
           <Suspense>{children}</Suspense>
         </Providers>
       </body>

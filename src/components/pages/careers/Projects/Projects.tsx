@@ -1,9 +1,9 @@
 import * as Styles from "./style.css";
 import MediaHoverOverlay from "@components/ui/Media/HoverOverlay/HoverOverlay";
-import useCareerWorkModal from "@components/modal/CareerWork/useCareerWork";
 import { ProjectCard } from "@domain/careers";
 import { useSession } from "@lib/auth/useSession";
 import PlusSVG from "@assets/icons/plus.svg";
+import { useRouter } from "nextjs-toploader/app";
 
 const CareerDetailProjects = ({
   email,
@@ -14,7 +14,7 @@ const CareerDetailProjects = ({
   projects: ProjectCard[];
   editable?: boolean;
 }) => {
-  const { openModal } = useCareerWorkModal();
+  const router = useRouter();
   const { me } = useSession();
 
   const isEditableProject =
@@ -28,7 +28,9 @@ const CareerDetailProjects = ({
           <button
             key={`WORKS_${idx}`}
             className={Styles.Item}
-            onClick={() => openModal(project.id)}
+            onClick={() =>
+              router.push(`?project=${project.id}`, { scroll: false })
+            }
           >
             <MediaHoverOverlay
               media={project.thumbnail}
@@ -41,7 +43,10 @@ const CareerDetailProjects = ({
           </button>
         ))}
         {isEditableProject && (
-          <button className={Styles.AddButton} onClick={() => openModal("new")}>
+          <button
+            className={Styles.AddButton}
+            onClick={() => router.push("?project=new", { scroll: false })}
+          >
             <PlusSVG className={Styles.AddButtonIcon} />
           </button>
         )}

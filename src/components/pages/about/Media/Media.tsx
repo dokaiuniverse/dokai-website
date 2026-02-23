@@ -3,7 +3,7 @@
 import MediaSlider from "@components/ui/Media/MediaSlider/MediaSlider";
 import { AboutContentMedias } from "@domain/about";
 import * as Styles from "./style.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditIcon from "@assets/icons/edit.svg";
 import { MediaSource } from "@domain/media";
 import ArrowRightSVG from "@assets/icons/arrow-right.svg";

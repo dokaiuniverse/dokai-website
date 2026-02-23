@@ -1,7 +1,7 @@
 import { MediaSource, MediaType } from "@domain/media";
 import EditModalLayout from "../Layout";
 import * as Styles from "./style.css";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import SelectMedia from "./Select/Select";
 import EditImage from "./EditImage/EditImage";
 import { uploadImage } from "@utils/uploadImage";
@@ -23,6 +23,21 @@ const EditSingleMediaModal = ({
 }) => {
   const [media, setMedia] = useState<MediaSource | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+
+  const ownedBlobUrlRef = useRef<string | null>(null);
+
+  const registerBlobUrl = (url: string) => {
+    // 기존에 등록된 blob이 있으면 revoke 후 교체
+    const prev = ownedBlobUrlRef.current;
+    if (prev) URL.revokeObjectURL(prev);
+    ownedBlobUrlRef.current = url;
+  };
+
+  const revokeBlobUrl = () => {
+    const prev = ownedBlobUrlRef.current;
+    if (prev) URL.revokeObjectURL(prev);
+    ownedBlobUrlRef.current = null;
+  };
 
   const blockedVideoType = useMemo(() => {
     if (blockedTypes.includes("VIDEO")) return "VIDEO" as const;
@@ -67,6 +82,11 @@ const EditSingleMediaModal = ({
     }
   };
 
+  const handleCancel = () => {
+    revokeBlobUrl();
+    onClose();
+  };
+
   const handleApply = async () => {
     if (!media) {
       onClose();
@@ -79,6 +99,7 @@ const EditSingleMediaModal = ({
         : media;
 
     applyMedia?.(nextMedia);
+    revokeBlobUrl();
     onClose();
   };
 
@@ -97,6 +118,8 @@ const EditSingleMediaModal = ({
             media={media}
             updateMedia={updateMedia}
             setPendingFile={setPendingFile}
+            registerBlobUrl={(url) => registerBlobUrl(url)}
+            revokeBlobUrl={() => revokeBlobUrl()}
           />
         ) : (
           <EditVideo
@@ -116,7 +139,7 @@ const EditSingleMediaModal = ({
               <ArrowLeftSVG />
             </button>
           )}
-          <button onClick={onClose} className={Styles.CancelButton}>
+          <button onClick={handleCancel} className={Styles.CancelButton}>
             Cancel
           </button>
           <button onClick={handleApply} className={Styles.ApplyButton}>
