@@ -4,6 +4,7 @@ export const Container = style({
   display: "flex",
   flexDirection: "column",
   gap: "0.25em",
+  width: "100%",
 });
 
 export const Title = style({

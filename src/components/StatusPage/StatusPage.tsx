@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import * as Styles from "./style.css";
 import UnknownPNG from "@assets/Unknown.png";
@@ -28,6 +30,7 @@ export default function StatusPage({
               fill
               sizes={IMAGE_SIZES}
               className={Styles.CodeImage}
+              priority
             />
           </div>
           <p className={Styles.Code}>{code}</p>

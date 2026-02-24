@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { queryOptions } from "..";
-import { SessionStatus } from "./session.type";
+import { queryOptions } from "../common";
+import { SessionStatus } from "./types";
 
 export const fetchSessionStatus = async (
   init?: RequestInit,
@@ -30,4 +30,21 @@ export const useSessionStatusQuery = () => {
     queryFn: fetchSessionStatus,
     ...queryOptions,
   });
+};
+
+export const useSessionOwner = (email: string | null) => {
+  const { data } = useSessionStatusQuery();
+  if (!data?.loggedIn) return false;
+  if (data.role === "admin") return true;
+  return data.email === email;
+};
+
+export const useSessionRole = () => {
+  const { data } = useSessionStatusQuery();
+  return data?.role;
+};
+
+export const useSessionEmail = () => {
+  const { data } = useSessionStatusQuery();
+  return data?.email;
 };

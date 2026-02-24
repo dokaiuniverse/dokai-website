@@ -1,4 +1,10 @@
-import StatusPage from "@components/StatusPage/StatusPage";
+"use client";
+
+import dynamic from "next/dynamic";
+
+const StatusPage = dynamic(() => import("@components/StatusPage/StatusPage"), {
+  ssr: false,
+});
 
 export default function NotFound() {
   return (

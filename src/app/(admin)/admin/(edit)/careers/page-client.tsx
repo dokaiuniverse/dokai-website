@@ -150,7 +150,7 @@ const AdminCareersPageClient = ({
         <EditInfoSection emailEditable={emailEditable} />
         {/* <EditProfileSection /> */}
       </FormProvider>
-      <CareerDetailProfile
+      {/* <CareerDetailProfile
         profile={profile}
         editable
         updateProfile={setProfile}
@@ -203,7 +203,7 @@ const AdminCareersPageClient = ({
                 },
               ]
         }
-      />
+      /> */}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import EditModalLayout from "../Layout";
 import * as Styles from "./style.css";
+import type { ContactLink } from "@domain/careers";
 import InstagramSVG from "@assets/social/Instagram.svg";
 import XSVG from "@assets/social/X.svg";
 import FacebookSVG from "@assets/social/Facebook.svg";
@@ -8,7 +9,6 @@ import LinkedInSVG from "@assets/social/LinkedIn.svg";
 import BehanceSVG from "@assets/social/Behance.svg";
 import EmailSVG from "@assets/social/Email.svg";
 import URLSVG from "@assets/icons/url.svg";
-import type { ContactLink } from "@domain/careers";
 
 type ContactType =
   | "Instagram"

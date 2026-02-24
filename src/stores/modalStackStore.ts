@@ -1,5 +1,5 @@
 // src/stores/modalStackStore.ts
-import { ProjectContent } from "@domain/careers";
+import { ContactLink, ProjectContent } from "@domain/careers";
 import { MediaSource, MediaType } from "@domain/media";
 import { create } from "zustand";
 
@@ -22,12 +22,11 @@ export type ModalMap = {
   };
 
   DRAWER_MENU: {
-    closeMenuRef: React.RefObject<(() => void) | null>;
-    closeSearchRef: React.RefObject<(() => void) | null>;
+    handleCloseAll: () => void;
   };
 
   SEARCH: {
-    closeSearchRef: React.RefObject<(() => void) | null>;
+    handleCloseAll: () => void;
   };
 
   PROJECT: {
@@ -50,18 +49,39 @@ export type ModalMap = {
     initial?: ProjectContent;
     applyContent?: (content: ProjectContent) => void;
   };
+
+  EDIT_CONTACT: {
+    initial: ContactLink;
+    applyContact: (contact: ContactLink) => void;
+    deleteContact?: () => void;
+  };
+
+  EDIT_EXPERIENCE: {
+    initial: string;
+    applyExperience: (next: string) => void;
+    deleteExperience?: () => void;
+  };
 };
 
 export type ModalState = {
-  [K in keyof ModalMap]: { id: string; type: K; props: ModalMap[K] };
+  [K in keyof ModalMap]: {
+    id: string;
+    type: K;
+    props: ModalMap[K];
+    status?: "open" | "closing";
+  };
 }[keyof ModalMap];
 
 type Store = {
   stack: ModalState[];
-  push: <K extends keyof ModalMap>(type: K, props: ModalMap[K]) => void;
+  push: <K extends keyof ModalMap>(type: K, props: ModalMap[K]) => string;
   pop: () => void;
   replaceTop: <K extends keyof ModalMap>(type: K, props: ModalMap[K]) => void;
   clear: () => void;
+  requestCloseTop: () => void;
+  requestCloseById: (id: string) => void;
+  finalizeCloseById: (id: string) => void;
+  requestCloseByTypes: (types: (keyof ModalMap)[]) => void;
 };
 
 const uid = () =>
@@ -71,10 +91,13 @@ const uid = () =>
 
 export const useModalStackStore = create<Store>((set) => ({
   stack: [],
-  push: (type, props) =>
+  push: (type, props) => {
+    const id = uid();
     set((s) => ({
-      stack: [...s.stack, { id: uid(), type, props } as ModalState],
-    })),
+      stack: [...s.stack, { id, type, props, status: "open" } as ModalState],
+    }));
+    return id;
+  },
   pop: () => set((s) => ({ stack: s.stack.slice(0, -1) })),
   replaceTop: (type, props) =>
     set((s) => ({
@@ -84,4 +107,30 @@ export const useModalStackStore = create<Store>((set) => ({
       ],
     })),
   clear: () => set({ stack: [] }),
+  requestCloseById: (id) =>
+    set((s) => ({
+      stack: s.stack.map((m) =>
+        m.id === id ? ({ ...m, status: "closing" } as ModalState) : m,
+      ),
+    })),
+  requestCloseTop: () =>
+    set((s) => {
+      const top = s.stack[s.stack.length - 1];
+      if (!top) return s;
+      return {
+        stack: s.stack.map((m) =>
+          m.id === top.id ? ({ ...m, status: "closing" } as ModalState) : m,
+        ),
+      };
+    }),
+  finalizeCloseById: (id) =>
+    set((s) => ({ stack: s.stack.filter((m) => m.id !== id) })),
+  requestCloseByTypes: (types) =>
+    set((s) => ({
+      stack: s.stack.map((m) =>
+        types.includes(m.type)
+          ? ({ ...m, status: "closing" } as ModalState)
+          : m,
+      ),
+    })),
 }));

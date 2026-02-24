@@ -17,10 +17,15 @@ const FloatingButton = ({
 }) => {
   return (
     <button className={`${Styles.Button} ${className}`} onClick={onClick}>
-      {type === "EDIT" && <EditSVG className={Styles.ButtonIcon} />}
-      {type === "ADD" && <PlusSVG className={Styles.ButtonIcon} />}
-      {type === "REMOVE" && <TrashSVG className={Styles.ButtonIcon} />}
-      {type === "SAVE" && <SaveSVG className={Styles.ButtonIcon} />}
+      {type === "EDIT" ? (
+        <EditSVG className={Styles.ButtonIcon} />
+      ) : type === "ADD" ? (
+        <PlusSVG className={Styles.ButtonIcon} />
+      ) : type === "REMOVE" ? (
+        <TrashSVG className={Styles.ButtonIcon} />
+      ) : (
+        <SaveSVG className={Styles.ButtonIcon} />
+      )}
       <div className={Styles.ButtonText}>{text ?? type}</div>
     </button>
   );

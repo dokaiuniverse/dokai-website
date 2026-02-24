@@ -14,7 +14,7 @@ const EditSingleMedia = ({
   buttonClassName,
   blockedTypes,
 }: {
-  media?: MediaSource;
+  media?: MediaSource | null;
   applyMedia?: (media: MediaSource | null) => void;
   onClick?: () => void;
   className?: string;

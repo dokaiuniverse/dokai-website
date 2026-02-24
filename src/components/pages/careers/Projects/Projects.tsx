@@ -4,6 +4,9 @@ import { ProjectCard } from "@domain/careers";
 import { useSession } from "@lib/auth/useSession";
 import PlusSVG from "@assets/icons/plus.svg";
 import { useRouter } from "nextjs-toploader/app";
+import { useQueryClient } from "@tanstack/react-query";
+import { fetchProjectDetail } from "@controllers/careers/fetch";
+import { queryOptions } from "@controllers/common";
 
 const CareerDetailProjects = ({
   email,
@@ -15,6 +18,7 @@ const CareerDetailProjects = ({
   editable?: boolean;
 }) => {
   const router = useRouter();
+  const qc = useQueryClient();
   const { me } = useSession();
 
   const isEditableProject =
@@ -28,9 +32,14 @@ const CareerDetailProjects = ({
           <button
             key={`WORKS_${idx}`}
             className={Styles.Item}
-            onClick={() =>
-              router.push(`?project=${project.id}`, { scroll: false })
-            }
+            onClick={async () => {
+              void qc.prefetchQuery({
+                queryKey: ["project", project.id],
+                queryFn: () => fetchProjectDetail(project.id),
+                ...queryOptions,
+              });
+              router.push(`?project=${project.id}`, { scroll: false });
+            }}
           >
             <MediaHoverOverlay
               media={project.thumbnail}
@@ -45,7 +54,9 @@ const CareerDetailProjects = ({
         {isEditableProject && (
           <button
             className={Styles.AddButton}
-            onClick={() => router.push("?project=new", { scroll: false })}
+            onClick={() => {
+              router.push("?project=new", { scroll: false });
+            }}
           >
             <PlusSVG className={Styles.AddButtonIcon} />
           </button>

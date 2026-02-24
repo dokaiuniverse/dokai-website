@@ -1,5 +1,5 @@
 import { media, vars } from "@styles/theme.css";
-import { globalStyle, style } from "@vanilla-extract/css";
+import { globalStyle, keyframes, style } from "@vanilla-extract/css";
 
 export const Container = style({
   display: "grid",
@@ -75,4 +75,14 @@ export const ProfileItemOverlay = style({
   padding: "1rem",
 
   fontSize: vars.fontSize.lg,
+});
+
+export const FloatingButtonContainer = style({
+  position: "fixed",
+  bottom: "2rem",
+  right: "2rem",
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+  color: "black",
 });

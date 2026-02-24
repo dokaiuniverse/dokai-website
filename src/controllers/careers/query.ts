@@ -5,7 +5,7 @@ import {
   fetchProfileList,
   fetchProjectDetail,
 } from "./fetch";
-import { queryOptions } from "..";
+import { queryOptions } from "../common";
 
 export const useProfileListQuery = () => {
   return useQuery({
@@ -34,7 +34,7 @@ export const useHasProfileQuery = ({ enabled }: { enabled: boolean }) => {
 
 export const useProjectDetailQuery = (projectId?: string | null) => {
   return useQuery({
-    queryKey: ["project-detail", projectId],
+    queryKey: ["project", projectId],
     queryFn: () => fetchProjectDetail(projectId!),
     ...queryOptions,
     enabled: !!projectId,

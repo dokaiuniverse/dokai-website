@@ -1,5 +1,5 @@
-import StatusPage from "@components/StatusPage/StatusPage";
 import { headers } from "next/headers";
+import ErrorPage from "./errorPage";
 
 export default async function AdminLayout({
   children,
@@ -11,33 +11,15 @@ export default async function AdminLayout({
   const reason = h.get("x-admin-guard-reason") ?? "";
 
   if (guard === "unauthorized") {
-    return (
-      <StatusPage
-        code={401}
-        title="Unauthorized"
-        description="로그인이 필요합니다."
-      />
-    );
+    return <ErrorPage code={401} reason={reason} />;
   }
 
   if (guard === "forbidden") {
-    return (
-      <StatusPage
-        code={403}
-        title="Forbidden"
-        description="관리자 권한이 없습니다."
-      />
-    );
+    return <ErrorPage code={403} reason={reason} />;
   }
 
   if (guard === "error") {
-    return (
-      <StatusPage
-        code={500}
-        title="Server Error"
-        description={`권한 확인 중 오류가 발생했습니다. (${reason || "unknown"})`}
-      />
-    );
+    return <ErrorPage code={500} reason={reason} />;
   }
 
   return <>{children}</>;

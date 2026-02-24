@@ -1,10 +1,13 @@
-import { getSessionStatusServer } from "@controllers/auth/session.server";
 import LoginPageClient from "./page-client";
+import { getQueryClient } from "@lib/react-query/getQueryClient";
+import { prefetchAppQuery } from "@controllers/common";
+import { authQueriesServer } from "@controllers/auth/query.server";
 
 const LoginPage = async () => {
-  const data = await getSessionStatusServer();
+  const qc = getQueryClient();
+  await prefetchAppQuery(qc, authQueriesServer.sessionStatus());
 
-  return <LoginPageClient isAuthed={data.loggedIn} />;
+  return <LoginPageClient />;
 };
 
 export default LoginPage;

@@ -55,6 +55,7 @@ export const Placeholder = style({
   top: 0,
   left: 0,
   right: 0,
+  margin: "0.5rem",
   pointerEvents: "none",
   opacity: 0.6,
   whiteSpace: "pre-wrap",
@@ -119,6 +120,71 @@ globalStyle(`${Content} a:hover`, {
 });
 
 globalStyle(`${Content} a:hover::after`, {
+  content: "attr(href)",
+  position: "absolute",
+  left: "0",
+  bottom: "calc(100% + 0.25rem)",
+  whiteSpace: "nowrap",
+  padding: "0.25em 0.5em",
+  border: "1px solid rgba(0,0,0,0.2)",
+  borderRadius: "0.75em",
+  background: "white",
+  boxShadow: "0 0.5em 1em rgba(0,0,0,0.12)",
+  fontSize: "0.5em",
+  color: "black",
+  zIndex: "9999",
+});
+
+//
+
+export const ToolbarContainer2 = style({
+  position: "absolute",
+  bottom: "100%",
+  left: "-1px",
+  border: "1px solid #999",
+  zIndex: "100",
+  display: "flex",
+  borderRadius: "0.5rem 0.5rem 0 0",
+  borderBottom: "none",
+  overflow: "hidden",
+  background: "white",
+});
+
+export const Container2 = style({
+  position: "relative",
+  border: "1px solid #eee",
+  borderRadius: "0.5rem",
+  background: "white",
+  padding: "0.5rem",
+  transition: "border-radius 0.1s ease-in-out, border-color 0.1s ease-in-out",
+
+  selectors: {
+    "&:hover, &:focus-within": {
+      borderColor: "#999",
+    },
+  },
+});
+
+export const Content2 = style({
+  position: "relative",
+  border: "none",
+  outline: "none",
+});
+
+globalStyle(`${Container2}:has(${Content2}:focus)`, {
+  borderTopLeftRadius: "0",
+});
+
+globalStyle(`${Content2} a`, {
+  color: "blue",
+  position: "relative",
+});
+
+globalStyle(`${Content2} a:hover`, {
+  textDecoration: "underline",
+});
+
+globalStyle(`${Content2} a:hover::after`, {
   content: "attr(href)",
   position: "absolute",
   left: "0",

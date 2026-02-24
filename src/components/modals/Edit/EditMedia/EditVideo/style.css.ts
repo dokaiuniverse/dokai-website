@@ -7,6 +7,7 @@ export const Container = style({
   display: "flex",
   flexDirection: "column",
   gap: "1rem",
+  overflow: "auto",
 });
 
 export const Media = style({

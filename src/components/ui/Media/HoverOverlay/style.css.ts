@@ -2,6 +2,7 @@ import { globalStyle, style } from "@vanilla-extract/css";
 
 export const Container = style({
   position: "relative",
+  overflow: "hidden",
 });
 
 export const Media = style({

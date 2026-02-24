@@ -1,6 +1,7 @@
 import ErrorComponent from "@components/ui/Status/Error";
 import LoadingComponent from "@components/ui/Status/Loading";
 import { ImageSource } from "@domain/media";
+import { IMAGE_SIZES } from "@ts/image";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -13,9 +14,11 @@ const isSupportedImageSrc = (src: string) =>
 const ImageCard = ({
   image,
   useAlternative,
+  priority,
 }: {
   image?: ImageSource;
   useAlternative?: boolean;
+  priority?: boolean;
 }) => {
   const [state, setState] = useState<{
     step: "loading" | "error" | "loaded" | "idle";
@@ -47,6 +50,8 @@ const ImageCard = ({
           src={image.src}
           alt={image.alt}
           fill
+          sizes={IMAGE_SIZES}
+          priority={priority}
           style={{
             objectFit: "cover",
             opacity: state.step !== "loaded" ? 0 : 1,

@@ -3,20 +3,40 @@
 
 import dynamic from "next/dynamic";
 import { useModalStackStore } from "@stores/modalStackStore";
+import ProjectModal from "./Project/ProjectModal";
+import DrawerMenuModal from "./DrawerMenu/DrawerMenuModal";
+import SearchModal from "./Search/SearchModal";
+
 const ApiModal = dynamic(() => import("./Api/ApiModal"), { ssr: false });
 const ConfirmModal = dynamic(() => import("./Confirm/ConfirmModal"), {
   ssr: false,
 });
-import DrawerMenuModal from "./DrawerMenu/DrawerMenuModal";
-import SearchModal from "./Search/SearchModal";
-import ProjectModal from "./Project/ProjectModal";
-import EditMediaListModal from "./Edit/EditMedia/EditMediaListModal";
-import EditProjectContentModal from "./Edit/EditProjectContent/EditProjectContentModal";
-import EditMediaSingleModal from "./Edit/EditMedia/EditMediaSingleModal";
+const EditMediaListModal = dynamic(
+  () => import("./Edit/EditMedia/EditMediaListModal"),
+  { ssr: false },
+);
+const EditProjectContentModal = dynamic(
+  () => import("./Edit/EditProjectContent/EditProjectContentModal"),
+  { ssr: false },
+);
+const EditMediaSingleModal = dynamic(
+  () => import("./Edit/EditMedia/EditMediaSingleModal"),
+  { ssr: false },
+);
+const EditContactModal = dynamic(
+  () => import("./Edit/EditContact/EditContactModal"),
+  { ssr: false },
+);
+const EditExperienceModal = dynamic(
+  () => import("./Edit/EditExperience/EdieExperienceModal"),
+  { ssr: false },
+);
 
 const ModalStackRoot = () => {
   const stack = useModalStackStore((s) => s.stack);
   const pop = useModalStackStore((s) => s.pop);
+  const requestCloseTop = useModalStackStore((s) => s.requestCloseTop);
+  const finalizeCloseById = useModalStackStore((s) => s.finalizeCloseById);
 
   if (stack.length === 0) return null;
 
@@ -29,6 +49,9 @@ const ModalStackRoot = () => {
           // top만 닫히게: 아래 모달들은 클릭/esc 반응 안 하게 할 때 사용
           isTop,
           onClose: isTop ? pop : () => {},
+          onRequestClose: isTop ? requestCloseTop : () => {},
+          onAfterClose: () => finalizeCloseById(m.id),
+          state: m.status ?? "open",
           zIndex: 9999 + idx,
         };
 
@@ -51,6 +74,10 @@ const ModalStackRoot = () => {
             return (
               <EditProjectContentModal key={m.id} {...common} {...m.props} />
             );
+          case "EDIT_CONTACT":
+            return <EditContactModal key={m.id} {...common} {...m.props} />;
+          case "EDIT_EXPERIENCE":
+            return <EditExperienceModal key={m.id} {...common} {...m.props} />;
           default:
             return null;
         }

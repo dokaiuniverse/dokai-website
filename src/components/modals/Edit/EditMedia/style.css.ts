@@ -49,6 +49,7 @@ export const SingleContainer = style({
   margin: "1rem",
   marginTop: "0",
   height: "36rem",
+  overflow: "hidden",
 });
 
 export const SingleContent = style({

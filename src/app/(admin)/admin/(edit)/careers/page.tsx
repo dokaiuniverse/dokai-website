@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import AdminCareersPageClient from "./page-client";
 import { fetchProfileDetail } from "@controllers/careers/fetch";
+import AdminCareersPageServer from "./page-server";
 
 const AdminCareersPage = async ({
   searchParams,
@@ -20,7 +21,16 @@ const AdminCareersPage = async ({
         .catch(() => undefined)
     : undefined;
 
-  return <AdminCareersPageClient profileDetail={profileDetail} />;
+  const { data, isPublished, id } = profileDetail ?? {};
+
+  return (
+    <AdminCareersPageServer
+      id={id}
+      profileDetail={data}
+      isPublished={isPublished}
+      email={email as string}
+    />
+  );
 };
 
 export default AdminCareersPage;

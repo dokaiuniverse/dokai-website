@@ -1,7 +1,6 @@
 import { useSearchParams } from "next/navigation";
 import * as Styles from "./style.css";
 import { useRouter } from "nextjs-toploader/app";
-import MediaCard from "@components/ui/Media/MediaCard/MediaCard";
 import { useEffect, useMemo, useState } from "react";
 import useLockBodyScroll from "@hooks/useLockBodyScroll";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
@@ -16,7 +15,6 @@ import {
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MediaSource } from "@domain/media";
-import PlusSVG from "@assets/icons/plus.svg";
 import { useModalStackStore } from "@stores/modalStackStore";
 import {
   fetchProjectCreate,
@@ -31,7 +29,13 @@ import EditMediaList from "@components/ui/Edit/EditMediaList/EditMediaList";
 import EditSingleMedia from "@components/ui/Edit/EditSingleMedia/EditSingleMedia";
 import EditPublished from "@components/ui/Edit/EditPublished/EditPublished";
 import FloatingButton from "@components/ui/Edit/FloatingButton/FloatingButton";
-import { useSession } from "@lib/auth/useSession";
+import PrivateMark from "@components/ui/PrivateMark/PrivateMark";
+import EditModeToggle from "@components/ui/Edit/EditModeToggle/EditModeToggle";
+import ProjectModalView from "./View";
+import ErrorComponent from "@components/ui/Status/Error";
+import LoadingComponent from "@components/ui/Status/Loading";
+import AddButton from "@components/ui/Edit/AddButton/AddButton";
+import { useSessionOwner } from "@controllers/auth/session";
 
 const TRANSITION_DURATION = 200;
 
@@ -44,7 +48,6 @@ const schema = z
     medias: z.array(z.unknown().nullable()),
   })
   .superRefine((v, ctx) => {
-    // ✅ thumbnail 필수
     if (v.thumbnail == null) {
       ctx.addIssue({
         code: "custom",
@@ -53,7 +56,6 @@ const schema = z
       });
     }
 
-    // ✅ contents 최소 1개 (null/undefined/빈문자 제거 기준)
     const contentsCount = v.contents.filter(
       (x) => x != null && x !== "",
     ).length;
@@ -65,7 +67,6 @@ const schema = z
       });
     }
 
-    // ✅ medias 최소 1개
     const mediasCount = v.medias.filter((x) => x != null && x !== "").length;
     if (mediasCount < 1) {
       ctx.addIssue({
@@ -83,47 +84,13 @@ type Props = {
   onClose: () => void;
 };
 
-const initialProject: Project = {
+const initialProject: Project & { isPublished: boolean } = {
   id: "",
   title: "",
   thumbnail: null,
   contents: [],
   medias: [],
-};
-
-const ProjectModalView = ({ project }: { project: Project }) => {
-  return (
-    <div className={Styles.Container}>
-      <p className={Styles.Title}>{project?.title}</p>
-      <div className={Styles.Content}>
-        {project?.contents?.map((item) => (
-          <div key={item.name} className={Styles.ContentItem}>
-            <p className={Styles.ContentItemName}>{item.name}</p>
-            {item.type === "TEXT" ? (
-              <p className={Styles.ContentItemText}>{item.value}</p>
-            ) : (
-              <ul className={Styles.ContentItemList}>
-                {item.value.map((value, index) => (
-                  <li key={index} className={Styles.ContentItemListItem}>
-                    {value}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
-      </div>
-      <div className={Styles.MediaContainer}>
-        {project?.medias?.map((media, index) => (
-          <MediaCard
-            key={`CAREER_WORK_MEDIA_${index}`}
-            media={media}
-            className={Styles.Media}
-          />
-        ))}
-      </div>
-    </div>
-  );
+  isPublished: false,
 };
 
 const ProjectModalEdit = () => {
@@ -198,11 +165,9 @@ const ProjectModalEdit = () => {
       <div className={Styles.Content}>
         {contents.map((item, idx) => (
           <div key={item.name} className={Styles.ContentItem}>
-            <p className={Styles.ContentItemName}>{item.name ?? "Name..."}</p>
+            <p className={Styles.ContentItemName}>{item.name}</p>
             {item.type === "TEXT" ? (
-              <p className={Styles.ContentItemText}>
-                {item.value ?? "Text..."}
-              </p>
+              <p className={Styles.ContentItemText}>{item.value}</p>
             ) : (
               <ul className={Styles.ContentItemList}>
                 {item.value.map((value, index) => (
@@ -210,9 +175,6 @@ const ProjectModalEdit = () => {
                     {value}
                   </li>
                 ))}
-                {item.value.length === 0 && (
-                  <li className={Styles.ContentItemListItem}>Item...</li>
-                )}
               </ul>
             )}
             <EditButton
@@ -221,12 +183,7 @@ const ProjectModalEdit = () => {
             />
           </div>
         ))}
-        <button
-          className={Styles.ContentAddButton}
-          onClick={handleCreateContent}
-        >
-          <PlusSVG className={Styles.ButtonIcon} />
-        </button>
+        <AddButton onClick={handleCreateContent} />
 
         <ErrorText message={errors.contents?.message} />
       </div>
@@ -246,21 +203,47 @@ const ProjectModalEdit = () => {
 };
 
 const ProjectModal = ({ ownerEmail, onClose }: Props) => {
-  const { me } = useSession();
+  const isOwner = useSessionOwner(ownerEmail);
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawId = searchParams.get("project");
-  const [mode, setMode] = useState(rawId === "new" ? "EDIT" : "VIEW");
+  const [mode, setMode] = useState<"EDIT" | "VIEW">(
+    rawId === "new" ? "EDIT" : "VIEW",
+  );
 
   const [isVisible, setIsVisible] = useState(false);
-
+  const [projectId, setProjectId] = useState<string | null>(
+    rawId === "new" ? null : rawId!,
+  );
   const { push } = useModalStackStore();
-
-  const isEditableProject =
-    me?.role === "admin" || (me?.role === "staff" && me?.email === ownerEmail);
-
-  //error
   useLockBodyScroll(true);
+
+  const {
+    data: fetchedProject,
+    isLoading,
+    isError,
+  } = useProjectDetailQuery(projectId);
+
+  const form = useForm<ProjectFormInput>({
+    mode: "onBlur",
+    resolver: zodResolver(schema),
+    defaultValues: initialProject,
+  });
+
+  const isPublished = form.watch("isPublished");
+  const formValues = useWatch({ control: form.control });
+
+  const projectForView = useMemo(() => formValues as Project, [formValues]);
+
+  const isEditableProject = !isLoading && !isError && isOwner;
+
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(() => {
+      onClose();
+      router.back();
+    }, TRANSITION_DURATION);
+  };
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -271,56 +254,14 @@ const ProjectModal = ({ ownerEmail, onClose }: Props) => {
     return () => clearTimeout(t);
   }, []);
 
-  const handleClose = () => {
-    setIsVisible(false);
-    setTimeout(() => {
-      onClose();
-      router.back();
-    }, TRANSITION_DURATION);
-  };
-
-  const [projectId, setProjectId] = useState<string | null>(
-    rawId === "new" ? null : rawId!,
-    // "1",
-  );
-
-  const { data: fetchedProject } = useProjectDetailQuery(projectId);
-  console.log(fetchedProject);
-
-  const form = useForm<ProjectFormInput>({
-    mode: "onBlur",
-    resolver: zodResolver(schema),
-    defaultValues: {
-      ...initialProject,
-      ...{
-        isPublished: !!fetchedProject?.isPublished,
-        ...fetchedProject?.data,
-      },
-    },
-  });
-
   useEffect(() => {
     if (fetchedProject) {
       form.reset({
-        ...initialProject,
-        ...{
-          isPublished: !!fetchedProject?.isPublished,
-          ...fetchedProject?.data,
-        },
+        isPublished: !!fetchedProject?.isPublished,
+        ...fetchedProject?.data,
       });
     }
   }, [fetchedProject]);
-
-  const formValues = useWatch({ control: form.control });
-
-  const projectForView = useMemo(() => {
-    // formValues가 아직 비어있을 수 있으니 fallback을 섞어줌
-    return {
-      ...initialProject,
-      ...fetchedProject,
-      ...formValues,
-    } as Project;
-  }, [formValues, fetchedProject]);
 
   const handleSave = async () => {
     const isValid = await form.trigger();
@@ -401,25 +342,23 @@ const ProjectModal = ({ ownerEmail, onClose }: Props) => {
       >
         <div className={Styles.Header}>
           {isEditableProject && (
-            <label className={Styles.EditToggleContainer}>
-              <p className={Styles.EditToggleTitle}>Edit</p>
-              <input
-                type="checkbox"
-                checked={mode === "EDIT"}
-                onChange={(e) => {
-                  setMode(e.target.checked ? "EDIT" : "VIEW");
-                }}
-                className={Styles.EditToggleInput}
-              />
-              <span className={Styles.EditToggle} />
-            </label>
+            <EditModeToggle mode={mode} setMode={setMode} />
+          )}
+
+          {isEditableProject && (
+            <PrivateMark
+              isPrivate={!isPublished}
+              className={Styles.PrivateMark}
+            />
           )}
           <button onClick={handleClose} className={Styles.CloseButton}>
             <CrossSVG className={Styles.CloseButtonIcon} />
           </button>
         </div>
-        {!rawId ? (
-          <div>unknown project</div>
+        {isLoading ? (
+          <LoadingComponent useText="Loading..." />
+        ) : isError ? (
+          <ErrorComponent errorText="Unknown Project" />
         ) : mode === "VIEW" ? (
           <ProjectModalView project={projectForView} />
         ) : (

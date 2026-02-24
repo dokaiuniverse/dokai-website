@@ -8,12 +8,16 @@ const TitleInput = <T extends FieldValues, K extends Path<T>>({
   form,
   name,
   className,
+  disabled,
+  onChange,
 }: {
-  title: string;
+  title?: string;
   placeholder?: string;
   form: UseFormReturn<T>;
   name: K;
   className?: string;
+  disabled?: boolean;
+  onChange?: () => void;
 }) => {
   const {
     register,
@@ -23,13 +27,17 @@ const TitleInput = <T extends FieldValues, K extends Path<T>>({
 
   return (
     <div className={`${Styles.Container} ${className}`}>
-      <p className={Styles.Title}>{title}</p>
+      {title && <p className={Styles.Title}>{title}</p>}
       <input
         className={Styles.Input}
         type="text"
         placeholder={placeholder}
         {...register(name)}
-        onFocus={() => clearErrors(name)}
+        onChange={() => {
+          clearErrors(name);
+          onChange?.();
+        }}
+        disabled={disabled}
       />
       <ErrorText message={errors[name]?.message as string} />
     </div>

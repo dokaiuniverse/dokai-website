@@ -9,11 +9,16 @@ import useLockBodyScroll from "@hooks/useLockBodyScroll";
 const TRANSITION_DURATION = 250;
 
 type Props = {
-  closeSearchRef: React.RefObject<(() => void) | null>;
-  onClose: () => void;
+  handleCloseAll: () => void;
+  state?: "open" | "closing";
+  onAfterClose?: () => void;
 };
 
-const SearchModal = ({ closeSearchRef, onClose }: Props) => {
+const SearchModal = ({
+  handleCloseAll,
+  state = "open",
+  onAfterClose,
+}: Props) => {
   const [isVisible, setIsVisible] = useState(false);
   const [queries, setQueries] = useState<string[]>([]);
   useLockBodyScroll(true);
@@ -30,21 +35,21 @@ const SearchModal = ({ closeSearchRef, onClose }: Props) => {
     setQueries((prev) => prev.filter((q) => q !== value));
   };
 
-  const handleClose = () => {
-    setIsVisible(false);
-    setTimeout(() => {
-      onClose();
-    }, TRANSITION_DURATION);
-  };
-
   useEffect(() => {
-    closeSearchRef.current = handleClose;
-    setTimeout(() => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setIsVisible(true));
-      });
-    }, 0);
-  }, []);
+    if (state === "open") {
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => setIsVisible(true));
+        });
+      }, 0);
+    } else if (state === "closing") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsVisible(false);
+      setTimeout(() => {
+        onAfterClose?.();
+      }, TRANSITION_DURATION);
+    }
+  }, [state]);
 
   return createPortal(
     <div
@@ -53,13 +58,13 @@ const SearchModal = ({ closeSearchRef, onClose }: Props) => {
       aria-hidden={!isVisible}
     >
       <div className={Styles.Grid}>
-        <SearchHeader handleClose={handleClose} />
+        <SearchHeader handleClose={handleCloseAll} />
         <SearchInput
           queries={queries}
           addQuery={handleAddQuery}
           removeQuery={handleRemoveQuery}
         />
-        <SearchResult queries={queries} handleClose={handleClose} />
+        <SearchResult queries={queries} handleClose={handleCloseAll} />
       </div>
     </div>,
     document.body,

@@ -1,4 +1,4 @@
-import { vars } from "@styles/theme.css";
+import { media, vars } from "@styles/theme.css";
 import { globalStyle, style } from "@vanilla-extract/css";
 
 export const Container = style({
@@ -7,6 +7,7 @@ export const Container = style({
   display: "flex",
   flexDirection: "column",
   gap: "1rem",
+  overflow: "auto",
 });
 
 export const DragOverlay = style({
@@ -49,6 +50,7 @@ export const MediaContainer = style({
   borderRadius: "0.5rem",
   overflow: "hidden",
   cursor: "pointer",
+  flexShrink: "0",
 });
 
 export const Media = style({
@@ -91,6 +93,12 @@ export const DescriptionContainer = style({
   display: "flex",
   flexDirection: "column",
   gap: "0.5rem",
+
+  "@media": {
+    [media.mobile]: {
+      gridColumn: "1 / -1",
+    },
+  },
 });
 
 export const InputContainer = style({
@@ -133,6 +141,12 @@ export const UploadContainer = style({
   lineHeight: "1.25",
   gap: "0.25rem",
   cursor: "pointer",
+
+  "@media": {
+    [media.mobile]: {
+      gridColumn: "1 / -1",
+    },
+  },
 });
 
 globalStyle(`${UploadContainer}[data-dragging="true"]`, {

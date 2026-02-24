@@ -1,248 +1,80 @@
-import { Profile } from "@domain/careers";
-import {
+import type {
   CreateProfileRequest,
-  CreateProjectRequest,
+  UpdateProfileRequest,
   ProfileDetailResponse,
   ProfileListResponse,
   ProjectDetailResponse,
-  UpdateProfileRequest,
+  CreateProjectRequest,
   UpdateProjectRequest,
 } from "./types";
-import { notFound } from "next/navigation";
+import { fetchApi } from "../common";
 
-export const fetchProfileCreate = async ({
-  isPublished,
-  data,
-}: CreateProfileRequest): Promise<ProfileDetailResponse> => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/admin/career/profiles`,
+// Profile
+
+export const fetchProfileList = () =>
+  fetchApi<ProfileListResponse>(`/api/public/career/profiles`);
+
+export const fetchProfileDetail = (email: string) =>
+  fetchApi<ProfileDetailResponse>(
+    `/api/public/career/profiles/${encodeURIComponent(email)}`,
     {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        isPublished,
-        data,
-      }),
+      method: "GET",
     },
   );
 
-  if (!res.ok) {
-    throw new Error(`Failed to create profile: ${res.status}`);
-  }
+export const fetchProfileCreate = (req: CreateProfileRequest) =>
+  fetchApi<ProfileDetailResponse, CreateProfileRequest>(
+    `/api/admin/career/profiles`,
+    { method: "POST", body: req },
+  );
 
-  return await res.json();
-};
-
-export const fetchProfileUpdate = async ({
-  id,
-  isPublished,
-  data,
-}: UpdateProfileRequest & {
-  id: string;
-}): Promise<void> => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/admin/career/profiles/${id}`,
+export const fetchProfileUpdate = (
+  req: UpdateProfileRequest & { id: string },
+) =>
+  fetchApi<void, Omit<typeof req, "id">>(
+    `/api/admin/career/profiles/${req.id}`,
     {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        isPublished,
-        data,
-      }),
+      body: { isPublished: req.isPublished, data: req.data },
     },
   );
 
-  if (!res.ok) {
-    throw new Error(`Failed to update profile: ${res.status}`);
-  }
-};
+export const fetchProfileDelete = (id: string) =>
+  fetchApi<void>(`/api/admin/career/profiles/${id}`, {
+    method: "DELETE",
+  });
 
-export const fetchProfileDelete = async (id: string): Promise<void> => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/admin/career/profiles/${id}`,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
+export const fetchHasProfile = () =>
+  fetchApi<{ hasProfile: boolean }>(`/api/admin/career/profiles/has-profile`);
+
+export const fetchProfileCheckEmail = (email: string) =>
+  fetchApi<{ ok: boolean; available: boolean; message?: string }>(
+    `/api/admin/career/profiles/check-email?email=${encodeURIComponent(email)}`,
   );
-
-  if (res.status === 404) {
-    notFound();
-  }
-
-  if (!res.ok) {
-    throw new Error(`Failed to delete profile: ${res.status}`);
-  }
-
-  return;
-};
-
-export const fetchProfileList = async (): Promise<ProfileListResponse> => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/public/career/profiles`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
-  );
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch profile list: ${res.status}`);
-  }
-
-  return res.json();
-};
-
-export const fetchProfileDetail = async (
-  email: string,
-  opts?: { cookie?: string },
-): Promise<ProfileDetailResponse> => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/public/career/profiles/${encodeURIComponent(email)}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        ...(opts?.cookie ? { cookie: opts.cookie } : {}),
-      },
-    },
-  );
-
-  if (res.status === 404) {
-    notFound();
-  }
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch profile detail: ${res.status}`);
-  }
-
-  return res.json();
-};
-
-export const fetchHasProfile = async (): Promise<{ email: string } | false> => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/admin/career/profiles/has-profile`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
-  );
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch has profile: ${res.status}`);
-  }
-
-  return res.json();
-};
 
 // Project
 
-export const fetchProjectCreate = async ({
-  ownerEmail,
-  isPublished,
-  data,
-}: CreateProjectRequest): Promise<ProjectDetailResponse> => {
-  console.log(ownerEmail, isPublished, data);
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/admin/career/projects`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ownerEmail,
-        isPublished,
-        data,
-      }),
-    },
+export const fetchProjectCreate = (req: CreateProjectRequest) =>
+  fetchApi<ProjectDetailResponse, CreateProjectRequest>(
+    `/api/admin/career/projects`,
+    { method: "POST", body: req },
   );
 
-  if (!res.ok) {
-    throw new Error(`Failed to create project: ${res.status}`);
-  }
-
-  return await res.json();
-};
-
-export const fetchProjectUpdate = async ({
-  id,
-  isPublished,
-  data,
-}: UpdateProjectRequest): Promise<void> => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/admin/career/projects/${encodeURIComponent(id)}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        isPublished,
-        data,
-      }),
-    },
+export const fetchProjectUpdate = (req: UpdateProjectRequest) =>
+  fetchApi<void, UpdateProjectRequest>(
+    `/api/admin/career/projects/${encodeURIComponent(req.id)}`,
+    { method: "PUT", body: req },
   );
 
-  if (!res.ok) {
-    throw new Error(`Failed to update project: ${res.status}`);
-  }
-};
+export const fetchProjectDelete = (id: string) =>
+  fetchApi<void>(`/api/admin/career/projects/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
 
-export const fetchProjectDelete = async (id: string): Promise<void> => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/admin/career/projects/${encodeURIComponent(id)}`,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
-  );
-
-  if (res.status === 404) {
-    notFound();
-  }
-
-  if (!res.ok) {
-    throw new Error(`Failed to delete project: ${res.status}`);
-  }
-
-  return;
-};
-
-export const fetchProjectDetail = async (
-  id: string,
-  opts?: { cookie?: string },
-): Promise<ProjectDetailResponse> => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/public/career/projects/${encodeURIComponent(id)}`,
+export const fetchProjectDetail = (id: string) =>
+  fetchApi<ProjectDetailResponse>(
+    `/api/public/career/projects/${encodeURIComponent(id)}`,
     {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        ...(opts?.cookie ? { cookie: opts.cookie } : {}),
-      },
     },
   );
-
-  if (res.status === 404) {
-    notFound();
-  }
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch project detail: ${res.status}`);
-  }
-
-  return res.json();
-};

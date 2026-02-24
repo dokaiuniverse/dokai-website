@@ -7,7 +7,7 @@ import { requireRole } from "@lib/auth/requireRole";
  * /api/admin/works/{id}/fix:
  *   patch:
  *     tags:
- *       - Works
+ *       - Career
  *     summary: Update fixed_at to now() (admin)
  *     parameters:
  *       - in: path
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
 
   const { data, error } = await supabase
     .from("career_profiles")
-    .select("email, data, is_published, updated_at")
+    .select("email")
     .eq("email", auth.user?.email)
     .maybeSingle();
 
@@ -55,5 +55,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data ? { email: data.email } : false);
+  return NextResponse.json({ hasProfile: !!data });
 }

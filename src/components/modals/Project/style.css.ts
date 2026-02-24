@@ -55,11 +55,12 @@ export const Layout = recipe({
     overflow: "hidden",
     display: "flex",
     flexDirection: "column",
+    minHeight: "24rem",
 
     transition: `transform ${TransitionDurationVar} ease-in-out, opacity ${TransitionDurationVar} ease-in-out`,
 
-    padding: "1rem",
-    paddingRight: "0.75rem",
+    padding: "1.5rem",
+    paddingRight: "1.25rem",
     paddingBottom: "0",
 
     "@media": {
@@ -83,70 +84,31 @@ export const Layout = recipe({
 });
 
 export const Header = style({
+  position: "relative",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-});
 
-export const EditToggleContainer = style({
-  display: "flex",
-  alignItems: "center",
-  gap: "0.75rem",
-  cursor: "pointer",
-});
-
-export const EditToggleTitle = style({
-  fontSize: vars.fontSize.sm,
-  fontWeight: "400",
-});
-
-export const EditToggleInput = style({ display: "none" });
-
-export const EditToggle = style({
-  position: "relative",
-  width: "2rem",
-  height: "auto",
-  aspectRatio: "2 / 1",
-
-  selectors: {
-    "&::after": {
-      content: '""',
-      position: "absolute",
-      left: "0",
-      top: "0",
-      width: "auto",
-      height: "100%",
-      aspectRatio: "1 / 1",
-      borderRadius: 999,
-      background: "#fff",
-      boxShadow: "0 1px 2px rgba(0,0,0,0.18)",
-      transform: "translateX(0px)",
-      transition: "transform 160ms ease",
+  "@media": {
+    [media.tablet]: {
+      paddingRight: "16px",
     },
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      width: "100%",
-      height: "100%",
-      padding: "10%",
-      boxSizing: "content-box",
-      transformOrigin: "center",
-      borderRadius: 999,
-      background: "#e5e5e5",
-      left: "50%",
-      top: "50%",
-      transform: "translate(-50%, -50%)",
-      transition: "background 160ms ease",
+    [media.mobile]: {
+      paddingRight: "14px",
     },
   },
 });
 
-globalStyle(`${EditToggleInput}:checked + ${EditToggle}::after`, {
-  transform: "translateX(100%)",
-});
+export const PrivateMark = style({
+  top: "0 !important",
+  right: "2rem !important",
 
-globalStyle(`${EditToggleInput}:checked + ${EditToggle}::before`, {
-  background: "#262626",
+  "@media": {
+    [media.mobile]: {
+      top: "-1.5rem !important",
+      right: "0 !important",
+    },
+  },
 });
 
 export const CloseButton = style({
@@ -166,6 +128,7 @@ export const Container = style({
   fontSize: vars.fontSize.md,
   display: "grid",
   gridTemplateColumns: "repeat(8, 1fr)",
+  rowGap: "1rem",
   columnGap: "1rem",
   height: "fit-content",
   top: `calc(2rem + var(--title-height))`,
@@ -178,6 +141,7 @@ export const Container = style({
   "@media": {
     [media.tablet]: {
       gridColumn: "1 / -1",
+      rowGap: "1.5rem",
     },
   },
 
@@ -209,7 +173,6 @@ export const Title = style({
   gridColumn: "1 / -1",
   zIndex: 10,
   fontSize: vars.fontSize.xl,
-  marginBottom: "2rem",
 
   selectors: {
     "&[data-stuck='true']": {
@@ -223,6 +186,12 @@ export const Content = style({
   display: "flex",
   flexDirection: "column",
   gap: "1rem",
+
+  "@media": {
+    [media.tablet]: {
+      gridColumn: "1 / -1",
+    },
+  },
 });
 
 export const ContentItem = style({
@@ -232,6 +201,7 @@ export const ContentItem = style({
 });
 
 export const ContentItemName = style({
+  fontSize: vars.fontSize.sm,
   color: vars.color.border,
   lineHeight: "1.83",
 });
@@ -279,36 +249,30 @@ export const Media = style({
 
 // Edit
 
-export const SaveButton = style({
-  position: "absolute",
-  right: "2rem",
-  bottom: "2rem",
-  padding: "1rem",
-  borderRadius: "999px",
-  background: "#fff",
-  boxShadow: "0 1px 2px rgba(0,0,0,0.18)",
-  cursor: "pointer",
-});
-
-export const SaveButtonIcon = style({
-  width: "2rem",
-  height: "auto",
-  aspectRatio: "1 / 1",
-});
-
 export const ThumbnailEditContainer = style({
   gridColumn: "1 / span 4",
   marginTop: "1rem",
-  marginBottom: "2rem",
+
+  "@media": {
+    [media.tablet]: {
+      gridColumn: "1 / -1",
+    },
+  },
 });
 
 export const InfoEditContainer = style({
   gridColumn: "5 / -2",
-  marginBottom: "2rem",
   marginTop: "1rem",
   display: "flex",
   flexDirection: "column",
   gap: "1rem",
+
+  "@media": {
+    [media.tablet]: {
+      gridColumn: "1 / -1",
+      marginTop: "0",
+    },
+  },
 });
 
 export const TitleEditContainer = style({
@@ -336,32 +300,6 @@ export const ContentEditButton = style({
       opacity: "1",
     },
   },
-});
-
-export const ContentAddButton = style({
-  padding: "0.5rem",
-  borderRadius: "0.5rem",
-  background: "white",
-  marginTop: "1rem",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  opacity: "0.5",
-  transition: "opacity 0.2s ease-in-out",
-  border: "1px solid #999",
-  backdropFilter: "blur(1rem)",
-
-  selectors: {
-    "&:hover": {
-      opacity: "1",
-    },
-  },
-});
-
-export const ButtonIcon = style({
-  width: "1.25rem",
-  height: "auto",
-  aspectRatio: "1 / 1",
 });
 
 export const EditMediaContainer = style({

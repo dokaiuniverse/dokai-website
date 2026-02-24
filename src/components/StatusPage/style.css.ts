@@ -1,4 +1,4 @@
-import { vars } from "@styles/theme.css";
+import { media, vars } from "@styles/theme.css";
 import { style } from "@vanilla-extract/css";
 
 export const Container = style({
@@ -6,6 +6,15 @@ export const Container = style({
   flexDirection: "column",
   padding: "10rem",
   alignItems: "center",
+
+  "@media": {
+    [media.tablet]: {
+      padding: "5rem",
+    },
+    [media.mobile]: {
+      padding: "3rem",
+    },
+  },
 });
 
 export const CodeContainer = style({
@@ -35,6 +44,8 @@ export const TextContainer = style({
   flexDirection: "column",
   alignItems: "center",
   gap: "1rem",
+  textAlign: "center",
+  width: "100%",
 });
 
 export const Title = style({
@@ -53,6 +64,7 @@ export const ButtonContainer = style({
   alignItems: "center",
   gap: "1rem",
   marginTop: "2rem",
+  whiteSpace: "nowrap",
 });
 
 export const Button = style({

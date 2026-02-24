@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import * as Styles from "./style.css";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -12,6 +12,7 @@ import { useModalStackStore } from "@stores/modalStackStore";
 import SearchSVG from "@assets/icons/search.svg";
 import HamburgerXSVG from "@assets/icons/hamburger-x.svg";
 import MenuBGSVG from "@assets/icons/menu-bg.svg";
+import CloseLink from "@components/ui/Link/CloseLink";
 
 const navList = [
   { label: "Work", href: "/work" },
@@ -21,42 +22,38 @@ const navList = [
 const Header = () => {
   const pathname = usePathname();
   const { sentinelRef, isPast: isFloatingMenu } = useIsPastSentinel();
-  const { push } = useModalStackStore();
+  const { push, requestCloseByTypes } = useModalStackStore();
   const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const closeMenuRef = useRef<() => void>(null);
-  const closeSearchRef = useRef<() => void>(null);
-
-  const handleCloseModals = useCallback(() => {
-    setIsOpenMenu(false);
-    closeMenuRef.current?.();
-    closeSearchRef.current?.();
-  }, []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    handleCloseModals();
-  }, [pathname]);
+  const handleCloseAll = () => {
+    setIsOpenMenu(false);
+    requestCloseByTypes(["DRAWER_MENU", "SEARCH"]);
+  };
 
   const handleClickMenu = () => {
     if (!isOpenMenu) {
+      push("DRAWER_MENU", { handleCloseAll });
       setIsOpenMenu(true);
-      push("DRAWER_MENU", { closeMenuRef, closeSearchRef });
     } else {
-      setIsOpenMenu(false);
-      closeMenuRef.current?.();
+      handleCloseAll();
     }
   };
 
+  useEffect(() => {
+    handleCloseAll();
+  }, [pathname]);
+
   const handleClickSearch = () => {
-    push("SEARCH", { closeSearchRef });
+    push("SEARCH", { handleCloseAll });
   };
 
   return (
     <header className={`${Styles.Layout} layout-wrapper`}>
-      <Link
+      <CloseLink
         href="/"
         className={Styles.LogoContainer}
-        onClick={handleCloseModals}
+        handleClose={handleCloseAll}
       >
         <Image
           src={LogoPNG}
@@ -65,7 +62,7 @@ const Header = () => {
           sizes={IMAGE_SIZES}
           priority
         />
-      </Link>
+      </CloseLink>
       <nav ref={sentinelRef} className={Styles.NavContainer}>
         {navList.map((nav) => (
           <Link

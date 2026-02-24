@@ -1,18 +1,25 @@
 "use client";
 
-import Image from "next/image";
 import LoginButton from "./login-button";
 import * as Styles from "./style.css";
 import LogoSVG from "@assets/dokai.svg";
+import { useAppQuery } from "@controllers/common";
+import { authQueriesClient } from "@controllers/auth/query.client";
 
-const LoginPageClient = ({ isAuthed }: { isAuthed: boolean }) => {
+const LoginPageClient = () => {
+  const { data: sessionStatus } = useAppQuery(
+    authQueriesClient.sessionStatus(),
+  );
+
+  console.log(sessionStatus);
+
   return (
     <main className={Styles.Layout}>
       <div className={Styles.Container}>
         <LogoSVG className={Styles.Logo} />
         <p className={Styles.Title}>Login</p>
 
-        {isAuthed ? (
+        {sessionStatus?.loggedIn ? (
           <button
             onClick={() => {
               window.location.href = "/";

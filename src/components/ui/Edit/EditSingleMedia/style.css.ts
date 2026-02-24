@@ -2,6 +2,9 @@ import { style } from "@vanilla-extract/css";
 
 export const Container = style({
   position: "relative",
+  width: "100%",
+  height: "auto",
+  aspectRatio: "16 / 9",
 });
 
 export const Media = style({

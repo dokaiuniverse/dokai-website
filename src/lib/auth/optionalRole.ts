@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { createSupabaseRouteClient } from "@lib/supabase/route";
 import { createSupabaseAdminClient } from "@lib/supabase/admin";
+import { createSupabaseServerClient } from "@lib/supabase/server";
 
 type Role = "admin" | "staff";
 
@@ -46,5 +47,51 @@ export async function getOptionalRole(req: NextRequest) {
     isPrivileged: role === "admin" || role === "staff",
     supabase,
     applyCookies,
+  };
+}
+
+export async function getOptionalRoleServer() {
+  const supabase = await createSupabaseServerClient();
+
+  const { data, error } = await supabase.auth.getUser();
+  if (error) {
+    return {
+      user: null,
+      role: null as Role | null,
+      isPrivileged: false,
+    };
+  }
+
+  const user = data.user;
+  if (!user) {
+    return {
+      user: null,
+      role: null as Role | null,
+      isPrivileged: false,
+    };
+  }
+
+  const admin = createSupabaseAdminClient();
+
+  const { data: allowed, error: aErr } = await admin
+    .from("allowed_users")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (aErr) {
+    return {
+      user,
+      role: null as Role | null,
+      isPrivileged: false,
+    };
+  }
+
+  const role = (allowed?.role as Role | undefined) ?? null;
+
+  return {
+    user,
+    role,
+    isPrivileged: role === "admin" || role === "staff",
   };
 }

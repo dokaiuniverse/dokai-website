@@ -6,6 +6,7 @@ import { useWorksInfiniteQuery } from "@controllers/work/query";
 import { useMemo, useState } from "react";
 import { WorkCard, WorkCategory } from "@domain/work";
 import Link from "next/link";
+import CloseLink from "@components/ui/Link/CloseLink";
 
 const CATEGORY_ORDER: (WorkCategory | "EVERYTHING")[] = [
   "EVERYTHING",
@@ -91,15 +92,11 @@ const SearchResult = ({
           <p className={Styles.ResultGroupTitle}>{result.category}</p>
           <div className={Styles.ResultItemGroup}>
             {result.items.map((item) => (
-              <Link
+              <CloseLink
                 key={`SEARCH_RESULT_ITEM_${item.slug}`}
                 className={Styles.ResultItem}
                 href={`/work/${item.slug}`}
-                onClick={() => {
-                  if (window.location.pathname === `/work/${item.slug}`) {
-                    handleClose();
-                  }
-                }}
+                handleClose={handleClose}
               >
                 <MediaHoverOverlay
                   media={item.thumbnail}
@@ -110,7 +107,7 @@ const SearchResult = ({
                   </div>
                 </MediaHoverOverlay>
                 <p className={Styles.ResultItemText}>{item.title}</p>
-              </Link>
+              </CloseLink>
             ))}
           </div>
         </div>

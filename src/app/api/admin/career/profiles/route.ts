@@ -8,7 +8,7 @@ import { Profile } from "@domain/careers";
  * /api/admin/career/profiles:
  *   post:
  *     tags:
- *       - CareerAdmin
+ *       - Career
  *     summary: Create profile (admin/staff; staff can create only own)
  *     requestBody:
  *       required: true

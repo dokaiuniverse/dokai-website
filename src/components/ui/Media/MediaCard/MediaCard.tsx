@@ -1,3 +1,5 @@
+"use client";
+
 import { MediaSource } from "@domain/media";
 import ImageCard from "./ImageCard";
 import VideoCard from "./VideoCard";
@@ -8,11 +10,13 @@ const MediaCard = ({
   className,
   useAlternative,
   blockInteractive,
+  priority,
 }: {
   media: MediaSource;
   className?: string;
   useAlternative?: boolean;
   blockInteractive?: boolean;
+  priority?: boolean;
 }) => {
   return (
     <div
@@ -22,11 +26,12 @@ const MediaCard = ({
         background: "#EFEFEF",
       }}
     >
-      {media.type === "IMAGE" ? (
+      {!media ? null : media.type === "IMAGE" ? (
         <ImageCard
           image={media}
           useAlternative={useAlternative}
           key={`IMAGE_CARD_${media.src}`}
+          priority={priority}
         />
       ) : (
         <VideoCard

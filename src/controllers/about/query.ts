@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { queryOptions } from "..";
+import { queryOptions } from "../common";
 import { fetchAbout, fetchAboutUpdate } from "./fetch";
 import { About } from "@domain/about";
 
