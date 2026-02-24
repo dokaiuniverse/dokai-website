@@ -1,130 +1,151 @@
 "use client";
 
-import * as CareersStyles from "@app/(header)/(footer)/careers/[email]/style.css";
-import CareerDetailProfile from "@components/pages/careers/Profile/Profile";
+import CareerExperiences from "@components/pages/careers/Experiences";
+import CareerProfile from "@components/pages/careers/Profile";
+import CareerProjects from "@components/pages/careers/Projects";
+import EditModeToggle from "@components/ui/Edit/EditModeToggle/EditModeToggle";
+import PrivateMark from "@components/ui/PrivateMark/PrivateMark";
+import { ProfileDetail, ProjectCard } from "@domain/careers";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { ProfileDetail } from "@domain/careers";
-import CareerDetailProjects from "@components/pages/careers/Projects/Projects";
-import CareerDetailExperiences from "@components/pages/careers/Experiences/Experiences";
-import AdminButtons from "@components/ui/AdminButtons/AdminButtons";
-import { useSession } from "@lib/auth/useSession";
+import { FormProvider, useForm } from "react-hook-form";
+import { useSessionEmail } from "@controllers/auth/session";
 import {
+  initalProfile,
+  ProfileFormInput,
+  profileSchema,
+} from "@components/pages/careers/career";
+import CareerEditInfo from "@components/pages/careers/EditInfo";
+import CareerEditProfile from "@components/pages/careers/EditProfile";
+import CareerEditExperiences from "@components/pages/careers/EditExperiences";
+import * as Styles from "./style.css";
+import { useModalStackStore } from "@stores/modalStackStore";
+import {
+  fetchProfileCheckEmail,
   fetchProfileCreate,
   fetchProfileDelete,
   fetchProfileUpdate,
 } from "@controllers/careers/fetch";
 import { useRouter } from "nextjs-toploader/app";
-import { useModalStackStore } from "@stores/modalStackStore";
-import { ProfileDetailResponse } from "@controllers/careers/types";
-import z from "zod";
-import { FormProvider, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import EditInfoSection from "../../../../../components/pages/careers/EditInfo/EditInfo";
+import FloatingButton from "@components/ui/Edit/FloatingButton/FloatingButton";
+import { useAppQuery } from "@controllers/common";
+import { careersQueriesClient } from "@controllers/careers/query.client";
 
-const schema = z.object({
-  email: z.string().email(),
-  name: z.string().min(1),
-  role: z.string().min(1),
-  isPublished: z.boolean(),
-  avatar: z.unknown().nullable(),
-  bio: z.string(),
-  contacts: z
-    .array(
-      z.object({
-        name: z.string().min(1),
-        value: z.string().min(1),
-        href: z.string().url().or(z.literal("")),
-      }),
-    )
-    .default([]),
-  experiences: z.array(z.string().min(1)).default([]),
-});
+const AdminCareersPageClient = ({ email }: { email?: string }) => {
+  const router = useRouter();
+  const [mode, setMode] = useState<"VIEW" | "EDIT">("EDIT");
+  const { data } = useAppQuery(careersQueriesClient.profileDetail(email!), {
+    enabled: !!email,
+  });
+  const [profileId, setProfileId] = useState<string | null>(data?.id ?? null);
 
-export type ProfileFormInput = z.input<typeof schema>; // ✅ year: unknown
-type FormOutput = z.output<typeof schema>; // ✅ year: number
+  const userEmail = useSessionEmail();
 
-const initalProfile: ProfileDetail = {
-  email: "",
-  name: "",
-  role: "",
-  bio: "",
-  contacts: [],
-  avatar: null,
-  experiences: [],
-  projects: [],
-};
-
-const AdminCareersPageClient = ({
-  profileDetail,
-}: {
-  profileDetail?: ProfileDetailResponse;
-}) => {
   const form = useForm<ProfileFormInput>({
     mode: "onBlur",
-    resolver: zodResolver(schema),
+    resolver: zodResolver(profileSchema),
     defaultValues: {
       ...initalProfile,
-      ...profileDetail?.data,
-      isPublished: profileDetail?.isPublished ?? false,
+      ...data?.data,
+      isPublished: data?.isPublished ?? false,
     },
   });
-
-  const router = useRouter();
-  const session = useSession();
-  const [profileId, setProfileId] = useState(profileDetail?.id ?? null);
-  const [profile, setProfile] = useState<ProfileDetail>(
-    profileDetail?.data ?? initalProfile,
-  );
-  const emailEditable = !!(
-    !profileId &&
-    session.me &&
-    session.me.role === "admin"
-  );
-  const [isPublic, setIsPublic] = useState(profileDetail?.isPublished ?? false);
+  const { setValue, watch, trigger, getValues, setError, clearErrors } = form;
+  const isPublished = watch("isPublished");
+  const profileDetail = watch() as Omit<ProfileFormInput, "isPublished">;
 
   useEffect(() => {
-    if (!profileDetail && session.me) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      setProfile({
+    if (!email && userEmail) {
+      setValue("email", userEmail);
+    }
+  }, [email, userEmail]);
+
+  useEffect(() => {
+    if (data) {
+      setProfileId(data.id);
+      form.reset({
         ...initalProfile,
-        email: session.me.email,
+        ...data.data,
+        isPublished: data.isPublished,
       });
     }
-  }, [profileDetail, session.me]);
+  }, [data]);
 
   const push = useModalStackStore((s) => s.push);
 
+  const validateAndPush = async (mode: "create" | "update") => {
+    const valid = await trigger();
+    if (!valid) return;
+
+    const formValues = getValues();
+    const { isPublished: nextIsPublished, ...rest } = formValues;
+    const nextProfileDetail = rest as ProfileDetail;
+    const nextEmail = nextProfileDetail.email;
+
+    const shouldCheck = mode === "create" || (email && nextEmail !== email);
+
+    if (shouldCheck) {
+      try {
+        const result = await fetchProfileCheckEmail(nextEmail);
+
+        if (!result.ok) {
+          setError("email", {
+            type: "manual",
+            message: result.message ?? "This email is already in use",
+          });
+          return;
+        }
+      } catch {
+        setError("email", {
+          type: "manual",
+          message: "Email check failed",
+        });
+      }
+
+      clearErrors("email");
+    }
+
+    if (mode === "create") {
+      push("API", {
+        title: "Create New Profile",
+        onFetch: async () =>
+          fetchProfileCreate({
+            isPublished: nextIsPublished,
+            data: nextProfileDetail,
+          }),
+        onSuccess: (data) => {
+          setProfileId(data.id);
+        },
+        onConfirm: () => {
+          router.replace(`/careers/${encodeURIComponent(nextEmail)}`);
+        },
+      });
+    } else {
+      if (!profileId) return;
+
+      push("API", {
+        title: "Update Profile",
+        onFetch: async () =>
+          fetchProfileUpdate({
+            id: profileId,
+            isPublished: nextIsPublished,
+            data: nextProfileDetail,
+          }),
+        onConfirm: () => {
+          router.replace(`/careers/${encodeURIComponent(nextEmail)}`);
+        },
+      });
+    }
+  };
+
+  console.log(form.formState.errors);
+
   const handleCreateProfile = async () => {
-    push("API", {
-      title: "Create New Profile",
-      onFetch: async () =>
-        fetchProfileCreate({
-          isPublished: isPublic,
-          data: profile,
-        }),
-      onSuccess: (data) => {
-        setProfileId(data.id);
-      },
-      onConfirm: () => {
-        router.replace(`/careers/${encodeURIComponent(profile.email)}`);
-      },
-    });
+    await validateAndPush("create");
   };
 
   const handleUpdateProfile = async () => {
-    if (!profileId) return;
-    push("API", {
-      title: "Update Profile",
-      onFetch: async () =>
-        fetchProfileUpdate({
-          id: profileId,
-          isPublished: isPublic,
-          data: profile,
-        }),
-      onConfirm: () => {
-        router.replace(`/careers/${encodeURIComponent(profile.email)}`);
-      },
-    });
+    await validateAndPush("update");
   };
 
   const handleDeleteProfile = async () => {
@@ -145,65 +166,59 @@ const AdminCareersPageClient = ({
   };
 
   return (
-    <div className={`${CareersStyles.Container} page-wrapper layout-wrapper`}>
-      <FormProvider {...form}>
-        <EditInfoSection emailEditable={emailEditable} />
-        {/* <EditProfileSection /> */}
-      </FormProvider>
-      {/* <CareerDetailProfile
-        profile={profile}
-        editable
-        updateProfile={setProfile}
-      />
-      <CareerDetailProjects
-        email={profile.email}
-        projects={profile.projects}
-        editable
-      />
-      <CareerDetailExperiences
-        experiences={profile.experiences}
-        editable
-        updateProfile={setProfile}
-      />
-      <AdminButtons
-        adminButtons={
-          !profileId
-            ? [
-                {
-                  role: "STAFF",
-                  type: "SAVE",
-                  click: {
-                    type: "FUNCTION",
-                    onClick: handleCreateProfile,
-                  },
-                  email: profile.email,
-                  text: "Create New Profile",
-                },
-              ]
-            : [
-                {
-                  role: "STAFF",
-                  type: "SAVE",
-                  click: {
-                    type: "FUNCTION",
-                    onClick: handleUpdateProfile,
-                  },
-                  email: profile.email,
-                  text: "Update Profile",
-                },
-                {
-                  role: "ADMIN",
-                  type: "REMOVE",
-                  click: {
-                    type: "FUNCTION",
-                    onClick: handleDeleteProfile,
-                  },
-                  email: profile.email,
-                  text: "Delete Profile",
-                },
-              ]
-        }
-      /> */}
+    <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
+      <div className={Styles.HeaderContainer}>
+        <EditModeToggle mode={mode} setMode={setMode} />
+        <PrivateMark
+          isPrivate={!isPublished}
+          className={Styles.HeaderPrivateMark}
+        />
+      </div>
+      {mode === "VIEW" ? (
+        <>
+          <CareerProfile profileDetail={profileDetail as ProfileDetail} />
+          <CareerProjects
+            projects={profileDetail.projects as ProjectCard[]}
+            email={profileDetail.email}
+          />
+          <CareerExperiences
+            experiences={profileDetail.experiences as string[]}
+          />
+        </>
+      ) : (
+        <FormProvider {...form}>
+          <CareerEditInfo />
+          <CareerEditProfile />
+          <CareerProjects
+            projects={profileDetail.projects as ProjectCard[]}
+            email={profileDetail.email}
+            isReadOnly
+          />
+          <CareerEditExperiences />
+        </FormProvider>
+      )}
+      <div className={Styles.ButtonContainer}>
+        {profileId ? (
+          <>
+            <FloatingButton
+              type="SAVE"
+              text="Update Profile"
+              onClick={handleUpdateProfile}
+            />
+            <FloatingButton
+              type="REMOVE"
+              text="Delete Profile"
+              onClick={handleDeleteProfile}
+            />
+          </>
+        ) : (
+          <FloatingButton
+            type="SAVE"
+            text="Create Profile"
+            onClick={handleCreateProfile}
+          />
+        )}
+      </div>
     </div>
   );
 };

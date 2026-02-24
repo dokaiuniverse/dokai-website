@@ -1,8 +1,8 @@
 "use client";
 
-import CareerProfile from "@components/pages/career_tmp/Profile";
-import CareerProjects from "@components/pages/career_tmp/Projects";
-import CareerExperiences from "@components/pages/career_tmp/Experiences";
+import CareerProfile from "@components/pages/careers/Profile";
+import CareerProjects from "@components/pages/careers/Projects";
+import CareerExperiences from "@components/pages/careers/Experiences";
 import AdminButtons from "@components/ui/AdminButtons/AdminButtons";
 import PrivateMark from "@components/ui/PrivateMark/PrivateMark";
 import * as Styles from "./style.css";

@@ -2,11 +2,11 @@ import { useEffect, useMemo } from "react";
 import * as Styles from "./style.css";
 import type { ContactLink } from "@domain/careers";
 import ModalLayout from "@components/modals/ModalLayout";
-import ContactIcon from "@components/pages/career_tmp/ContactIcon";
+import ContactIcon from "@components/pages/careers/ContactIcon";
 
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import type { ContactType } from "@components/pages/career_tmp/career";
+import type { ContactType } from "@components/pages/careers/career";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TitleInput from "@components/ui/Edit/TitleInput/TitleInput";
 import DeleteButton from "@components/ui/Button/Delete/DeleteButton";
@@ -86,8 +86,8 @@ const FormSchema = z
   .object({
     type: ContactTypeSchema,
     value: z.string().min(1, "Value is required"),
-    href: z.string(), // ✅ Other 아닐 땐 자동으로 채울거라 min(1) X
-    title: z.string(), // ✅ Other 아닐 땐 안 쓰므로 min(1) X
+    href: z.string().url().or(z.literal("")),
+    title: z.string(),
   })
   .superRefine((data, ctx) => {
     if (data.type === "Email") {

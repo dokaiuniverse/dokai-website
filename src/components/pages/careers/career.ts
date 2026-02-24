@@ -7,6 +7,7 @@ import EmailSVG from "@assets/social/Email.svg";
 import URLSVG from "@assets/icons/url.svg";
 import z from "zod";
 import { ProfileDetail } from "@domain/careers";
+import { id } from "zod/locales";
 
 export type ContactType =
   | "Instagram"
@@ -27,6 +28,12 @@ export const ContactIconMap = {
   Other: URLSVG,
 };
 
+export const profileContactSchema = z.object({
+  name: z.string().min(1),
+  value: z.string().min(1),
+  href: z.string().url().or(z.literal("")),
+});
+
 export const profileSchema = z.object({
   email: z.string().email("Email is invalid"),
   name: z.string().min(1, "Name is required"),
@@ -35,14 +42,17 @@ export const profileSchema = z.object({
   avatar: z.unknown().nullable(),
   bio: z.string().min(1, "Bio is required"),
   contacts: z
+    .array(profileContactSchema)
+    .min(1, "At least one contact is required")
+    .default([]),
+  projects: z
     .array(
       z.object({
-        name: z.string().min(1),
-        value: z.string().min(1),
-        href: z.string().url().or(z.literal("")),
+        id: z.string(),
+        title: z.string(),
+        thumbnail: z.unknown().nullable(),
       }),
     )
-    .min(1, "At least one contact is required")
     .default([]),
   experiences: z.array(z.string().min(1)).default([]),
 });
