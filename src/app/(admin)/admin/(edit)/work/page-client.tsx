@@ -1,79 +1,162 @@
 "use client";
 
-import * as WorkStyles from "@app/(header)/(footer)/work/[slug]/style.css";
-import { useEffect, useState } from "react";
-import { Work } from "@domain/work";
-import WorkDetailHeader from "@components/pages/work/Header/Header";
-import WorkDetailKeyVisuals from "@components/pages/work/KeyVisuals/KeyVisuals";
-import WorkDetailCredits from "@components/pages/work/Credits/Credits";
-import {
-  fetchWorkCreate,
-  fetchWorkDelete,
-  fetchWorkUpdate,
-  WorkDetailResponse,
-} from "@controllers/work/fetch";
-import WorkDetailInfo from "@components/pages/work/Info/Info";
-import AdminButtons from "@components/ui/AdminButtons/AdminButtons";
 import { useRouter } from "nextjs-toploader/app";
+import { useEffect, useState } from "react";
+import * as Styles from "./style.css";
+import EditModeToggle from "@components/ui/Edit/EditModeToggle/EditModeToggle";
+import PrivateMark from "@components/ui/PrivateMark/PrivateMark";
+import { ApiError, useAppMutation, useAppQuery } from "@controllers/common";
+import { worksQueriesClient } from "@controllers/works/query.client";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { initalWork, WorkInput, workSchema } from "@components/pages/work/work";
+import { Work } from "@domain/work";
+import WorkHeader from "@components/pages/work/Header";
+import WorkKeyVisuals from "@components/pages/work/KeyVisuals";
+import WorkCredits from "@components/pages/work/Credits";
+import WorkEditInfo from "@components/pages/work/EditInfo";
+import WorkEditHeader from "@components/pages/work/EditHeader";
+import WorkEditKeyVisuals from "@components/pages/work/EditKeyVisuals";
+import WorkEditCredits from "@components/pages/work/EditCredits";
+import FloatingButton from "@components/ui/Edit/FloatingButton/FloatingButton";
 import { useModalStackStore } from "@stores/modalStackStore";
+import { fetchWorkCheckSlug } from "@controllers/works/fetch";
+import { worksMutations } from "@controllers/works/mutation";
 
-const initalWork: Work = {
-  title: "",
-  category: "ANIMATE",
-  summary: "",
-  thumbnail: null,
-  mainMedia: null,
-  publishedAt: "",
-  productionType: "",
-  meta: [],
-  keyVisuals: [],
-  credits: [],
-};
-
-const AdminWorkPageClient = ({
-  workDetail,
-}: {
-  workDetail?: WorkDetailResponse;
-}) => {
+const AdminWorkPageClient = ({ slug }: { slug?: string }) => {
   const router = useRouter();
-  const [workId, setWorkId] = useState(workDetail?.id ?? null);
-  const [slug, setSlug] = useState(workDetail?.slug ?? "");
-  const [slugChecked, setSlugChecked] = useState<"OK" | "FAIL" | "NEED_CHECK">(
-    "NEED_CHECK",
-  );
-  const [work, setWork] = useState<Work>(workDetail?.data ?? initalWork);
-  const [isPublic, setIsPublic] = useState(workDetail?.isPublished ?? false);
+  const [mode, setMode] = useState<"VIEW" | "EDIT">("EDIT");
+  const [workId, setWorkId] = useState<string | null>(null);
 
-  const updateWork = (updater: (work: Work) => Work) => {
-    setWork((prev) => updater(prev));
+  const { data } = useAppQuery(worksQueriesClient.workDetail(slug!), {
+    enabled: !!slug,
+  });
+
+  const { mutateAsync: mutateCreateWork } = useAppMutation(
+    worksMutations.createWork(),
+    {
+      onSuccess: (data) => {
+        setWorkId(data.workId);
+        // queryClient.invalidateQueries({ queryKey: ["careers", "profileList"] })
+      },
+    },
+  );
+  const { mutateAsync: mutateUpdateWork } = useAppMutation(
+    worksMutations.updateWork(workId!),
+  );
+  const { mutateAsync: mutateDeleteWork } = useAppMutation(
+    worksMutations.deleteWork(workId!),
+  );
+
+  const form = useForm<WorkInput>({
+    mode: "onBlur",
+    resolver: zodResolver(workSchema),
+    defaultValues: initalWork,
+  });
+  const { setValue, watch, trigger, getValues, setError, clearErrors } = form;
+  const {
+    isPublished,
+    slug: nextSlug,
+    ...rest
+  } = useWatch({ control: form.control });
+  const work = rest as Work;
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!data) return;
+    setWorkId(data.id);
+    form.reset({
+      ...initalWork,
+      ...data.data,
+      productionDate: {
+        date: new Date(data.data.productionDate?.date ?? ""),
+        text: data.data.productionDate?.text ?? "",
+      },
+      slug: data.slug,
+      isPublished: data.isPublished,
+    });
+  }, [data, form]);
+
+  const { push } = useModalStackStore();
+
+  const validateAndPush = async (mode: "create" | "update") => {
+    const valid = await trigger();
+    if (!valid) return;
+
+    const formValues = getValues();
+    const {
+      isPublished: nextIsPublished,
+      slug: nextSlug,
+      ...rest
+    } = formValues;
+    const nextWork = rest as Work;
+
+    if (slug && nextSlug !== slug) {
+      try {
+        const result = await fetchWorkCheckSlug(nextSlug);
+
+        const isTaken = result.exists;
+        if (isTaken) {
+          setError("slug", {
+            type: "manual",
+            message: "This slug is already in use",
+          });
+          return;
+        }
+      } catch (error) {
+        if (error instanceof ApiError) {
+          setError("slug", {
+            type: "manual",
+            message: error.userMessage || "Request failed",
+          });
+        }
+        setError("slug", {
+          type: "manual",
+          message: "Unknown error",
+        });
+        return;
+      }
+    }
+
+    if (mode === "create") {
+      push("API", {
+        title: "Create New Work",
+        onFetch: async () =>
+          mutateCreateWork({
+            slug: nextSlug,
+            isPublished: nextIsPublished,
+            data: nextWork,
+          }),
+        onConfirm: () => {
+          router.replace(`/work/${nextSlug}`);
+        },
+        isRouteAfterConfirm: true,
+      });
+    } else {
+      if (!workId) return;
+
+      push("API", {
+        title: "Update Work",
+        onFetch: async () =>
+          mutateUpdateWork({
+            slug: nextSlug,
+            isPublished: nextIsPublished,
+            data: nextWork,
+          }),
+        onConfirm: () => {
+          router.replace(`/work/${nextSlug}`);
+        },
+        isRouteAfterConfirm: true,
+      });
+    }
   };
 
-  const togglePublic = () => setIsPublic((prev) => !prev);
-
-  const push = useModalStackStore((s) => s.push);
-
   const handleCreateWork = async () => {
-    push("API", {
-      title: "Create New Work",
-      onFetch: async () => fetchWorkCreate(slug, isPublic, work),
-      onSuccess: (data) => {
-        setWorkId(data.id);
-      },
-      onConfirm: () => {
-        router.replace(`/work/${slug}`);
-      },
-    });
+    await validateAndPush("create");
   };
 
   const handleUpdateWork = async () => {
-    if (!workId) return;
-    push("API", {
-      title: "Update Work",
-      onFetch: async () => fetchWorkUpdate(workId, slug, isPublic, work),
-      onConfirm: () => {
-        router.replace(`/work/${slug}`);
-      },
-    });
+    await validateAndPush("update");
   };
 
   const handleDeleteWork = async () => {
@@ -84,67 +167,63 @@ const AdminWorkPageClient = ({
       onConfirm: () => {
         push("API", {
           title: "Delete Work",
-          onFetch: async () => fetchWorkDelete(workId),
+          onFetch: async () => mutateDeleteWork(),
           onConfirm: () => {
             router.replace(`/work`);
           },
+          isRouteAfterConfirm: true,
         });
       },
     });
   };
 
   return (
-    <div className={`${WorkStyles.Container} page-wrapper layout-wrapper`}>
-      <WorkDetailInfo
-        slug={slug}
-        work={work}
-        isPublic={isPublic}
-        slugChecked={slugChecked}
-        setSlug={setSlug}
-        updateWork={updateWork}
-        togglePublic={togglePublic}
-        setSlugChecked={setSlugChecked}
-      />
-      <WorkDetailHeader work={work} editable updateWork={updateWork} />
-      <WorkDetailKeyVisuals work={work} editable updateWork={updateWork} />
-      <WorkDetailCredits work={work} editable updateWork={updateWork} />
-
-      <AdminButtons
-        adminButtons={
-          !workId
-            ? [
-                {
-                  role: "ADMIN",
-                  type: "ADD",
-                  click: {
-                    type: "FUNCTION",
-                    onClick: handleCreateWork,
-                  },
-                  text: "Create New Work",
-                },
-              ]
-            : [
-                {
-                  role: "ADMIN",
-                  type: "SAVE",
-                  click: {
-                    type: "FUNCTION",
-                    onClick: handleUpdateWork,
-                  },
-                  text: "Update Work",
-                },
-                {
-                  role: "ADMIN",
-                  type: "REMOVE",
-                  click: {
-                    type: "FUNCTION",
-                    onClick: handleDeleteWork,
-                  },
-                  text: "Delete Work",
-                },
-              ]
-        }
-      />
+    <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
+      <div className={Styles.HeaderContainer}>
+        <EditModeToggle mode={mode} setMode={setMode} />
+        <PrivateMark
+          isPrivate={!isPublished}
+          className={Styles.HeaderPrivateMark}
+        />
+      </div>
+      {mode === "VIEW" ? (
+        <>
+          <WorkHeader work={work} />
+          <WorkKeyVisuals keyVisuals={work.keyVisuals} />
+          <WorkCredits credits={work.credits} />
+        </>
+      ) : (
+        <>
+          <FormProvider {...form}>
+            <WorkEditInfo />
+            <WorkEditHeader />
+            <WorkEditKeyVisuals />
+            <WorkEditCredits />
+          </FormProvider>
+        </>
+      )}
+      <div className={Styles.FloatingButtonContainer}>
+        {workId ? (
+          <>
+            <FloatingButton
+              type="SAVE"
+              text="Update Work"
+              onClick={handleUpdateWork}
+            />
+            <FloatingButton
+              type="REMOVE"
+              text="Delete Work"
+              onClick={handleDeleteWork}
+            />
+          </>
+        ) : (
+          <FloatingButton
+            type="SAVE"
+            text="Create Work"
+            onClick={handleCreateWork}
+          />
+        )}
+      </div>
     </div>
   );
 };

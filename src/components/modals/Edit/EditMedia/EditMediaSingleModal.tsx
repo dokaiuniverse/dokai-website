@@ -13,12 +13,16 @@ const EditMediaSingleModal = ({
   initial,
   applyMedia,
   blockedTypes = [],
-  onClose,
+  isOpen,
+  closeModal,
+  requestCloseModal,
 }: {
   initial?: MediaSource | null;
-  applyMedia?: (media: MediaSource | null) => void;
+  applyMedia?: (media: MediaSource) => void;
   blockedTypes?: MediaType[];
-  onClose: () => void;
+  isOpen: boolean;
+  closeModal: () => void;
+  requestCloseModal: () => void;
 }) => {
   const [media, setMedia] = useState<MediaSource | null>(initial ?? null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -82,12 +86,12 @@ const EditMediaSingleModal = ({
 
   const handleCancel = () => {
     revokeBlobUrl();
-    onClose();
+    requestCloseModal();
   };
 
   const handleApply = async () => {
     if (!media) {
-      onClose();
+      requestCloseModal();
       return;
     }
 
@@ -98,14 +102,14 @@ const EditMediaSingleModal = ({
 
     applyMedia?.(nextMedia);
     revokeBlobUrl();
-    onClose();
+    requestCloseModal();
   };
 
   return (
     <ModalLayout
       title={initial ? "Edit Media" : "Add Media"}
-      isOpen={true}
-      onClose={onClose}
+      isOpen={isOpen}
+      onClose={closeModal}
       className={Styles.SingleContainer}
     >
       <div className={Styles.SingleContent}>

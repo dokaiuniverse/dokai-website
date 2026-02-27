@@ -1,4 +1,4 @@
-import EditSingleMedia from "@components/ui/Edit/EditSingleMedia/EditSingleMedia";
+import EditMediaSingle from "@components/ui/Edit/EditMediaSingle/EditMediaSingle";
 import * as Styles from "./style.css";
 import EditableText from "@components/ui/Edit/Editable/EditableText";
 import { useFormContext } from "react-hook-form";
@@ -61,7 +61,7 @@ const CareerEditProfile = () => {
   return (
     <section className={Styles.ProfileContainer}>
       <div className={Styles.EditProfileMediaContainer}>
-        <EditSingleMedia
+        <EditMediaSingle
           media={avatar}
           applyMedia={(media) => {
             setValue("avatar", media);

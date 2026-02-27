@@ -13,6 +13,7 @@ const EditMediaList = ({
   cardClassName,
   buttonClassName,
   blockedTypes,
+  priority,
 }: {
   medias?: MediaSource[];
   applyMedias?: (medias: MediaSource[]) => void;
@@ -21,6 +22,7 @@ const EditMediaList = ({
   cardClassName?: string;
   buttonClassName?: string;
   blockedTypes?: MediaType[];
+  priority?: boolean;
 }) => {
   const { push } = useModalStackStore();
 
@@ -40,20 +42,20 @@ const EditMediaList = ({
           key={index}
           media={media}
           className={`${Styles.Media} ${cardClassName}`}
+          priority={priority && index === 0}
         />
       ))}
-      {medias?.length ? (
+      {!!medias?.length && (
         <EditButton
           onClick={handleEditMedias}
           className={`${Styles.Button} ${buttonClassName}`}
         />
-      ) : (
-        <div className={`${Styles.Media} ${cardClassName}`}>
-          <button className={Styles.AddMedia} onClick={handleEditMedias}>
-            <PlusSVG className={Styles.AddMediaIcon} />
-          </button>
-        </div>
       )}
+      <div className={`${Styles.Media} ${cardClassName}`}>
+        <button className={Styles.AddMedia} onClick={handleEditMedias}>
+          <PlusSVG className={Styles.AddMediaIcon} />
+        </button>
+      </div>
     </div>
   );
 };

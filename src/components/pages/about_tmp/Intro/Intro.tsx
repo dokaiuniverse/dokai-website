@@ -1,10 +1,10 @@
 import * as Styles from "./style.css";
 
-type AboutPageIntroProps = {
+type AboutIntroProps = {
   text: string;
 };
 
-const AboutPageIntro = ({ text }: AboutPageIntroProps) => {
+const AboutIntro = ({ text }: AboutIntroProps) => {
   return (
     <div
       className={Styles.Container}
@@ -13,4 +13,4 @@ const AboutPageIntro = ({ text }: AboutPageIntroProps) => {
   );
 };
 
-export default AboutPageIntro;
+export default AboutIntro;

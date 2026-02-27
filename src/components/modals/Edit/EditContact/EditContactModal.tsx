@@ -123,12 +123,16 @@ export default function EditContactModal({
   initial,
   applyContact,
   deleteContact,
-  onClose,
+  isOpen,
+  closeModal,
+  requestCloseModal,
 }: {
   initial: ContactLink;
   applyContact: (contact: ContactLink) => void;
   deleteContact?: () => void;
-  onClose: () => void;
+  isOpen: boolean;
+  closeModal: () => void;
+  requestCloseModal: () => void;
 }) {
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
@@ -211,16 +215,16 @@ export default function EditContactModal({
     };
 
     applyContact(next);
-    onClose();
+    requestCloseModal();
   });
 
-  const handleCancel = () => onClose();
+  const handleCancel = () => requestCloseModal();
 
   const handleDelete = () => {
     if (deleteContact) {
       deleteContact();
     }
-    onClose();
+    requestCloseModal();
   };
 
   const isDeletable = !!deleteContact;
@@ -228,8 +232,8 @@ export default function EditContactModal({
   return (
     <ModalLayout
       title="Contact"
-      isOpen={true}
-      onClose={onClose}
+      isOpen={isOpen}
+      onClose={closeModal}
       className={Styles.Container}
       maxWidth="20rem"
     >

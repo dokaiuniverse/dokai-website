@@ -1,7 +1,7 @@
 "use client";
 
 import { getRandomLightColor } from "@utils/Color";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import * as Styles from "./style.css";
 import { createPortal } from "react-dom";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
@@ -31,15 +31,11 @@ const TRANSITION_DURATION = 250;
 
 type Props = {
   handleCloseAll: () => void;
-  state?: "open" | "closing";
-  onAfterClose?: () => void;
+  isOpen: boolean;
+  closeModal: () => void;
 };
 
-const DrawerMenu = ({
-  handleCloseAll,
-  state = "open",
-  onAfterClose,
-}: Props) => {
+const DrawerMenu = ({ handleCloseAll, isOpen, closeModal }: Props) => {
   const { data: sessionStatus } = useAppQuery(
     authQueriesClient.sessionStatus(),
   );
@@ -47,7 +43,7 @@ const DrawerMenu = ({
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [count, setCount] = useState(0);
-  useLockBodyScroll(true);
+  // useLockBodyScroll(true);
 
   const { push } = useModalStackStore();
 
@@ -63,24 +59,24 @@ const DrawerMenu = ({
     setCount((prev) => prev + 1);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     overlayRef.current?.style.setProperty("--drawer-bg", getRandomLightColor());
   }, []);
 
   useEffect(() => {
-    if (state === "open") {
+    if (isOpen) {
       setTimeout(() => {
         requestAnimationFrame(() => {
           requestAnimationFrame(() => setIsVisible(true));
         });
       }, 0);
-    } else if (state === "closing") {
+    } else {
       setIsVisible(false);
       setTimeout(() => {
-        onAfterClose?.();
+        closeModal();
       }, TRANSITION_DURATION);
     }
-  }, [state]);
+  }, [isOpen]);
 
   return createPortal(
     <div

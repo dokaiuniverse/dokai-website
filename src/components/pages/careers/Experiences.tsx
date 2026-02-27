@@ -5,11 +5,7 @@ const CareerExperiences = ({ experiences }: { experiences: string[] }) => {
 
   return (
     <div className={Styles.ExperienceContainer}>
-      <p className={Styles.ExperienceTitle}>
-        Experience <br />
-        Credentials <br />
-        Profile
-      </p>
+      <p className={Styles.ExperienceTitle}>Credentials</p>
       <div className={Styles.ExperienceContent}>
         {experiences.map((experience, idx) => (
           <p key={`EXPERIENCE_${idx}`} className={Styles.ExperienceItem}>

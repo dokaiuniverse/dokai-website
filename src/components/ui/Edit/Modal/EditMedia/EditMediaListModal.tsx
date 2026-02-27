@@ -40,16 +40,12 @@ const EditMediaListModal = ({
     const prev = ownedBlobUrlsRef.current.get(id);
     if (prev) URL.revokeObjectURL(prev);
     ownedBlobUrlsRef.current.set(id, url);
-    console.log("register", id, url, "keys:", [
-      ...ownedBlobUrlsRef.current.keys(),
-    ]);
   };
 
   const revokeBlobUrl = (id: number) => {
     const prev = ownedBlobUrlsRef.current.get(id);
     if (prev) URL.revokeObjectURL(prev);
     ownedBlobUrlsRef.current.delete(id);
-    console.log("revoke", id, "keys:", [...ownedBlobUrlsRef.current.keys()]);
   };
 
   const revokeAllBlobUrls = () => {

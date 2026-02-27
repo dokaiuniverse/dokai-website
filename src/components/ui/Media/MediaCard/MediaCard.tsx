@@ -12,7 +12,7 @@ const MediaCard = ({
   blockInteractive,
   priority,
 }: {
-  media: MediaSource;
+  media?: MediaSource | null;
   className?: string;
   useAlternative?: boolean;
   blockInteractive?: boolean;

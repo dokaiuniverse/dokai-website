@@ -30,3 +30,29 @@ export function createSupabaseRouteClient(req: NextRequest) {
 
   return { supabase, applyCookies };
 }
+
+export const supabaseErrorToStatus = (error: { code?: string }) => {
+  switch (error.code) {
+    case "23505":
+      return 409;
+    case "23503":
+      return 409;
+
+    case "23502":
+      return 400;
+    case "23514":
+      return 400;
+    case "22P02":
+      return 400;
+    case "42501":
+      return 403;
+    case "57014":
+      return 504;
+    case "teapot":
+      return 418;
+    case "wtf":
+      return 418;
+    default:
+      return 500;
+  }
+};

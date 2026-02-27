@@ -7,7 +7,6 @@ import EmailSVG from "@assets/social/Email.svg";
 import URLSVG from "@assets/icons/url.svg";
 import z from "zod";
 import { ProfileDetail } from "@domain/careers";
-import { id } from "zod/locales";
 
 export type ContactType =
   | "Instagram"
@@ -45,22 +44,13 @@ export const profileSchema = z.object({
     .array(profileContactSchema)
     .min(1, "At least one contact is required")
     .default([]),
-  projects: z
-    .array(
-      z.object({
-        id: z.string(),
-        title: z.string(),
-        thumbnail: z.unknown().nullable(),
-      }),
-    )
-    .default([]),
   experiences: z.array(z.string().min(1)).default([]),
 });
 
 export type ProfileFormInput = z.input<typeof profileSchema>; // ✅ year: unknown
 type FormOutput = z.output<typeof profileSchema>; // ✅ year: number
 
-export const initalProfile: ProfileDetail = {
+export const initalProfile: ProfileFormInput = {
   email: "",
   name: "",
   role: "",
@@ -68,5 +58,5 @@ export const initalProfile: ProfileDetail = {
   contacts: [],
   avatar: null,
   experiences: [],
-  projects: [],
+  isPublished: false,
 };

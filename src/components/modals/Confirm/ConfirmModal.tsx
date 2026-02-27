@@ -9,30 +9,32 @@ type Props = {
   title: string;
   content: string;
   onConfirm?: () => void | Promise<void>;
-  onClose: () => void;
+  isOpen: boolean;
+  closeModal: () => void;
+  requestCloseModal: () => void;
 };
 
 export default function ConfirmModal({
   title = "확인",
   content,
   onConfirm,
-  onClose,
+  isOpen,
+  closeModal,
+  requestCloseModal,
 }: Props) {
-  const [isOpen, setIsOpen] = useState(true);
-
   const handleConfirm = async () => {
     await onConfirm?.();
-    setIsOpen(false);
+    requestCloseModal();
   };
 
   const handleCancel = () => {
-    setIsOpen(false);
+    requestCloseModal();
   };
 
   return (
     <ModalLayout
       title={title}
-      onClose={onClose}
+      onClose={closeModal}
       isOpen={isOpen}
       className={Styles.Container}
       maxWidth="24rem"

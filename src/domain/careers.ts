@@ -31,16 +31,22 @@ export type Profile = {
 };
 
 export type Project = {
-  id: string;
   title: string;
   thumbnail: MediaSource | null;
   contents: ProjectContent[];
   medias: MediaSource[];
 };
 
+export type Careers = {
+  profiles: Profile[];
+  projects: Project[];
+};
+
 export type ProfileListItem = Pick<
   Profile,
   "email" | "avatar" | "name" | "role"
 >;
-export type ProjectCard = Pick<Project, "id" | "title" | "thumbnail">;
-export type ProfileDetail = Profile & { projects: ProjectCard[] };
+export type ProjectListItem = Pick<Project, "title" | "thumbnail"> & {
+  id: string;
+};
+export type ProfileDetail = Profile & { projects: ProjectListItem[] };

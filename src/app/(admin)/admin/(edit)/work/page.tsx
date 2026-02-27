@@ -1,24 +1,26 @@
-import { fetchWorkDetail } from "@controllers/work/fetch";
 import AdminWorkPageClient from "./page-client";
-import { cookies } from "next/headers";
+import { getQueryClient } from "@lib/react-query/getQueryClient";
+import { prefetchAppQuery } from "@controllers/common";
+import { worksQueriesServer } from "@controllers/works/query.server";
+import { worksQueryKeys } from "@controllers/works/keys";
+import { notFound } from "next/navigation";
 
 const AdminWorkPage = async ({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) => {
-  const { slug } = await searchParams;
+  const rawSlug = (await searchParams).slug;
+  const slug = rawSlug ? decodeURIComponent(rawSlug as string) : undefined;
 
-  const cookieStore = await cookies(); // ✅ 여기
-  const cookie = cookieStore
-    .getAll()
-    .map(({ name, value }) => `${name}=${value}`)
-    .join("; ");
-  const workDetail = slug
-    ? await fetchWorkDetail(slug as string, { cookie })
-    : undefined;
+  const qc = getQueryClient();
+  if (slug) {
+    await prefetchAppQuery(qc, worksQueriesServer.workDetail(slug));
+    const exist = await qc.getQueryData(worksQueryKeys.workDetail(slug));
+    if (!exist) notFound();
+  }
 
-  return <AdminWorkPageClient workDetail={workDetail} />;
+  return <AdminWorkPageClient slug={slug} />;
 };
 
 export default AdminWorkPage;

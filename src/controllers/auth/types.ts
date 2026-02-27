@@ -1,5 +1,7 @@
+import { Role } from "@lib/auth/types";
+
 export type SessionStatus = {
   loggedIn: boolean;
   email: string | null;
-  role: "admin" | "staff" | null;
+  role: Role | null;
 };

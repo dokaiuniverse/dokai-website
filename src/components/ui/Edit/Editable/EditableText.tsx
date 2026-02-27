@@ -23,7 +23,6 @@ function isBr(n: ChildNode) {
 function trimOuterBlankLines(root: HTMLElement) {
   while (root.firstChild) {
     const n = root.firstChild;
-    console.log(n);
     if (isBlankTextNode(n) || isBr(n)) {
       root.removeChild(n);
       continue;

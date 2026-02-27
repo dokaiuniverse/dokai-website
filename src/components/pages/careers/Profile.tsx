@@ -2,23 +2,23 @@ import MediaCard from "@components/ui/Media/MediaCard/MediaCard";
 
 import Link from "next/link";
 import * as Styles from "./style.css";
-import { ProfileDetail } from "@domain/careers";
+import { Profile } from "@domain/careers";
 import ContactIcon from "./ContactIcon";
 
-const CareerProfile = ({ profileDetail }: { profileDetail: ProfileDetail }) => {
+const CareerProfile = ({ profile }: { profile: Profile }) => {
   return (
     <div className={Styles.ProfileContainer}>
       <MediaCard
-        media={profileDetail.avatar!}
+        media={profile.avatar!}
         className={Styles.ProfileMedia}
         priority
       />
       <div
-        dangerouslySetInnerHTML={{ __html: profileDetail.bio }}
+        dangerouslySetInnerHTML={{ __html: profile.bio }}
         className={Styles.ProfileBio}
       />
       <div className={Styles.ProfileContactContainer}>
-        {profileDetail.contacts.map((contact) => (
+        {profile.contacts.map((contact) => (
           <div
             key={`CONTACT_${contact.name}`}
             className={Styles.ProfileContactItem}

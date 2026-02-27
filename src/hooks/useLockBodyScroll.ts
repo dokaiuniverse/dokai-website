@@ -5,10 +5,10 @@ const useLockBodyScroll = (locked: boolean) => {
 
   useEffect(() => {
     if (locked || !hasOpened) return;
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    // window.scrollTo({
+    //   top: 0,
+    //   behavior: "smooth",
+    // });
   }, [locked, hasOpened]);
 
   useEffect(() => {

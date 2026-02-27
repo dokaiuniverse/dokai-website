@@ -11,8 +11,6 @@ const LoginPageClient = () => {
     authQueriesClient.sessionStatus(),
   );
 
-  console.log(sessionStatus);
-
   return (
     <main className={Styles.Layout}>
       <div className={Styles.Container}>

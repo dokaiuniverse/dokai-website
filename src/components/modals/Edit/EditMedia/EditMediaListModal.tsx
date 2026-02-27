@@ -14,12 +14,16 @@ const EditMediaListModal = ({
   initial,
   applyMedias,
   blockedTypes = [],
-  onClose,
+  isOpen,
+  closeModal,
+  requestCloseModal,
 }: {
   initial?: MediaSource[];
   applyMedias?: (medias: MediaSource[]) => void;
   blockedTypes?: MediaType[];
-  onClose: () => void;
+  isOpen: boolean;
+  closeModal: () => void;
+  requestCloseModal: () => void;
 }) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [medias, setMedias] = useState<{ id: number; media: MediaSource }[]>(
@@ -146,12 +150,12 @@ const EditMediaListModal = ({
   const handleCommit = () => {
     applyMedias?.(medias.map((item) => item.media));
     revokeAllBlobUrls();
-    onClose();
+    requestCloseModal();
   };
 
   const handleCancel = () => {
     revokeAllBlobUrls();
-    onClose();
+    requestCloseModal();
   };
 
   const handleApply = async () => {
@@ -165,8 +169,8 @@ const EditMediaListModal = ({
   return (
     <ModalLayout
       title={initial ? "Edit Medias" : "Add Medias"}
-      isOpen={true}
-      onClose={onClose}
+      isOpen={isOpen}
+      onClose={closeModal}
       className={Styles.ListContainer}
       maxWidth="48rem"
     >

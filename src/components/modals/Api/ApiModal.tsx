@@ -11,37 +11,40 @@ import useMount from "@hooks/useMount";
 
 type Props = {
   title: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onFetch: () => void | Promise<any>;
+  onFetch: () => void | Promise<unknown>;
   loadingText?: string;
   doneText?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSuccess?: (data: any) => void | Promise<void>;
+  onSuccess?: (data: unknown) => void | Promise<void>;
   onConfirm?: () => void | Promise<void>;
-  onClose: () => void;
+  isRouteAfterConfirm?: boolean;
+  isOpen: boolean;
+  closeModal: () => void;
+  requestCloseModal: () => void;
 };
 
-export default function ConfirmModal({
+const ApiModal = ({
   title = "확인",
   onFetch,
   loadingText,
   doneText,
   onSuccess,
   onConfirm,
-  onClose,
-}: Props) {
+  isRouteAfterConfirm,
+  isOpen,
+  closeModal,
+  requestCloseModal,
+}: Props) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const mounted = useMount();
 
   const handleConfirm = async () => {
     await onConfirm?.();
-    setIsOpen(false);
+    if (!isRouteAfterConfirm) requestCloseModal();
   };
 
   const handleCancel = () => {
-    setIsOpen(false);
+    requestCloseModal();
   };
 
   useEffect(() => {
@@ -62,7 +65,7 @@ export default function ConfirmModal({
   return (
     <ModalLayout
       title={title}
-      onClose={onClose}
+      onClose={closeModal}
       isOpen={isOpen}
       className={Styles.Container}
       maxWidth="24rem"
@@ -91,4 +94,6 @@ export default function ConfirmModal({
       </div>
     </ModalLayout>
   );
-}
+};
+
+export default ApiModal;

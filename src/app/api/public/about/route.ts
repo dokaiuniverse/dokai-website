@@ -34,7 +34,6 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // RLS 상 published=false면 data가 null일 수 있음(혹은 row 자체가 조회 안됨)
   if (!data || !data.is_published) {
     return applyCookies(
       NextResponse.json({ message: "Not Found" }, { status: 404 }),

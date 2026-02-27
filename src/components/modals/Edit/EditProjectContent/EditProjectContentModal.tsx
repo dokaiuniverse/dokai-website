@@ -149,12 +149,16 @@ function ListEditor() {
 
 const EditProjectContentModal = ({
   initial,
-  onClose,
   applyContent,
+  isOpen,
+  closeModal,
+  requestCloseModal,
 }: {
   initial?: ProjectContent;
-  onClose: () => void;
   applyContent?: (content: ProjectContent) => void;
+  isOpen: boolean;
+  closeModal: () => void;
+  requestCloseModal: () => void;
 }) => {
   const defaultValues = useMemo(() => toDefaults(initial), [initial]);
 
@@ -171,7 +175,11 @@ const EditProjectContentModal = ({
 
   const activeType = useWatch({ control: form.control, name: "activeType" });
 
-  const handleSubmit = form.handleSubmit((v) => {
+  const handleCancel = () => {
+    requestCloseModal();
+  };
+
+  const handleApply = form.handleSubmit((v) => {
     const name = v.name.trim();
 
     if (v.activeType === "TEXT") {
@@ -185,14 +193,14 @@ const EditProjectContentModal = ({
       applyContent?.({ type: "LIST", name, value: cleaned } as ProjectContent);
     }
 
-    onClose();
+    requestCloseModal();
   });
 
   return (
     <ModalLayout
       title={initial ? "Edit Content" : "Add Content"}
-      isOpen={true}
-      onClose={onClose}
+      isOpen={isOpen}
+      onClose={closeModal}
       className={Styles.Container}
       maxWidth="24rem"
     >
@@ -240,14 +248,14 @@ const EditProjectContentModal = ({
         <div className={Styles.ButtonContainer}>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleCancel}
             className={Styles.CancelButton}
           >
             Cancel
           </button>
           <button
             type="button"
-            onClick={handleSubmit}
+            onClick={handleApply}
             className={Styles.ApplyButton}
           >
             Apply

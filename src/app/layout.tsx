@@ -55,8 +55,10 @@ export default function RootLayout({
           color="#ed8435"
         />
         <Providers>
-          <ModalStackRoot />
-          <Suspense>{children}</Suspense>
+          <Suspense fallback={null}>
+            <ModalStackRoot />
+            {children}
+          </Suspense>
         </Providers>
       </body>
     </html>

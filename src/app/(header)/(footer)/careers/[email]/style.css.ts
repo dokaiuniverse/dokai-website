@@ -2,10 +2,6 @@ import { media } from "@styles/theme.css";
 import { style } from "@vanilla-extract/css";
 
 export const Container = style({
-  minHeight: "100dvh",
-});
-
-export const Content = style({
   position: "relative",
   display: "grid",
   gridTemplateColumns: "repeat(8, 1fr)",
@@ -22,4 +18,14 @@ export const Content = style({
 
 export const HeaderPrivateMark = style({
   right: "2rem !important",
+});
+
+export const FloatingButtonContainer = style({
+  position: "fixed",
+  bottom: "2rem",
+  right: "2rem",
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+  color: "black",
 });

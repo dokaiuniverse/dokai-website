@@ -14,7 +14,7 @@ export type WorkMetaField = {
   values: string[];
 };
 
-export type Credit = {
+export type WorkCredit = {
   team: string;
   members: {
     role: string;
@@ -22,17 +22,23 @@ export type Credit = {
   }[];
 };
 
+export type WorkProductionDate = {
+  date: Date;
+  text: string;
+};
+
 export type Work = {
   title: string;
   thumbnail: MediaSource | null;
-  summary: string;
   category: WorkCategory;
-  publishedAt: string;
+  summary: string;
+  productionDate: WorkProductionDate;
   productionType: string;
   meta: WorkMetaField[];
+  isShortForm: boolean;
   mainMedia: MediaSource | null;
   keyVisuals: MediaSource[];
-  credits: Credit[];
+  credits: WorkCredit[];
 };
 
 export type WorkCard = {

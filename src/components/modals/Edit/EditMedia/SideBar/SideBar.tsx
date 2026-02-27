@@ -15,7 +15,6 @@ const SideBar = ({
   selectedIndex: number | null;
   setSelectedIndex: (index: number | null) => void;
 }) => {
-  console.log(medias);
   return (
     <div className={Styles.Scroll}>
       {medias.map((media, i) => (

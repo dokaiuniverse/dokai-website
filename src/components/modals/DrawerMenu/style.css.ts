@@ -13,6 +13,8 @@ export const Overlay = recipe({
     justifyContent: "center",
     zIndex: 101,
     transition: `background ${TransitionDurationVar} ease-in-out, backdrop-filter ${TransitionDurationVar} ease-in-out`,
+    willChange: "transform, opacity",
+    contain: "layout paint style",
   },
   variants: {
     isVisible: {
@@ -43,6 +45,8 @@ export const Layout = recipe({
     overflow: "hidden",
     height: "100%",
     justifyContent: "space-between",
+    willChange: "transform, opacity",
+    contain: "layout paint style",
   },
   variants: {
     isVisible: {

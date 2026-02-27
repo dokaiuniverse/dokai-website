@@ -5,13 +5,15 @@ export const Button = style({
   borderRadius: "0.5rem",
   background: "white",
   opacity: "0.5",
-  transition: "opacity 0.2s ease-in-out",
+  transition: "opacity 0.2s ease-in-out, outline-color 0.2s ease-in-out",
   border: "1px solid #999",
+  outline: `1px solid transparent`,
   backdropFilter: "blur(1rem)",
 
   selectors: {
     "&:hover": {
       opacity: "1",
+      outlineColor: "#999",
     },
   },
 });

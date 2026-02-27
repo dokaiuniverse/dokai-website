@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseRouteClient } from "@lib/supabase/route";
-import { tryGetRole } from "@lib/auth/tryGetRole";
+import { Role } from "@lib/auth/types";
 
 /**
  * @openapi
@@ -33,26 +33,29 @@ export async function GET(req: NextRequest) {
   const { supabase, applyCookies } = createSupabaseRouteClient(req);
 
   const { data, error } = await supabase.auth.getUser();
-  if (error) {
-    return applyCookies(
-      NextResponse.json({ message: error.message }, { status: 500 }),
-    );
+  const user = data.user;
+
+  if (error || !user) {
+    return NextResponse.json({ loggedIn: false, email: null, role: null });
   }
 
-  const email = data.user?.email ?? null;
-  if (!email) {
-    return applyCookies(
-      NextResponse.json({ loggedIn: false, email: null, role: null }),
-    );
-  }
+  const userEmail = user.email?.toLowerCase() ?? null;
 
-  const role = await tryGetRole(req);
+  // RLS가 본인 row만 보여줌
+  const { data: roleRow } = await supabase
+    .from("allowed_users")
+    .select("role, email")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const role = (roleRow?.role as Role) ?? null;
+  const email = roleRow?.email ?? userEmail ?? null;
 
   return applyCookies(
     NextResponse.json({
-      loggedIn: true,
       email,
-      role: role ?? null,
+      role,
+      loggedIn: true,
     }),
   );
 }

@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getOptionalRole } from "@lib/auth/optionalRole";
-import { createSupabaseAdminClient } from "@lib/supabase/admin";
+import { createSupabaseRouteClient } from "@lib/supabase/route";
 
 /**
  * @openapi
@@ -39,19 +38,12 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> },
 ) {
-  const {
-    isPrivileged,
-    supabase: routeSupabase,
-    applyCookies,
-  } = await getOptionalRole(req);
-
-  const supabase = isPrivileged ? createSupabaseAdminClient() : routeSupabase;
-
-  const slug = (await params).slug;
+  const { supabase, applyCookies } = createSupabaseRouteClient(req);
+  const slug = decodeURIComponent((await params).slug);
 
   const { data, error } = await supabase
     .from("works")
-    .select("id, slug, data, is_published, fixed_at, published_at, updated_at")
+    .select("id, slug, data, is_published, fixed_at, updated_at")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -61,7 +53,7 @@ export async function GET(
     );
   }
 
-  if (!data || (!isPrivileged && !data.is_published)) {
+  if (!data) {
     return applyCookies(
       NextResponse.json({ message: "Not Found" }, { status: 404 }),
     );
@@ -72,10 +64,7 @@ export async function GET(
       id: data.id,
       slug: data.slug,
       isPublished: data.is_published,
-      data: {
-        ...data.data,
-        fixedAt: data.fixed_at ? new Date(data.fixed_at).toISOString() : null,
-      },
+      data: data.data,
       updatedAt: data.updated_at,
     }),
   );

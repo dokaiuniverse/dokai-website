@@ -17,6 +17,6 @@ export const Input = style({
   padding: "0.25rem 0.5rem",
   lineHeight: "1.33",
   fontWeight: "400",
-  borderRadius: "0.5rem",
+  borderRadius: "0.25rem",
   border: "1px solid #999",
 });

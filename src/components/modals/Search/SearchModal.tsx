@@ -4,24 +4,18 @@ import SearchResult from "./Result";
 import SearchHeader from "./Header";
 import SearchInput from "./Input";
 import { createPortal } from "react-dom";
-import useLockBodyScroll from "@hooks/useLockBodyScroll";
 
 const TRANSITION_DURATION = 250;
 
 type Props = {
   handleCloseAll: () => void;
-  state?: "open" | "closing";
-  onAfterClose?: () => void;
+  isOpen: boolean;
+  closeModal: () => void;
 };
 
-const SearchModal = ({
-  handleCloseAll,
-  state = "open",
-  onAfterClose,
-}: Props) => {
+const SearchModal = ({ handleCloseAll, isOpen, closeModal }: Props) => {
   const [isVisible, setIsVisible] = useState(false);
   const [queries, setQueries] = useState<string[]>([]);
-  useLockBodyScroll(true);
 
   const handleAddQuery = (value: string) => {
     if (!value) return false;
@@ -36,20 +30,20 @@ const SearchModal = ({
   };
 
   useEffect(() => {
-    if (state === "open") {
+    if (isOpen) {
       setTimeout(() => {
         requestAnimationFrame(() => {
           requestAnimationFrame(() => setIsVisible(true));
         });
       }, 0);
-    } else if (state === "closing") {
+    } else {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsVisible(false);
       setTimeout(() => {
-        onAfterClose?.();
+        closeModal();
       }, TRANSITION_DURATION);
     }
-  }, [state]);
+  }, [isOpen]);
 
   return createPortal(
     <div

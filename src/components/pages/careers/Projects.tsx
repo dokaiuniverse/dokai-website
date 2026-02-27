@@ -1,6 +1,5 @@
 "use client";
 
-import { ProjectCard } from "@domain/careers";
 import * as Styles from "./style.css";
 import MediaHoverOverlay from "@components/ui/Media/HoverOverlay/HoverOverlay";
 import Link from "next/link";
@@ -12,20 +11,21 @@ import { useSearchParams } from "next/navigation";
 import { useModalStackStore } from "@stores/modalStackStore";
 import { useEffect } from "react";
 import { useSessionOwner } from "@controllers/auth/session";
+import { ProjectListItem } from "@domain/careers";
 
 const CareerProjects = ({
   projects,
   email,
   isReadOnly,
 }: {
-  projects: ProjectCard[];
+  projects: ProjectListItem[];
   email: string;
   isReadOnly?: boolean;
 }) => {
   const qc = useQueryClient();
   const isOwner = useSessionOwner(email);
 
-  const handleClickProject = async (project: ProjectCard) => {
+  const handleClickProject = async (project: ProjectListItem) => {
     void qc.prefetchQuery({
       queryKey: ["project", project.id],
       queryFn: () => fetchProjectDetail(project.id),

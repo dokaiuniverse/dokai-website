@@ -125,7 +125,7 @@ const HyperlinkModal = ({
       step: "loading",
     }));
 
-    fetch(`/api/public/og?url=${encodeURIComponent(trimmedUrl)}`)
+    fetch(`/api/public/common/og?url=${encodeURIComponent(trimmedUrl)}`)
       .then(async (r) => {
         if (!r.ok) throw new Error("OpenGraph fetch failed");
         await new Promise((resolve) => setTimeout(resolve, 1000));

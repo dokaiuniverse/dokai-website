@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { ReactNode, useEffect, useMemo, useRef } from "react";
+import { ReactNode, useMemo, useRef } from "react";
 
 type Props = {
   href: string;
@@ -20,21 +20,11 @@ const CloseLink = ({ href, children, handleClose, className }: Props) => {
     return sp ? `${pathname}?${sp}` : pathname;
   }, [pathname, sp]);
 
-  const pendingCloseRef = useRef(false);
-
-  useEffect(() => {
-    if (!pendingCloseRef.current) return;
-    pendingCloseRef.current = false;
-    handleClose();
-  }, [pathname, sp]);
-
   const onClickLink = () => {
     if (href === currentUrl) {
       handleClose();
       return;
     }
-
-    pendingCloseRef.current = true;
   };
 
   return (

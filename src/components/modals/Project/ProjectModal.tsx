@@ -2,7 +2,6 @@ import { useSearchParams } from "next/navigation";
 import * as Styles from "./style.css";
 import { useRouter } from "nextjs-toploader/app";
 import { useEffect, useMemo, useState } from "react";
-import useLockBodyScroll from "@hooks/useLockBodyScroll";
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import CrossSVG from "@assets/icons/cross.svg";
 import { Project, ProjectContent } from "@domain/careers";
@@ -16,17 +15,11 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MediaSource } from "@domain/media";
 import { useModalStackStore } from "@stores/modalStackStore";
-import {
-  fetchProjectCreate,
-  fetchProjectDelete,
-  fetchProjectUpdate,
-} from "@controllers/careers/fetch";
-import { useProjectDetailQuery } from "@controllers/careers/query";
 import EditButton from "@components/ui/Edit/EditButton/EditButton";
 import TitleInput from "@components/ui/Edit/TitleInput/TitleInput";
 import ErrorText from "@components/ui/Edit/ErrorText/ErrorText";
 import EditMediaList from "@components/ui/Edit/EditMediaList/EditMediaList";
-import EditSingleMedia from "@components/ui/Edit/EditSingleMedia/EditSingleMedia";
+import EditMediaSingle from "@components/ui/Edit/EditMediaSingle/EditMediaSingle";
 import EditPublished from "@components/ui/Edit/EditPublished/EditPublished";
 import FloatingButton from "@components/ui/Edit/FloatingButton/FloatingButton";
 import PrivateMark from "@components/ui/PrivateMark/PrivateMark";
@@ -36,6 +29,10 @@ import ErrorComponent from "@components/ui/Status/Error";
 import LoadingComponent from "@components/ui/Status/Loading";
 import AddButton from "@components/ui/Edit/AddButton/AddButton";
 import { useSessionOwner } from "@controllers/auth/session";
+import { useAppMutation, useAppQuery } from "@controllers/common";
+import { careersQueriesClient } from "@controllers/careers/query.client";
+import { careersMutations } from "@controllers/careers/mutation";
+import { encodeEmailParam } from "@utils/Email";
 
 const TRANSITION_DURATION = 200;
 
@@ -81,11 +78,13 @@ export type ProjectFormInput = z.input<typeof schema>;
 
 type Props = {
   ownerEmail: string;
-  onClose: () => void;
+
+  isOpen: boolean;
+  closeModal: () => void;
+  requestCloseModal: () => void;
 };
 
 const initialProject: Project & { isPublished: boolean } = {
-  id: "",
   title: "",
   thumbnail: null,
   contents: [],
@@ -138,10 +137,10 @@ const ProjectModalEdit = () => {
     <div className={Styles.Container}>
       <div className={Styles.ThumbnailEditContainer}>
         <ErrorText message={errors.thumbnail?.message} />
-        <EditSingleMedia
+        <EditMediaSingle
           media={thumbnail}
           onClick={() => clearErrors("thumbnail")}
-          className={Styles.MediaContainer}
+          className={Styles.Media}
           applyMedia={(media) => {
             setValue("thumbnail", media);
           }}
@@ -202,7 +201,7 @@ const ProjectModalEdit = () => {
   );
 };
 
-const ProjectModal = ({ ownerEmail, onClose }: Props) => {
+const ProjectModal = ({ ownerEmail, isOpen, closeModal }: Props) => {
   const isOwner = useSessionOwner(ownerEmail);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -215,115 +214,140 @@ const ProjectModal = ({ ownerEmail, onClose }: Props) => {
   const [projectId, setProjectId] = useState<string | null>(
     rawId === "new" ? null : rawId!,
   );
+  const { mutateAsync: mutateCreateProject } = useAppMutation(
+    careersMutations.createProject(),
+    {
+      onSuccess: (data) => {
+        setProjectId(data.projectId);
+      },
+    },
+  );
+  const { mutateAsync: mutateUpdateProject } = useAppMutation(
+    careersMutations.updateProject(projectId!),
+  );
+  const { mutateAsync: mutateDeleteProject } = useAppMutation(
+    careersMutations.deleteProject(projectId!),
+  );
+
   const { push } = useModalStackStore();
-  useLockBodyScroll(true);
+  // useLockBodyScroll(true);
 
   const {
     data: fetchedProject,
     isLoading,
     isError,
-  } = useProjectDetailQuery(projectId);
+  } = useAppQuery(careersQueriesClient.projectDetail(projectId!), {
+    enabled: projectId != null,
+  });
 
   const form = useForm<ProjectFormInput>({
     mode: "onBlur",
     resolver: zodResolver(schema),
     defaultValues: initialProject,
   });
+  const { getValues, trigger, watch, reset } = form;
 
-  const isPublished = form.watch("isPublished");
+  const isPublished = watch("isPublished");
   const formValues = useWatch({ control: form.control });
 
   const projectForView = useMemo(() => formValues as Project, [formValues]);
 
   const isEditableProject = !isLoading && !isError && isOwner;
 
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => setIsVisible(true));
+        });
+      }, 0);
+    } else {
+      setIsVisible(false);
+      setTimeout(() => {
+        closeModal();
+      }, TRANSITION_DURATION);
+    }
+  }, [isOpen]);
+
   const handleClose = () => {
-    setIsVisible(false);
-    setTimeout(() => {
-      onClose();
-      router.back();
-    }, TRANSITION_DURATION);
+    router.back();
   };
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => setIsVisible(true)),
-      );
-    }, 0);
-    return () => clearTimeout(t);
-  }, []);
-
-  useEffect(() => {
     if (fetchedProject) {
-      form.reset({
+      reset({
         isPublished: !!fetchedProject?.isPublished,
         ...fetchedProject?.data,
       });
     }
   }, [fetchedProject]);
 
-  const handleSave = async () => {
-    const isValid = await form.trigger();
-    if (!isValid) return;
-    if (projectId) {
-      push("API", {
-        title: "Update Project",
-        onFetch: () => {
-          const { isPublished, ...rest } = schema.parse(formValues);
+  const validateAndPush = async (mode: "create" | "update") => {
+    const valid = await trigger();
+    if (!valid) return;
 
-          return fetchProjectUpdate({
-            id: projectId,
-            isPublished,
-            data: rest as Omit<Project, "id">,
-          });
-        },
-        doneText: "Update Project Success",
-        loadingText: "Updating Project...",
+    const formValues = getValues();
+    const { isPublished: nextIsPublished, ...rest } = formValues;
+    const nextProject = rest as Project;
+
+    if (mode === "create") {
+      push("API", {
+        title: "Create New Work",
+        onFetch: async () =>
+          mutateCreateProject({
+            ownerEmail,
+            isPublished: nextIsPublished,
+            data: nextProject,
+          }),
         onConfirm: () => {
-          router.replace(`?project=${projectId}`);
-          handleClose();
+          router.replace(
+            `/careers/${encodeEmailParam(ownerEmail)}?project=${projectId}`,
+          );
         },
       });
     } else {
-      push("API", {
-        title: "Create Project",
-        onFetch: () => {
-          const { isPublished, ...rest } = schema.parse(formValues);
+      if (!projectId) return;
 
-          return fetchProjectCreate({
+      push("API", {
+        title: "Update Work",
+        onFetch: async () =>
+          mutateUpdateProject({
             ownerEmail,
-            isPublished,
-            data: rest as Omit<Project, "id">,
-          });
-        },
-        doneText: "Create Project Success",
-        loadingText: "Creating Project...",
-        onSuccess: (data) => {
-          console.log(1, data);
-          setProjectId(data.id);
-        },
+            isPublished: nextIsPublished,
+            data: nextProject,
+          }),
         onConfirm: () => {
-          router.replace(`?project=${projectId}`);
-          handleClose();
+          router.replace(
+            `/careers/${encodeEmailParam(ownerEmail)}?project=${projectId}`,
+          );
         },
       });
     }
   };
 
-  const handleRemove = () => {
-    push("API", {
-      title: "Remove Project",
-      onFetch: () => {
-        return fetchProjectDelete(projectId!);
-      },
-      doneText: "Remove Project Success",
-      loadingText: "Removing Project...",
+  const handleCreateProject = async () => {
+    await validateAndPush("create");
+  };
+
+  const handleUpdateProject = async () => {
+    await validateAndPush("update");
+  };
+
+  const handleDeleteProject = async () => {
+    if (!projectId) return;
+    push("CONFIRM", {
+      title: "Delete Project",
+      content: "Are you sure to delete this project?",
       onConfirm: () => {
-        const searchParams = new URLSearchParams(window.location.search);
-        searchParams.delete("project");
-        router.replace(`?${searchParams.toString()}`);
-        handleClose();
+        push("API", {
+          title: "Delete Project",
+          onFetch: async () => mutateDeleteProject(),
+          onConfirm: () => {
+            const searchParams = new URLSearchParams(window.location.search);
+            searchParams.delete("project");
+            router.replace(`?${searchParams.toString()}`);
+          },
+        });
       },
     });
   };
@@ -368,16 +392,24 @@ const ProjectModal = ({ ownerEmail, onClose }: Props) => {
         )}
         {isEditableProject && (
           <div className={Styles.FloatingButtonContainer}>
-            <FloatingButton
-              type="SAVE"
-              text="Save Project"
-              onClick={handleSave}
-            />
-            {projectId && (
+            {projectId ? (
+              <>
+                <FloatingButton
+                  type="SAVE"
+                  text="Save Project"
+                  onClick={handleUpdateProject}
+                />
+                <FloatingButton
+                  type="REMOVE"
+                  text="Delete Project"
+                  onClick={handleDeleteProject}
+                />
+              </>
+            ) : (
               <FloatingButton
-                type="REMOVE"
-                text="Remove Project"
-                onClick={handleRemove}
+                type="SAVE"
+                text="Create Project"
+                onClick={handleCreateProject}
               />
             )}
           </div>

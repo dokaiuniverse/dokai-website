@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import * as Styles from "./style.css";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import LogoPNG from "@assets/dokai.png";
@@ -13,6 +12,7 @@ import SearchSVG from "@assets/icons/search.svg";
 import HamburgerXSVG from "@assets/icons/hamburger-x.svg";
 import MenuBGSVG from "@assets/icons/menu-bg.svg";
 import CloseLink from "@components/ui/Link/CloseLink";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const navList = [
   { label: "Work", href: "/work" },
@@ -20,12 +20,16 @@ const navList = [
 ];
 
 const Header = () => {
-  const pathname = usePathname();
   const { sentinelRef, isPast: isFloatingMenu } = useIsPastSentinel();
   const { push, requestCloseByTypes } = useModalStackStore();
   const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsOpenMenu(false);
+  }, [pathname, searchParams]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleCloseAll = () => {
     setIsOpenMenu(false);
     requestCloseByTypes(["DRAWER_MENU", "SEARCH"]);
@@ -39,10 +43,6 @@ const Header = () => {
       handleCloseAll();
     }
   };
-
-  useEffect(() => {
-    handleCloseAll();
-  }, [pathname]);
 
   const handleClickSearch = () => {
     push("SEARCH", { handleCloseAll });

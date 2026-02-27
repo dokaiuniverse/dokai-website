@@ -1,13 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseAdminClient } from "@lib/supabase/admin";
-import { Work } from "@domain/work";
-
-type WorkUpsertRequest = {
-  slug: string;
-  isPublished: boolean;
-  data: Work;
-  fixedAt?: string | null;
-};
+import { WorkUpsertRequest } from "@controllers/works/types";
+import {
+  createSupabaseRouteClient,
+  supabaseErrorToStatus,
+} from "@lib/supabase/route";
 
 /**
  * @openapi
@@ -79,86 +76,112 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const id = (await params).id;
-  const supabase = createSupabaseAdminClient();
+  const { id } = await params;
+
+  const { supabase, applyCookies } = createSupabaseRouteClient(req);
+
+  const { data: userRes, error: userErr } = await supabase.auth.getUser();
+  if (userErr || !userRes.user) {
+    return applyCookies(
+      NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
+    );
+  }
 
   let body: WorkUpsertRequest;
   try {
     body = (await req.json()) as WorkUpsertRequest;
   } catch {
-    return NextResponse.json({ message: "Invalid JSON" }, { status: 400 });
-  }
-
-  if (!body?.slug || typeof body.slug !== "string") {
-    return NextResponse.json({ message: "slug is required" }, { status: 400 });
-  }
-  if (typeof body.isPublished !== "boolean") {
-    return NextResponse.json(
-      { message: "isPublished is required" },
-      { status: 400 },
+    return applyCookies(
+      NextResponse.json({ message: "Invalid JSON body" }, { status: 400 }),
     );
   }
-  if (!body.data || typeof body.data !== "object") {
-    return NextResponse.json({ message: "data is required" }, { status: 400 });
+
+  const updatePayload: Record<string, unknown> = {};
+
+  if (body.slug !== undefined) {
+    updatePayload.slug = body.slug;
   }
 
-  const fixedAt =
-    body.fixedAt === undefined || body.fixedAt === null || body.fixedAt === ""
-      ? null
-      : body.fixedAt;
+  if (body.isPublished !== undefined) {
+    updatePayload.is_published = body.isPublished;
+  }
+
+  if (body.data !== undefined) {
+    updatePayload.data = body.data;
+  }
+
+  if (Object.keys(updatePayload).length === 0) {
+    return applyCookies(
+      NextResponse.json({ message: "Nothing to update" }, { status: 400 }),
+    );
+  }
 
   const { data, error } = await supabase
     .from("works")
-    .update({
-      slug: body.slug,
-      data: body.data,
-      is_published: body.isPublished,
-      fixed_at: fixedAt,
-    })
+    .update(updatePayload)
     .eq("id", id)
-    .select("id, slug, data, is_published, fixed_at, updated_at")
+    .select("id")
     .maybeSingle();
 
   if (error) {
-    const status = error.code === "23505" ? 409 : 500;
-    return NextResponse.json({ message: error.message }, { status });
-  }
-  if (!data) {
-    return NextResponse.json({ message: "Not Found" }, { status: 404 });
+    return applyCookies(
+      NextResponse.json(
+        { message: error.message },
+        { status: supabaseErrorToStatus(error) },
+      ),
+    );
   }
 
-  return NextResponse.json({
-    id: data.id,
-    slug: data.slug,
-    isPublished: data.is_published,
-    data: {
-      ...data.data,
-      fixedAt: data.fixed_at ? new Date(data.fixed_at).toISOString() : null,
-    },
-    updatedAt: data.updated_at,
-  });
+  if (!data) {
+    return applyCookies(
+      NextResponse.json({ message: "Not Found" }, { status: 404 }),
+    );
+  }
+
+  return applyCookies(
+    NextResponse.json({
+      ok: true,
+      id: data.id,
+    }),
+  );
 }
 
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const id = (await params).id;
-  const supabase = createSupabaseAdminClient();
+  const { id } = await params;
 
-  const { error, count } = await supabase
+  const { supabase, applyCookies } = createSupabaseRouteClient(req);
+
+  const { data: userRes, error: userErr } = await supabase.auth.getUser();
+  if (userErr || !userRes.user) {
+    return applyCookies(
+      NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
+    );
+  }
+
+  const { data, error } = await supabase
     .from("works")
-    .delete({ count: "exact" })
-    .eq("id", id);
-
-  console.log(id);
+    .delete()
+    .eq("id", id)
+    .select("id")
+    .maybeSingle();
 
   if (error) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
-  }
-  if ((count ?? 0) === 0) {
-    return NextResponse.json({ message: "Not Found" }, { status: 404 });
+    return applyCookies(
+      NextResponse.json(
+        { message: error.message },
+        { status: supabaseErrorToStatus(error) },
+      ),
+    );
   }
 
-  return new NextResponse(null, { status: 204 });
+  if (!data) {
+    return applyCookies(
+      NextResponse.json({ message: "Not Found" }, { status: 404 }),
+    );
+  }
+
+  return applyCookies(NextResponse.json({ ok: true, id: data.id }));
 }

@@ -5,10 +5,10 @@ import CareerProfile from "@components/pages/careers/Profile";
 import CareerProjects from "@components/pages/careers/Projects";
 import EditModeToggle from "@components/ui/Edit/EditModeToggle/EditModeToggle";
 import PrivateMark from "@components/ui/PrivateMark/PrivateMark";
-import { ProfileDetail, ProjectCard } from "@domain/careers";
+import { Profile, ProfileDetail } from "@domain/careers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { useSessionEmail } from "@controllers/auth/session";
 import {
   initalProfile,
@@ -22,14 +22,14 @@ import * as Styles from "./style.css";
 import { useModalStackStore } from "@stores/modalStackStore";
 import {
   fetchProfileCheckEmail,
-  fetchProfileCreate,
   fetchProfileDelete,
-  fetchProfileUpdate,
 } from "@controllers/careers/fetch";
 import { useRouter } from "nextjs-toploader/app";
 import FloatingButton from "@components/ui/Edit/FloatingButton/FloatingButton";
-import { useAppQuery } from "@controllers/common";
+import { useAppMutation, useAppQuery } from "@controllers/common";
 import { careersQueriesClient } from "@controllers/careers/query.client";
+import { careersMutations } from "@controllers/careers/mutation";
+import { encodeEmailParam } from "@utils/Email";
 
 const AdminCareersPageClient = ({ email }: { email?: string }) => {
   const router = useRouter();
@@ -37,22 +37,35 @@ const AdminCareersPageClient = ({ email }: { email?: string }) => {
   const { data } = useAppQuery(careersQueriesClient.profileDetail(email!), {
     enabled: !!email,
   });
-  const [profileId, setProfileId] = useState<string | null>(data?.id ?? null);
+  const [profileId, setProfileId] = useState<string | null>(null);
 
+  const { mutateAsync: mutateCreateProfile } = useAppMutation(
+    careersMutations.createProfile(),
+    {
+      onSuccess: (data) => {
+        setProfileId(data.profileId);
+        // queryClient.invalidateQueries({ queryKey: ["careers", "profileList"] })
+      },
+    },
+  );
+  const { mutateAsync: mutateUpdateProfile } = useAppMutation(
+    careersMutations.updateProfile(profileId!),
+    {
+      onSuccess: () => {
+        // queryClient.invalidateQueries({ queryKey: ["careers", "profileList"] })
+      },
+    },
+  );
   const userEmail = useSessionEmail();
 
   const form = useForm<ProfileFormInput>({
     mode: "onBlur",
     resolver: zodResolver(profileSchema),
-    defaultValues: {
-      ...initalProfile,
-      ...data?.data,
-      isPublished: data?.isPublished ?? false,
-    },
+    defaultValues: initalProfile,
   });
-  const { setValue, watch, trigger, getValues, setError, clearErrors } = form;
-  const isPublished = watch("isPublished");
-  const profileDetail = watch() as Omit<ProfileFormInput, "isPublished">;
+  const { setValue, trigger, getValues, setError, clearErrors } = form;
+  const { isPublished, ...rest } = useWatch({ control: form.control });
+  const profile = rest as Profile;
 
   useEffect(() => {
     if (!email && userEmail) {
@@ -61,6 +74,7 @@ const AdminCareersPageClient = ({ email }: { email?: string }) => {
   }, [email, userEmail]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     if (data) {
       setProfileId(data.id);
       form.reset({
@@ -88,10 +102,10 @@ const AdminCareersPageClient = ({ email }: { email?: string }) => {
       try {
         const result = await fetchProfileCheckEmail(nextEmail);
 
-        if (!result.ok) {
+        if (result.exists) {
           setError("email", {
             type: "manual",
-            message: result.message ?? "This email is already in use",
+            message: "This email is already in use",
           });
           return;
         }
@@ -109,15 +123,12 @@ const AdminCareersPageClient = ({ email }: { email?: string }) => {
       push("API", {
         title: "Create New Profile",
         onFetch: async () =>
-          fetchProfileCreate({
+          mutateCreateProfile({
             isPublished: nextIsPublished,
             data: nextProfileDetail,
           }),
-        onSuccess: (data) => {
-          setProfileId(data.id);
-        },
         onConfirm: () => {
-          router.replace(`/careers/${encodeURIComponent(nextEmail)}`);
+          router.replace(`/careers/${encodeEmailParam(nextEmail)}`);
         },
       });
     } else {
@@ -126,19 +137,16 @@ const AdminCareersPageClient = ({ email }: { email?: string }) => {
       push("API", {
         title: "Update Profile",
         onFetch: async () =>
-          fetchProfileUpdate({
-            id: profileId,
+          mutateUpdateProfile({
             isPublished: nextIsPublished,
             data: nextProfileDetail,
           }),
         onConfirm: () => {
-          router.replace(`/careers/${encodeURIComponent(nextEmail)}`);
+          router.replace(`/careers/${encodeEmailParam(nextEmail)}`);
         },
       });
     }
   };
-
-  console.log(form.formState.errors);
 
   const handleCreateProfile = async () => {
     await validateAndPush("create");
@@ -176,22 +184,20 @@ const AdminCareersPageClient = ({ email }: { email?: string }) => {
       </div>
       {mode === "VIEW" ? (
         <>
-          <CareerProfile profileDetail={profileDetail as ProfileDetail} />
+          <CareerProfile profile={profile} />
           <CareerProjects
-            projects={profileDetail.projects as ProjectCard[]}
-            email={profileDetail.email}
+            projects={data?.data.projects ?? []}
+            email={profile.email}
           />
-          <CareerExperiences
-            experiences={profileDetail.experiences as string[]}
-          />
+          <CareerExperiences experiences={profile.experiences} />
         </>
       ) : (
         <FormProvider {...form}>
-          <CareerEditInfo />
+          <CareerEditInfo email={email} />
           <CareerEditProfile />
           <CareerProjects
-            projects={profileDetail.projects as ProjectCard[]}
-            email={profileDetail.email}
+            projects={data?.data.projects ?? []}
+            email={data?.data.email ?? ""}
             isReadOnly
           />
           <CareerEditExperiences />

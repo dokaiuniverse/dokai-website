@@ -1,6 +1,7 @@
 // src/stores/modalStackStore.ts
 import { ContactLink, ProjectContent } from "@domain/careers";
 import { MediaSource, MediaType } from "@domain/media";
+import { WorkCredit, WorkMetaField } from "@domain/work";
 import { create } from "zustand";
 
 export type ModalMap = {
@@ -13,6 +14,7 @@ export type ModalMap = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onSuccess?: (data: any) => void | Promise<void>;
     onConfirm?: () => void | Promise<void>;
+    isRouteAfterConfirm?: boolean;
   };
 
   CONFIRM: {
@@ -41,7 +43,7 @@ export type ModalMap = {
 
   EDIT_MEDIA_SINGLE: {
     initial?: MediaSource | null;
-    applyMedia?: (media: MediaSource | null) => void;
+    applyMedia?: (media: MediaSource) => void;
     blockedTypes?: MediaType[];
   };
 
@@ -60,6 +62,23 @@ export type ModalMap = {
     initial: string;
     applyExperience: (next: string) => void;
     deleteExperience?: () => void;
+  };
+
+  EDIT_DATE_PICKER: {
+    initialDate?: Date;
+    applyDate: (nextDate: Date, nextText: string) => void;
+  };
+
+  EDIT_META_INFO: {
+    initial?: WorkMetaField;
+    applyMeta: (next: WorkMetaField) => void;
+    deleteMeta?: () => void;
+  };
+
+  EDIT_CREDIT: {
+    initial?: WorkCredit;
+    applyCredit: (next: WorkCredit) => void;
+    deleteCredit?: () => void;
   };
 };
 
@@ -82,6 +101,7 @@ type Store = {
   requestCloseById: (id: string) => void;
   finalizeCloseById: (id: string) => void;
   requestCloseByTypes: (types: (keyof ModalMap)[]) => void;
+  requestCloseAll: () => void;
 };
 
 const uid = () =>
@@ -103,7 +123,7 @@ export const useModalStackStore = create<Store>((set) => ({
     set((s) => ({
       stack: [
         ...s.stack.slice(0, -1),
-        { id: uid(), type, props } as ModalState,
+        { id: uid(), type, props, status: "open" } as ModalState,
       ],
     })),
   clear: () => set({ stack: [] }),
@@ -132,5 +152,9 @@ export const useModalStackStore = create<Store>((set) => ({
           ? ({ ...m, status: "closing" } as ModalState)
           : m,
       ),
+    })),
+  requestCloseAll: () =>
+    set((s) => ({
+      stack: s.stack.map((m) => ({ ...m, status: "closing" }) as ModalState),
     })),
 }));
