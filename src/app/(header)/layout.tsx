@@ -4,6 +4,7 @@ import Header from "@components/layout/Header/Header";
 import { prefetchAppQuery } from "@controllers/common";
 import { authQueriesServer } from "@controllers/auth/query.server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { Suspense } from "react";
 
 const HeaderLayout = async ({ children }: { children: React.ReactNode }) => {
   const qc = getQueryClient();
@@ -12,7 +13,9 @@ const HeaderLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <HydrationBoundary state={dehydrate(qc)}>
       <div className={Styles.Layout}>
-        <Header />
+        <Suspense fallback={null}>
+          <Header />
+        </Suspense>
         <div className={Styles.Content}>{children}</div>
       </div>
     </HydrationBoundary>

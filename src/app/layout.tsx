@@ -57,8 +57,8 @@ export default function RootLayout({
         <Providers>
           <Suspense fallback={null}>
             <ModalStackRoot />
-            {children}
           </Suspense>
+          {children}
         </Providers>
       </body>
     </html>
