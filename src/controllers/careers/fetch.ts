@@ -4,9 +4,20 @@ import type {
   ProjectDetailResponse,
   ProfileUpsertRequest,
   ProjectUpsertRequest,
+  CareerPageDetailResponse,
+  CareerPageUpsertRequest,
 } from "./types";
 import { fetchApi } from "../common";
 import { encodeEmailParam } from "@utils/Email";
+
+export const fetchCareerPageDetail = () =>
+  fetchApi<CareerPageDetailResponse>(`/api/public/careers`);
+
+export const fetchCareerPageUpdate = (req: CareerPageUpsertRequest) =>
+  fetchApi<void, CareerPageUpsertRequest>(`/api/admin/careers`, {
+    method: "PUT",
+    body: req,
+  });
 
 // Profile
 

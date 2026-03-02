@@ -1,4 +1,5 @@
 // src/stores/modalStackStore.ts
+import { AboutCard, AboutContent, AboutGroup, AboutTeam } from "@domain/about";
 import { ContactLink, ProjectContent } from "@domain/careers";
 import { MediaSource, MediaType } from "@domain/media";
 import { WorkCredit, WorkMetaField } from "@domain/work";
@@ -86,6 +87,32 @@ export type ModalMap = {
       setProgress: (file: File | null, progress: number, count: number) => void,
     ) => void;
     handleCommit?: () => void;
+  };
+
+  HYPERLINK: {
+    onApply: (url: string) => void;
+  };
+
+  EDIT_ABOUT_GROUP: {
+    initial?: AboutGroup;
+    applyGroup: (next: AboutGroup) => void;
+    deleteGroup?: () => void;
+  };
+
+  EDIT_ABOUT_CARD: {
+    initial?: AboutCard;
+    applyCard: (next: AboutCard) => void;
+    deleteCard?: () => void;
+  };
+
+  EDIT_ABOUT_TEAM: {
+    initial?: AboutTeam;
+    applyTeam: (next: AboutTeam) => void;
+    deleteTeam?: () => void;
+  };
+
+  ADD_ABOUT_SECTION: {
+    addAboutContent: (content: AboutContent) => void;
   };
 };
 

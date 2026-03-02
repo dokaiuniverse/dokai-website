@@ -8,7 +8,9 @@ import * as Styles from "./style.css";
 import { useAppQuery } from "@controllers/common";
 import { careersQueriesClient } from "@controllers/careers/query.client";
 import { authQueriesClient } from "@controllers/auth/query.client";
-import FloatingButton from "@components/ui/Edit/FloatingButton/FloatingButton";
+import FloatingButton, {
+  FloatingButtonContainer,
+} from "@components/ui/Button/FloatingButton/FloatingButton";
 import { useRouter } from "nextjs-toploader/app";
 import { encodeEmailParam } from "@utils/Email";
 
@@ -18,7 +20,6 @@ const CareersDetailPageClient = ({ email }: { email: string }) => {
   const { data: sessionStatus } = useAppQuery(
     authQueriesClient.sessionStatus(),
   );
-
   if (!data) return null;
 
   const { data: profileDetail, isPublished } = data;
@@ -50,13 +51,13 @@ const CareersDetailPageClient = ({ email }: { email: string }) => {
         <CareerExperiences experiences={profileDetail.experiences} />
       </div>
       {editable && (
-        <div className={Styles.FloatingButtonContainer}>
+        <FloatingButtonContainer>
           <FloatingButton
             type="EDIT"
             onClick={handleEditProfile}
             text="Edit Profile"
           />
-        </div>
+        </FloatingButtonContainer>
       )}
     </>
   );

@@ -1,4 +1,4 @@
-import WorkPageClient from "./client";
+import WorkPageClient from "./page-client";
 
 const WorkPage = async () => {
   return <WorkPageClient />;

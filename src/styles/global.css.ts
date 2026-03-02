@@ -41,6 +41,7 @@ globalStyle("input, button, textarea, select", {
 globalStyle("a", {
   color: "inherit",
   textDecoration: "none",
+  transition: "opacity 0.2s ease-in-out",
 });
 
 globalStyle("p", {
@@ -93,4 +94,16 @@ const fadeInUp = keyframes({
 
 globalStyle(".page-wrapper", {
   animation: `${fadeInUp} 0.5s ease-in-out`,
+});
+
+globalStyle(".rich-text a", {
+  transition: "opacity 0.2s ease-in-out",
+});
+
+globalStyle(".rich-text a:hover", {
+  opacity: "0.5",
+});
+
+globalStyle(".rich-text b", {
+  fontWeight: "600",
 });

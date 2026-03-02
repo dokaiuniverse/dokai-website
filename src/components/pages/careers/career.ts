@@ -6,7 +6,25 @@ import BehanceSVG from "@assets/social/Behance.svg";
 import EmailSVG from "@assets/social/Email.svg";
 import URLSVG from "@assets/icons/url.svg";
 import z from "zod";
-import { ProfileDetail } from "@domain/careers";
+
+export const careersPageSchema = z.object({
+  contents: z
+    .array(
+      z.object({
+        type: z.literal("TEXT"),
+        name: z.string().min(1, "Name is required"),
+        text: z.string().min(1, "Text is required"),
+      }),
+    )
+    .default([]),
+});
+
+export type CareersPageFormInput = z.input<typeof careersPageSchema>; // ✅ year: unknown
+
+export const initalCareersPage: CareersPageFormInput = {
+  contents: [],
+};
+//
 
 export type ContactType =
   | "Instagram"

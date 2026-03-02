@@ -1,4 +1,5 @@
 import type {
+  CareerPageDetail,
   Profile,
   ProfileDetail,
   ProfileListItem,
@@ -6,6 +7,12 @@ import type {
 } from "@domain/careers";
 
 // ===== Responses =====
+
+export type CareerPageDetailResponse = {
+  id: string;
+  data: CareerPageDetail;
+  updatedAt: string;
+};
 
 export type ProfileListResponse = {
   items: ProfileListItem[];
@@ -26,6 +33,10 @@ export type ProjectDetailResponse = {
 };
 
 // ===== Requests =====
+
+export type CareerPageUpsertRequest = {
+  data: CareerPageDetail;
+};
 
 export type ProfileUpsertRequest = {
   isPublished: boolean;

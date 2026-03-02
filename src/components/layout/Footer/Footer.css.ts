@@ -117,7 +117,6 @@ export const ItemMapContainer = style({
 });
 
 export const Footer = style({
-  position: "relative",
   columnGap: "1rem",
   display: "grid",
   gridTemplateColumns: "repeat(8, minmax(0px, 1fr))",
@@ -189,7 +188,6 @@ export const SocialLink = style({
 
 export const FooterIconButton = style({
   gridColumn: "8",
-  position: "relative",
   marginLeft: "auto",
 
   "@media": {

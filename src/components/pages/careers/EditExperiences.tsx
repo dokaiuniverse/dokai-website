@@ -43,7 +43,7 @@ const CareerEditExperiences = () => {
 
   return (
     <section className={Styles.ExperienceContainer}>
-      <p className={Styles.ExperienceTitle}>Experiences</p>
+      <p className={Styles.ExperienceTitle}>Credentials</p>
       <div className={Styles.ExperienceContent}>
         {experiences?.map((experience, idx) => (
           <div key={`EXPERIENCE_${idx}`} className={Styles.EditExperienceItem}>

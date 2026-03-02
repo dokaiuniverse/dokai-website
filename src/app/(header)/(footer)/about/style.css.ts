@@ -7,7 +7,6 @@ export const Container = style({
   gridTemplateColumns: "repeat(8, 1fr)",
   rowGap: "4rem",
   columnGap: "1rem",
-  padding: "2rem",
   marginBottom: "10rem",
 });
 

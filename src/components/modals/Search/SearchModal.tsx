@@ -46,11 +46,7 @@ const SearchModal = ({ handleCloseAll, isOpen, closeModal }: Props) => {
   }, [isOpen]);
 
   return createPortal(
-    <div
-      className={`${Styles.Overlay} layout-wrapper`}
-      data-open={isVisible}
-      aria-hidden={!isVisible}
-    >
+    <div className={`${Styles.Overlay} layout-wrapper`} data-open={isVisible}>
       <div className={Styles.Grid}>
         <SearchHeader handleClose={handleCloseAll} />
         <SearchInput

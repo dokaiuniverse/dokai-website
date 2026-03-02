@@ -1,6 +1,5 @@
 import EditMediaSingle from "@components/ui/Edit/EditMediaSingle/EditMediaSingle";
 import * as Styles from "./style.css";
-import EditableText from "@components/ui/Edit/Editable/EditableText";
 import { useFormContext } from "react-hook-form";
 import { ProfileFormInput } from "./career";
 import { MediaSource } from "@domain/media.js";
@@ -10,6 +9,7 @@ import Link from "next/link";
 import EditButton from "@components/ui/Edit/EditButton/EditButton";
 import AddButton from "@components/ui/Edit/AddButton/AddButton";
 import { useModalStackStore } from "@stores/modalStackStore";
+import TitleRichText from "@components/ui/Edit/TitleRichText/TitleRichText";
 
 const CareerEditProfile = () => {
   const { push } = useModalStackStore();
@@ -22,7 +22,6 @@ const CareerEditProfile = () => {
   } = form;
 
   const avatar = watch("avatar") as MediaSource;
-  const bio = watch("bio");
   const contacts = watch("contacts");
 
   const handleEditContact = (contactIdx: number) => {
@@ -75,20 +74,13 @@ const CareerEditProfile = () => {
         />
         <ErrorText message={errors.avatar?.message} />
       </div>
-      <div className={Styles.EditProfileBioContainer}>
-        <EditableText
-          value={bio}
-          onChange={(value) => {
-            setValue("bio", value);
-            clearErrors("bio");
-          }}
-          onBlur={() => {
-            form.trigger("bio");
-          }}
-          placeholder="Bio"
-        />
-        <ErrorText message={errors.bio?.message} />
-      </div>
+      <TitleRichText
+        title="Bio"
+        form={form}
+        name="bio"
+        className={Styles.EditProfileBioContainer}
+        placeholder="Bio"
+      />
       <div className={Styles.EditProfileContactContainer}>
         {contacts?.map((contact, idx) => (
           <div

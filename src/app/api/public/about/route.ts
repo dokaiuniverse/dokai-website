@@ -23,9 +23,9 @@ export async function GET(req: NextRequest) {
   const { supabase, applyCookies } = createSupabaseRouteClient(req);
 
   const { data, error } = await supabase
-    .from("about_page")
-    .select("id, data, is_published, updated_at")
-    .eq("id", "main")
+    .from("page_detail")
+    .select("id, data, updated_at")
+    .eq("id", "about")
     .maybeSingle();
 
   if (error) {
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  if (!data || !data.is_published) {
+  if (!data) {
     return applyCookies(
       NextResponse.json({ message: "Not Found" }, { status: 404 }),
     );

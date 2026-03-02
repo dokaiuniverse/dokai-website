@@ -38,7 +38,9 @@ const CareerProjects = ({
 
   useEffect(() => {
     if (searchParams.get("project")) {
-      replaceTop("PROJECT", { ownerEmail: email });
+      setTimeout(() => {
+        replaceTop("PROJECT", { ownerEmail: email });
+      }, 100);
     }
   }, [searchParams]);
 

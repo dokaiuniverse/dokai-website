@@ -17,6 +17,7 @@ import AddButton from "@components/ui/Edit/AddButton/AddButton";
 import RemoveButton from "@components/ui/Edit/RemoveButton/RemoveButton";
 import ErrorText from "@components/ui/Edit/ErrorText/ErrorText";
 import TitleInput from "@components/ui/Edit/TitleInput/TitleInput";
+import TitleRichText from "@components/ui/Edit/TitleRichText/TitleRichText";
 
 const schema = z
   .object({
@@ -87,23 +88,15 @@ function toDefaults(initial?: ProjectContent | null): FormInput {
 }
 
 function TextEditor() {
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext<FormInput>();
+  const form = useFormContext<FormInput>();
 
   return (
-    <div className={Styles.TextContainer}>
-      <textarea
-        {...register("textValue")}
-        rows={6}
-        placeholder="Write something..."
-        className={Styles.TextInput}
-      />
-      {errors.textValue?.message && (
-        <p style={{ color: "red" }}>{errors.textValue.message}</p>
-      )}
-    </div>
+    <TitleRichText
+      form={form}
+      name="textValue"
+      className={Styles.TextContainer}
+      placeholder="Write something..."
+    />
   );
 }
 

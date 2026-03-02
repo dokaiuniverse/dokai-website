@@ -23,7 +23,6 @@
     "next": "16.1.6",
     "nextjs-toploader": "^3.9.17",
     "react": "19.2.3",
-    "react-day-picker": "^9.14.0",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.2",
     "swagger-jsdoc": "^6.2.8",

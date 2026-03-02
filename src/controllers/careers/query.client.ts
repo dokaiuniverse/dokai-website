@@ -1,5 +1,6 @@
 import { QueryDef } from "../common";
 import {
+  fetchCareerPageDetail,
   fetchHasProfile,
   fetchProfileDetail,
   fetchProfileList,
@@ -7,12 +8,20 @@ import {
 } from "./fetch";
 import { careersQueryKeys } from "./keys";
 import {
+  CareerPageDetailResponse,
   ProfileDetailResponse,
   ProfileListResponse,
   ProjectDetailResponse,
 } from "./types";
 
 export const careersQueriesClient = {
+  careerPageDetail: (): QueryDef<
+    CareerPageDetailResponse,
+    readonly ["careers-page", "career-page-detail"]
+  > => ({
+    queryKey: careersQueryKeys.careerPageDetail(),
+    queryFn: () => fetchCareerPageDetail(),
+  }),
   profileList: (): QueryDef<
     ProfileListResponse,
     readonly ["careers", "profile-list"]

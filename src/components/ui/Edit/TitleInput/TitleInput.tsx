@@ -1,4 +1,9 @@
-import { FieldValues, Path, UseFormReturn } from "react-hook-form";
+import {
+  FieldValues,
+  Path,
+  useController,
+  UseFormReturn,
+} from "react-hook-form";
 import * as Styles from "./style.css";
 import ErrorText from "../ErrorText/ErrorText";
 
@@ -17,13 +22,16 @@ const TitleInput = <T extends FieldValues, K extends Path<T>>({
   name: K;
   className?: string;
   disabled?: boolean;
-  onChange?: () => void;
+  onChange?: (e?: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
+  const { register, clearErrors, control } = form;
+
   const {
-    register,
-    clearErrors,
-    formState: { errors },
-  } = form;
+    fieldState: { error },
+  } = useController({
+    control,
+    name,
+  });
 
   return (
     <div className={`${Styles.Container} ${className}`}>
@@ -33,13 +41,13 @@ const TitleInput = <T extends FieldValues, K extends Path<T>>({
         type="text"
         placeholder={placeholder}
         {...register(name)}
-        onChange={() => {
+        onChange={(e) => {
           clearErrors(name);
-          onChange?.();
+          onChange?.(e);
         }}
         disabled={disabled}
       />
-      <ErrorText message={errors[name]?.message as string} />
+      <ErrorText message={error?.message} />
     </div>
   );
 };

@@ -18,7 +18,7 @@ import WorkEditInfo from "@components/pages/work/EditInfo";
 import WorkEditHeader from "@components/pages/work/EditHeader";
 import WorkEditKeyVisuals from "@components/pages/work/EditKeyVisuals";
 import WorkEditCredits from "@components/pages/work/EditCredits";
-import FloatingButton from "@components/ui/Edit/FloatingButton/FloatingButton";
+import FloatingButton from "@components/ui/Button/FloatingButton/FloatingButton";
 import { useModalStackStore } from "@stores/modalStackStore";
 import { fetchWorkCheckSlug } from "@controllers/works/fetch";
 import { worksMutations } from "@controllers/works/mutation";
@@ -53,19 +53,15 @@ const AdminWorkPageClient = ({ slug }: { slug?: string }) => {
     resolver: zodResolver(workSchema),
     defaultValues: initalWork,
   });
-  const { setValue, watch, trigger, getValues, setError, clearErrors } = form;
-  const {
-    isPublished,
-    slug: nextSlug,
-    ...rest
-  } = useWatch({ control: form.control });
+  const { reset, control, trigger, getValues, setError } = form;
+  const { isPublished, slug: nextSlug, ...rest } = useWatch({ control });
   const work = rest as Work;
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     if (!data) return;
     setWorkId(data.id);
-    form.reset({
+    reset({
       ...initalWork,
       ...data.data,
       productionDate: {
@@ -75,7 +71,7 @@ const AdminWorkPageClient = ({ slug }: { slug?: string }) => {
       slug: data.slug,
       isPublished: data.isPublished,
     });
-  }, [data, form]);
+  }, [data, reset]);
 
   const { push } = useModalStackStore();
 

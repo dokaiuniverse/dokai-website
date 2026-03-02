@@ -25,7 +25,7 @@ import {
   fetchProfileDelete,
 } from "@controllers/careers/fetch";
 import { useRouter } from "nextjs-toploader/app";
-import FloatingButton from "@components/ui/Edit/FloatingButton/FloatingButton";
+import FloatingButton from "@components/ui/Button/FloatingButton/FloatingButton";
 import { useAppMutation, useAppQuery } from "@controllers/common";
 import { careersQueriesClient } from "@controllers/careers/query.client";
 import { careersMutations } from "@controllers/careers/mutation";

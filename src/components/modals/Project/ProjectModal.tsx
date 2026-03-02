@@ -21,7 +21,7 @@ import ErrorText from "@components/ui/Edit/ErrorText/ErrorText";
 import EditMediaList from "@components/ui/Edit/EditMediaList/EditMediaList";
 import EditMediaSingle from "@components/ui/Edit/EditMediaSingle/EditMediaSingle";
 import EditPublished from "@components/ui/Edit/EditPublished/EditPublished";
-import FloatingButton from "@components/ui/Edit/FloatingButton/FloatingButton";
+import FloatingButton from "@components/ui/Button/FloatingButton/FloatingButton";
 import PrivateMark from "@components/ui/PrivateMark/PrivateMark";
 import EditModeToggle from "@components/ui/Edit/EditModeToggle/EditModeToggle";
 import ProjectModalView from "./View";
@@ -166,7 +166,10 @@ const ProjectModalEdit = () => {
           <div key={item.name} className={Styles.ContentItem}>
             <p className={Styles.ContentItemName}>{item.name}</p>
             {item.type === "TEXT" ? (
-              <p className={Styles.ContentItemText}>{item.value}</p>
+              <div
+                className={`${Styles.ContentItemText} rich-text`}
+                dangerouslySetInnerHTML={{ __html: item.value }}
+              />
             ) : (
               <ul className={Styles.ContentItemList}>
                 {item.value.map((value, index) => (

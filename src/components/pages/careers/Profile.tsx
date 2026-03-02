@@ -15,7 +15,7 @@ const CareerProfile = ({ profile }: { profile: Profile }) => {
       />
       <div
         dangerouslySetInnerHTML={{ __html: profile.bio }}
-        className={Styles.ProfileBio}
+        className={`${Styles.ProfileBio} rich-text`}
       />
       <div className={Styles.ProfileContactContainer}>
         {profile.contacts.map((contact) => (

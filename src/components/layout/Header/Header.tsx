@@ -69,6 +69,7 @@ const Header = () => {
             key={`HEADER_NAV_${nav.label}`}
             href={nav.href}
             className={Styles.NavLabel}
+            prefetch={false}
           >
             {nav.label}
           </Link>

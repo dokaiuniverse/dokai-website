@@ -1,16 +1,15 @@
 "use client";
 
 import * as Styles from "./style.css";
-import Link from "next/link";
-import MediaHoverOverlay from "@components/ui/Media/HoverOverlay/HoverOverlay";
 import { useAppQuery } from "@controllers/common";
 import { authQueriesClient } from "@controllers/auth/query.client";
 import { careersQueriesClient } from "@controllers/careers/query.client";
 import { useRouter } from "nextjs-toploader/app";
-import FloatingButton from "@components/ui/Edit/FloatingButton/FloatingButton";
-
-const careersCopy =
-  "BUCK is always looking for dynamic, passionate, and talented artists to join our team.Below is a list of our current vacancies - if you don't see anything, check back again soon. If you don't see any positions that match your skills, feel free to send an email with a link to your work.";
+import FloatingButton, {
+  FloatingButtonContainer,
+} from "@components/ui/Button/FloatingButton/FloatingButton";
+import CareersPageContent from "@components/pages/careers/Content";
+import CareersPageProfileList from "@components/pages/careers/ProfileList";
 
 const CareersPageClient = () => {
   const router = useRouter();
@@ -21,6 +20,10 @@ const CareersPageClient = () => {
   const { data: hasProfile } = useAppQuery(careersQueriesClient.hasProfile(), {
     enabled: sessionStatus?.loggedIn,
   });
+  const { data: pageDetail } = useAppQuery(
+    careersQueriesClient.careerPageDetail(),
+  );
+  const careersPageDetail = pageDetail?.data;
 
   const handleAddProfile = () => {
     router.push(`/admin/careers`);
@@ -32,6 +35,10 @@ const CareersPageClient = () => {
     );
   };
 
+  const handleEditCareersPage = () => {
+    router.push(`/admin/careers/edit-page`);
+  };
+
   if (!data) return null;
 
   const profiles = data.items;
@@ -39,38 +46,20 @@ const CareersPageClient = () => {
   return (
     <>
       <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
-        <p className={Styles.Title}>Careers</p>
-        <p className={Styles.Copy}>{careersCopy}</p>
-        <p className={Styles.Title}>Artists</p>
-        <p className={Styles.Copy}>
-          {
-            "See what it's like to work at DOKAI through these Day in the Life staff profiles."
-          }
-        </p>
-        <div className={Styles.ProfileContainer}>
-          {profiles.map((profile) => (
-            <Link
-              href={`/careers/${encodeURIComponent(profile.email)}`}
-              className={Styles.ProfileItem}
-              key={`CAREERS_${profile.email}`}
-            >
-              <MediaHoverOverlay
-                media={profile.avatar}
-                className={Styles.ProfileItemImage}
-              >
-                <div className={Styles.ProfileItemOverlay}>
-                  <p>{profile.role}</p>
-                  <p>{profile.name}</p>
-                </div>
-              </MediaHoverOverlay>
-            </Link>
-          ))}
-        </div>
+        {careersPageDetail?.contents.map((item, idx) => (
+          <CareersPageContent key={`CAREER_CONTENT_${idx}`} content={item} />
+        ))}
+        <CareersPageProfileList profiles={profiles} />
       </div>
       {sessionStatus?.loggedIn && (
-        <div className={Styles.FloatingButtonContainer}>
+        <FloatingButtonContainer>
           {sessionStatus?.role === "admin" ? (
             <>
+              <FloatingButton
+                type="EDIT"
+                onClick={handleEditCareersPage}
+                text="Edit Careers Page"
+              />
               {hasProfile?.hasProfile && (
                 <FloatingButton
                   type="EDIT"
@@ -97,7 +86,7 @@ const CareersPageClient = () => {
               text="Add Profile"
             />
           )}
-        </div>
+        </FloatingButtonContainer>
       )}
     </>
   );

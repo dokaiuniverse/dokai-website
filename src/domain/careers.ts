@@ -1,5 +1,17 @@
 import type { MediaSource } from "./media";
 
+export type CareerPageContent = {
+  type: "TEXT";
+  name: string;
+  text: string;
+};
+
+export type CareerPageDetail = {
+  contents: CareerPageContent[];
+};
+
+//
+
 export type ContactLink = {
   name: string;
   value: string;

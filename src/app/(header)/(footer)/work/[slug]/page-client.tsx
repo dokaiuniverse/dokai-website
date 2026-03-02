@@ -3,7 +3,9 @@
 import { useAppQuery } from "@controllers/common";
 import { worksQueriesClient } from "@controllers/works/query.client";
 import PrivateMark from "@components/ui/PrivateMark/PrivateMark";
-import FloatingButton from "@components/ui/Edit/FloatingButton/FloatingButton";
+import FloatingButton, {
+  FloatingButtonContainer,
+} from "@components/ui/Button/FloatingButton/FloatingButton";
 import { authQueriesClient } from "@controllers/auth/query.client";
 import { useRouter } from "nextjs-toploader/app";
 import WorkKeyVisuals from "@components/pages/work/KeyVisuals";
@@ -40,13 +42,13 @@ const WorkDetailPageClient = ({ slug }: { slug: string }) => {
         <WorkCredits credits={work.credits} />
       </div>
       {editable && (
-        <div className={Styles.FloatingButtonContainer}>
+        <FloatingButtonContainer>
           <FloatingButton
             type="EDIT"
             onClick={handleEditWork}
             text="Edit Work"
           />
-        </div>
+        </FloatingButtonContainer>
       )}
     </>
   );

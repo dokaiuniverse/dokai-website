@@ -1,13 +1,7 @@
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-export const fetchCache = "force-no-store";
-
-import AboutPageClient from "./page-client";
-import { fetchAbout } from "@controllers/about/fetch";
+import AdminAboutPageClient from "./page-client";
 
 const AdminAboutPage = async () => {
-  const about = await fetchAbout();
-  return <AboutPageClient aboutInfo={about.data} />;
+  return <AdminAboutPageClient />;
 };
 
 export default AdminAboutPage;

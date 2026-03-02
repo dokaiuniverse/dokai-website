@@ -2,6 +2,100 @@ import { media, vars } from "@styles/theme.css";
 import { style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
+export const Content = style({
+  position: "relative",
+  display: "grid",
+  gridColumn: "1 / -1",
+  gridTemplateColumns: "repeat(9, 1fr)",
+  rowGap: "1rem",
+  columnGap: "1rem",
+
+  fontSize: vars.fontSize.md,
+  fontWeight: "300",
+  lineHeight: "1.4583",
+});
+
+export const ContentTitle = style({
+  gridColumn: "2",
+
+  "@media": {
+    [media.tablet]: {
+      gridColumn: "1 / span 2",
+    },
+    [media.mobile]: {
+      gridColumn: "1 / -1",
+    },
+  },
+});
+
+export const ContentText = style({
+  gridColumn: "3 / -2",
+
+  "@media": {
+    [media.mobile]: {
+      gridColumn: "1 / -1",
+      marginBottom: "3.5rem",
+    },
+  },
+});
+
+export const EditContentRemoveButton = style({
+  position: "absolute",
+  top: "0",
+  right: "0",
+});
+
+//
+
+export const ProfileListContainer = recipe({
+  base: {
+    gridColumn: "3 / -2",
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: "1rem",
+
+    "@media": {
+      [media.tablet]: {
+        gridTemplateColumns: "repeat(2, 1fr)",
+      },
+      [media.mobile]: {
+        gridColumn: "1 / -1",
+        gridTemplateColumns: "repeat(1, 1fr)",
+      },
+    },
+  },
+  variants: {
+    isReadOnly: {
+      true: {
+        opacity: "0.5",
+        pointerEvents: "none",
+      },
+    },
+  },
+  defaultVariants: {
+    isReadOnly: false,
+  },
+});
+
+export const ProfileListItem = style({
+  gridColumn: "span 1",
+  position: "relative",
+  overflow: "hidden",
+});
+
+export const ProfileListItemImage = style({
+  width: "100%",
+  aspectRatio: "1 / 1",
+});
+
+export const ProfileListItemOverlay = style({
+  padding: "1rem",
+
+  fontSize: vars.fontSize.lg,
+});
+
+//
+
 export const ProfileContainer = style({
   gridColumn: "2 / -2",
   display: "grid",

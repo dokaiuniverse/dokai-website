@@ -5,6 +5,7 @@ import {
   useMutation,
   UseMutationOptions,
   useQuery,
+  useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
 
@@ -172,6 +173,7 @@ export type MutationDef<
   TVariables = void,
   TKey extends MutationKey = MutationKey,
 > = {
+  invalidateQueries?: QueryKey[];
   mutationKey?: TKey;
   mutationFn: (variables: TVariables) => Promise<TData>;
   retry?: number | boolean;
@@ -201,11 +203,19 @@ export function useAppMutation<
   >,
 ) {
   const d = withMutationDefaults(def);
+  const queryClient = useQueryClient();
 
   return useMutation<TData, unknown, TVariables, TContext>({
     mutationKey: d.mutationKey,
     mutationFn: d.mutationFn,
     retry: d.retry,
+    onSuccess: () => {
+      if (d.invalidateQueries) {
+        d.invalidateQueries.forEach((queryKey) => {
+          queryClient.invalidateQueries({ queryKey });
+        });
+      }
+    },
     ...(opts ?? {}),
   });
 }

@@ -53,13 +53,11 @@ export async function PUT(req: NextRequest) {
   const admin = createSupabaseAdminClient();
 
   const { data, error } = await admin
-    .from("about_page")
+    .from("page_detail")
     .upsert(
       {
-        id: "main",
+        id: "about",
         data: body.data,
-        is_published:
-          typeof body.isPublished === "boolean" ? body.isPublished : true,
       },
       { onConflict: "id" },
     )

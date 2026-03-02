@@ -11,7 +11,10 @@ const ProjectModalView = ({ project }: { project: Project }) => {
           <div key={item.name} className={Styles.ContentItem}>
             <p className={Styles.ContentItemName}>{item.name}</p>
             {item.type === "TEXT" ? (
-              <p className={Styles.ContentItemText}>{item.value}</p>
+              <div
+                className={`${Styles.ContentItemText} rich-text`}
+                dangerouslySetInnerHTML={{ __html: item.value }}
+              />
             ) : (
               <ul className={Styles.ContentItemList}>
                 {item.value.map((value, index) => (

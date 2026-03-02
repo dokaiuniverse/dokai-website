@@ -6,12 +6,9 @@ import { useModalStackStore } from "@stores/modalStackStore";
 import ProjectModal from "./Project/ProjectModal";
 import SearchModal from "./Search/SearchModal";
 import DrawerMenuModal from "./DrawerMenu/DrawerMenuModal";
-import EditMetaInfoModal from "./Edit/EditMetaInfo/EditMetaInfoModal";
-import EditCreditModal from "./Edit/EditCredit/EditCreditModal";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import useLockBodyScroll from "@hooks/useLockBodyScroll";
-import UploadImageModal from "./UploadImage/UploadImageModal";
 
 const ApiModal = dynamic(() => import("./Api/ApiModal"), { ssr: false });
 const ConfirmModal = dynamic(() => import("./Confirm/ConfirmModal"), {
@@ -41,6 +38,37 @@ const EditDatePickerModal = dynamic(
   () => import("./Edit/EditDatePicker/EditDatePickerModal"),
   { ssr: false },
 );
+const UploadImageModal = dynamic(
+  () => import("./UploadImage/UploadImageModal"),
+  { ssr: false },
+);
+const HyperlinkModal = dynamic(() => import("./Hyperlink/HyperlinkModal"), {
+  ssr: false,
+});
+const EditAboutGroupModal = dynamic(
+  () => import("./Edit/EditAboutGroup/EditAboutGroupModal"),
+  { ssr: false },
+);
+const EditAboutCardModal = dynamic(
+  () => import("./Edit/EditAboutCard/EditAboutCardModal"),
+  { ssr: false },
+);
+const EditAboutTeamModal = dynamic(
+  () => import("./Edit/EditAboutTeam/EditAboutTeamModal"),
+  { ssr: false },
+);
+const AddAboutSectionModal = dynamic(
+  () => import("./Edit/AddAboutSection/AddAboutSectionModal"),
+  { ssr: false },
+);
+const EditMetaInfoModal = dynamic(
+  () => import("./Edit/EditMetaInfo/EditMetaInfoModal"),
+  { ssr: false },
+);
+const EditCreditModal = dynamic(
+  () => import("./Edit/EditCredit/EditCreditModal"),
+  { ssr: false },
+);
 
 const ModalStackRoot = () => {
   const pathname = usePathname();
@@ -64,11 +92,7 @@ const ModalStackRoot = () => {
         const isTop = idx === stack.length - 1;
 
         const common = {
-          // top만 닫히게: 아래 모달들은 클릭/esc 반응 안 하게 할 때 사용
           isTop,
-          // onClose: () => finalizeCloseById(m.id),
-          // onRequestClose: () => requestCloseById(m.id),
-          // onAfterClose: () => finalizeCloseById(m.id),
           closeModal: () => finalizeCloseById(m.id),
           requestCloseModal: () => requestCloseById(m.id),
           isOpen: m.status === "open",
@@ -106,6 +130,16 @@ const ModalStackRoot = () => {
             return <EditCreditModal key={m.id} {...common} {...m.props} />;
           case "UPLOAD_IMAGE":
             return <UploadImageModal key={m.id} {...common} {...m.props} />;
+          case "HYPERLINK":
+            return <HyperlinkModal key={m.id} {...common} {...m.props} />;
+          case "EDIT_ABOUT_GROUP":
+            return <EditAboutGroupModal key={m.id} {...common} {...m.props} />;
+          case "EDIT_ABOUT_CARD":
+            return <EditAboutCardModal key={m.id} {...common} {...m.props} />;
+          case "EDIT_ABOUT_TEAM":
+            return <EditAboutTeamModal key={m.id} {...common} {...m.props} />;
+          case "ADD_ABOUT_SECTION":
+            return <AddAboutSectionModal key={m.id} {...common} {...m.props} />;
           default:
             return null;
         }

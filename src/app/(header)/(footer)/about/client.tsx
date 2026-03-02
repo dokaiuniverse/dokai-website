@@ -1,58 +1,41 @@
+"use client";
+
 import * as Styles from "./style.css";
-import { About } from "@domain/about";
-import AboutPageIntro from "@components/pages/about_tmp/Intro/Intro";
-import AboutPageMedia from "@components/pages/about_tmp/Media/Media";
-import AboutPageTextSection from "@components/pages/about_tmp/Text/Text";
-import AboutPageGroupSection from "@components/pages/about_tmp/Group/Group";
-import AboutPageCardSection from "@components/pages/about_tmp/Card/Card";
-import AboutPageTeamSection from "@components/pages/about_tmp/Team/Team";
-import AdminButtons from "@components/ui/AdminButtons/AdminButtons";
+import AboutPageIntro from "@components/pages/about/Intro";
+import AboutPageContent from "@components/pages/about/Content";
+import FloatingButton, {
+  FloatingButtonContainer,
+} from "@components/ui/Button/FloatingButton/FloatingButton";
+import { useRouter } from "nextjs-toploader/app";
+import { useAppQuery } from "@controllers/common";
+import { aboutQueriesClient } from "@controllers/about/query.client";
 
-type AboutPageClientProps = {
-  aboutInfo: About;
-};
+const AboutPageClient = () => {
+  const router = useRouter();
+  const { data } = useAppQuery(aboutQueriesClient.aboutDetail());
 
-const AboutPageClient = ({ aboutInfo }: AboutPageClientProps) => {
+  if (!data) return null;
+
+  const aboutInfo = data.data;
+
   return (
-    <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
-      <AboutPageIntro text={aboutInfo.intro} />
-      {aboutInfo.contents.map((content, index) => (
-        <div
-          key={`ABOUT_CONTENT_${index}`}
-          className={Styles.Content({
-            align:
-              content.type === "MEDIAS" && content.align === "LEFT"
-                ? "LEFT"
-                : "RIGHT",
-          })}
-        >
-          {content.type === "MEDIAS" ? (
-            <AboutPageMedia content={content} />
-          ) : content.type === "TEXT" ? (
-            <AboutPageTextSection content={content} />
-          ) : content.type === "GROUP" ? (
-            <AboutPageGroupSection content={content} />
-          ) : content.type === "CARD" ? (
-            <AboutPageCardSection content={content} />
-          ) : content.type === "TEAM" ? (
-            <AboutPageTeamSection content={content} />
-          ) : null}
-        </div>
-      ))}
-      <AdminButtons
-        adminButtons={[
-          {
-            role: "ADMIN",
-            type: "EDIT",
-            click: {
-              type: "HREF",
-              href: "/admin/about",
-            },
-            text: "Edit About Page",
-          },
-        ]}
-      />
-    </div>
+    <>
+      <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
+        <AboutPageIntro text={aboutInfo.intro} />
+        {aboutInfo.contents.map((content, index) => (
+          <AboutPageContent key={`ABOUT_CONTENT_${index}`} content={content} />
+        ))}
+      </div>
+      <FloatingButtonContainer>
+        <FloatingButton
+          type="EDIT"
+          onClick={() => {
+            router.push("/admin/about");
+          }}
+          text="Edit About"
+        />
+      </FloatingButtonContainer>
+    </>
   );
 };
 

@@ -208,6 +208,7 @@ export const ContentItemName = style({
 
 export const ContentItemText = style({
   fontSize: vars.fontSize.sm,
+  fontWeight: "300",
 });
 
 export const ContentItemList = style({

@@ -1,196 +1,133 @@
 "use client";
 
-import { useState } from "react";
-import * as AboutStyles from "@app/(header)/(footer)/about/style.css";
-import { About, AboutContent, IndexedAboutContent } from "@domain/about";
-import PlusSVG from "@assets/icons/plus.svg";
 import * as Styles from "./style.css";
-import AddSectionModal from "@components/ui/Edit/Modal/AddSection/AddSectionModal";
-import TrashSVG from "@assets/icons/trash.svg";
-import CaretDownSVG from "@assets/icons/caret_down.svg";
-import CaretUpSVG from "@assets/icons/caret_up.svg";
-import AboutPageIntro from "@components/pages/about/Intro/Intro";
-import AboutPageMedia from "@components/pages/about/Media/Media";
-import AboutPageTextSection from "@components/pages/about/Text/Text";
-import AboutPageGroupSection from "@components/pages/about/Group/Group";
-import AboutPageCardSection from "@components/pages/about/Card/Card";
-import AboutPageTeamSection from "@components/pages/about/Team/Team";
-import { useRouter } from "nextjs-toploader/app";
-import AdminButtons from "@components/ui/AdminButtons/AdminButtons";
+import EditModeToggle from "@components/ui/Edit/EditModeToggle/EditModeToggle";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
+import {
+  AboutInput,
+  aboutSchema,
+  initialAbout,
+} from "@components/pages/about/about";
+import AboutPageIntro from "@components/pages/about/Intro";
+import AboutPageContent from "@components/pages/about/Content";
+import { About, AboutContent } from "@domain/about";
+import { useAppMutation, useAppQuery } from "@controllers/common";
+import { aboutQueriesClient } from "@controllers/about/query.client";
+import AboutPageEditContent from "@components/pages/about/EditContent";
+import AboutPageEditIntro from "@components/pages/about/EditIntro";
+import { aboutMutations } from "@controllers/about/mutation";
 import { useModalStackStore } from "@stores/modalStackStore";
-import { fetchAboutUpdate } from "@controllers/about/fetch";
+import { useRouter } from "nextjs-toploader/app";
+import FloatingButton, {
+  FloatingButtonContainer,
+} from "@components/ui/Button/FloatingButton/FloatingButton";
+import AddButton from "@components/ui/Edit/AddButton/AddButton";
 
-const AboutPageClient = ({ aboutInfo }: { aboutInfo?: About }) => {
+const AdminAboutPageClient = () => {
   const router = useRouter();
+  const { push } = useModalStackStore();
+  const [mode, setMode] = useState<"VIEW" | "EDIT">("EDIT");
 
-  const [aboutIntro, setAboutIntro] = useState(aboutInfo?.intro ?? "");
-  const [aboutContents, setAboutContents] = useState<IndexedAboutContent[]>(
-    aboutInfo?.contents.map((e, i) => ({ id: i, content: e })) ?? [],
+  const { data } = useAppQuery(aboutQueriesClient.aboutDetail());
+  const { mutateAsync: mutateUpdateAbout } = useAppMutation(
+    aboutMutations.updateAbout(),
   );
 
-  const push = useModalStackStore((s) => s.push);
+  const form = useForm<AboutInput>({
+    mode: "onBlur",
+    resolver: zodResolver(aboutSchema),
+    defaultValues: initialAbout,
+  });
 
-  const updateIntro = (value: string) => {
-    setAboutIntro(value);
-  };
+  const { control, reset, trigger, getValues } = form;
+  const { ...rest } = useWatch({ control });
+  const about = rest as About;
 
-  const updateContent =
-    (id: number) =>
-    <T extends AboutContent>(updater: (curr: T) => T) => {
-      setAboutContents((prev) =>
-        prev.map((item) =>
-          item.id !== id
-            ? item
-            : { ...item, content: updater(item.content as T) },
-        ),
-      );
-    };
+  useEffect(() => {
+    if (!data) return;
 
-  const removeContent = (id: number) => () => {
-    setAboutContents((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const moveContent = (index: number, direction: "UP" | "DOWN") => () => {
-    setAboutContents((prev) => {
-      const nextIndex = direction === "UP" ? index - 1 : index + 1;
-      if (nextIndex < 0 || nextIndex >= prev.length) return prev;
-
-      const next = [...prev];
-      [next[index], next[nextIndex]] = [next[nextIndex], next[index]];
-      return next;
+    reset({
+      ...initialAbout,
+      ...data.data,
     });
-  };
-
-  const [openAddSectionModal, setOpenAddSectionModal] = useState(false);
-
-  const closeAddSectionModal = () => {
-    setOpenAddSectionModal(false);
-  };
-
-  const addAboutContent = (content: AboutContent) => {
-    setAboutContents((prev) => [
-      ...prev,
-      {
-        id: prev.reduce((acc, e) => (e.id > acc ? e.id : acc), 0) + 1,
-        content,
-      },
-    ]);
-    closeAddSectionModal();
-  };
+  }, [data, reset]);
 
   const handleUpdateAbout = async () => {
+    const valid = await trigger();
+    if (!valid) return;
+
+    const formValues = getValues();
+    const { ...rest } = formValues;
+    const nextAbout = rest as About;
+
     push("API", {
       title: "Update About",
-      onFetch: async () =>
-        fetchAboutUpdate({
-          intro: aboutIntro,
-          contents: aboutContents.map((e) => e.content),
-        }),
+      onFetch: async () => mutateUpdateAbout({ data: nextAbout }),
       onConfirm: () => {
         router.replace(`/about`);
       },
     });
   };
 
+  const handleAddContent = () => {
+    push("ADD_ABOUT_SECTION", {
+      addAboutContent: (content: AboutContent) => {
+        const { contents } = getValues();
+        const nextContents = [...contents, content];
+        reset({
+          ...getValues(),
+          contents: nextContents,
+        });
+      },
+    });
+  };
+
   return (
-    <div className={`${AboutStyles.Container} page-wrapper layout-wrapper`}>
-      <AboutPageIntro text={aboutIntro} editable onChange={updateIntro} />
-      {aboutContents.map(({ id, content }, index) => (
-        <div
-          key={`ABOUT_CONTENT_${id}`}
-          className={AboutStyles.Content({
-            align:
-              content.type === "MEDIAS" && content.align === "LEFT"
-                ? "LEFT"
-                : "RIGHT",
-          })}
-        >
-          {content.type === "MEDIAS" ? (
-            <AboutPageMedia
-              content={content}
-              editable
-              updateContent={updateContent(id)}
-            />
-          ) : content.type === "TEXT" ? (
-            <AboutPageTextSection
-              content={content}
-              editable
-              updateContent={updateContent(index)}
-            />
-          ) : content.type === "GROUP" ? (
-            <AboutPageGroupSection
-              content={content}
-              editable
-              updateContent={updateContent(index)}
-            />
-          ) : content.type === "CARD" ? (
-            <AboutPageCardSection
-              content={content}
-              index={index}
-              editable
-              updateContent={updateContent(index)}
-            />
-          ) : content.type === "TEAM" ? (
-            <AboutPageTeamSection
-              content={content}
-              editable
-              updateContent={updateContent(index)}
-            />
-          ) : null}
-          <div
-            className={Styles.SideButtonContainer({
-              align:
-                content.type === "MEDIAS" && content.align === "LEFT"
-                  ? "LEFT"
-                  : "RIGHT",
-            })}
-          >
-            <button
-              onClick={moveContent(index, "UP")}
-              disabled={index === 0}
-              className={Styles.SideButton}
-            >
-              <CaretUpSVG className={Styles.SideButtonIcon} />
-            </button>
-            <button onClick={removeContent(id)} className={Styles.SideButton}>
-              <TrashSVG className={Styles.SideButtonIcon} />
-            </button>
-            <button
-              onClick={moveContent(index, "DOWN")}
-              disabled={index === aboutContents.length - 1}
-              className={Styles.SideButton}
-            >
-              <CaretDownSVG className={Styles.SideButtonIcon} />
-            </button>
-          </div>
+    <>
+      <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
+        <div className={Styles.HeaderContainer}>
+          <EditModeToggle mode={mode} setMode={setMode} />
         </div>
-      ))}
-      <button
-        className={Styles.AddButton}
-        onClick={() => setOpenAddSectionModal(true)}
-      >
-        <PlusSVG className={Styles.AddButtonIcon} />
-      </button>
-      <AddSectionModal
-        open={openAddSectionModal}
-        onClose={closeAddSectionModal}
-        addAboutContent={addAboutContent}
-      />
-      <AdminButtons
-        adminButtons={[
-          {
-            role: "ADMIN",
-            type: "SAVE",
-            click: {
-              type: "FUNCTION",
-              onClick: handleUpdateAbout,
-            },
-            text: "Update About Page",
-          },
-        ]}
-      />
-    </div>
+
+        {mode === "VIEW" ? (
+          <>
+            <AboutPageIntro text={about.intro} />
+            {about.contents.map((content, index) => (
+              <AboutPageContent
+                key={`ABOUT_CONTENT_${index}`}
+                content={content}
+              />
+            ))}
+          </>
+        ) : (
+          <>
+            <FormProvider {...form}>
+              <AboutPageEditIntro />
+              {about.contents.map((_, index) => (
+                <AboutPageEditContent
+                  key={`EDIT_ABOUT_CONTENT_${index}`}
+                  index={index}
+                />
+              ))}
+              <AddButton
+                onClick={handleAddContent}
+                className={Styles.AboutSectionAddButton}
+              />
+            </FormProvider>
+          </>
+        )}
+      </div>
+      <FloatingButtonContainer>
+        <FloatingButton
+          type="SAVE"
+          onClick={handleUpdateAbout}
+          text="Update About Page"
+        />
+      </FloatingButtonContainer>
+    </>
   );
 };
 
-export default AboutPageClient;
+export default AdminAboutPageClient;

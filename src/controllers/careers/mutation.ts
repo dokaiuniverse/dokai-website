@@ -1,4 +1,5 @@
 import {
+  fetchCareerPageUpdate,
   fetchProfileCreate,
   fetchProfileDelete,
   fetchProfileUpdate,
@@ -6,10 +7,19 @@ import {
   fetchProjectDelete,
   fetchProjectUpdate,
 } from "./fetch";
-import { careersMutationKeys } from "./keys";
-import { ProfileUpsertRequest, ProjectUpsertRequest } from "./types";
+import { careersMutationKeys, careersQueryKeys } from "./keys";
+import {
+  CareerPageUpsertRequest,
+  ProfileUpsertRequest,
+  ProjectUpsertRequest,
+} from "./types";
 
 export const careersMutations = {
+  updateCareersPage: () => ({
+    mutationKey: careersMutationKeys.careerPageUpdate(),
+    mutationFn: (body: CareerPageUpsertRequest) => fetchCareerPageUpdate(body),
+    invalidateQueries: [careersQueryKeys.careerPageDetail()],
+  }),
   createProfile: () => ({
     mutationKey: careersMutationKeys.createProfile(),
     mutationFn: (body: ProfileUpsertRequest) => fetchProfileCreate(body),
