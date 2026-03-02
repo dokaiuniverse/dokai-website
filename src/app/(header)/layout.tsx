@@ -7,18 +7,18 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Suspense } from "react";
 
 const HeaderLayout = async ({ children }: { children: React.ReactNode }) => {
-  const qc = getQueryClient();
-  await prefetchAppQuery(qc, authQueriesServer.sessionStatus());
+  // const qc = getQueryClient();
+  // await prefetchAppQuery(qc, authQueriesServer.sessionStatus());
 
   return (
-    <HydrationBoundary state={dehydrate(qc)}>
-      <div className={Styles.Layout}>
-        <Suspense fallback={null}>
-          <Header />
-        </Suspense>
-        <div className={Styles.Content}>{children}</div>
-      </div>
-    </HydrationBoundary>
+    // <HydrationBoundary state={dehydrate(qc)}>
+    <div className={Styles.Layout}>
+      <Suspense fallback={null}>
+        <Header />
+      </Suspense>
+      {children}
+    </div>
+    // </HydrationBoundary>
   );
 };
 

@@ -63,6 +63,10 @@ globalStyle("button", {
   padding: "0",
 });
 
+globalStyle("main", {
+  minHeight: "100dvh",
+});
+
 globalStyle(".layout-wrapper", {
   padding: "2rem",
 
