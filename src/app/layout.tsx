@@ -78,7 +78,9 @@ export default function RootLayout({
           speed={200}
           color="#ed8435"
         />
-        <GaPageView />
+        <Suspense fallback={null}>
+          <GaPageView />
+        </Suspense>
         <Providers>
           <Suspense fallback={null}>
             <ModalStackRoot />
