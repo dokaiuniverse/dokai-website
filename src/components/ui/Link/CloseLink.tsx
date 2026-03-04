@@ -28,12 +28,7 @@ const CloseLink = ({ href, children, handleClose, className }: Props) => {
   };
 
   return (
-    <Link
-      href={href}
-      onClick={onClickLink}
-      className={className}
-      prefetch={false}
-    >
+    <Link href={href} onClick={onClickLink} className={className}>
       {children}
     </Link>
   );
