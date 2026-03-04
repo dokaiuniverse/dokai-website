@@ -4,21 +4,26 @@ import { useEffect } from "react";
 
 export default function AuthDonePage() {
   useEffect(() => {
-    const url = new URL(window.location.href);
-    const next = url.searchParams.get("next") || "/";
-    const error = url.searchParams.get("error");
+    (async () => {
+      const url = new URL(window.location.href);
+      const next = url.searchParams.get("next") || "/";
+      const error = url.searchParams.get("error");
+      console.log(window.location.href);
 
-    const target = error
-      ? `/auth/login?error=${encodeURIComponent(error)}`
-      : next;
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    if (window.opener) {
-      window.opener.location.href = target;
-      window.close();
-      return;
-    }
+      const target = error
+        ? `/auth/login?error=${encodeURIComponent(error)}`
+        : next;
 
-    window.location.href = target;
+      if (window.opener) {
+        window.opener.location.href = target;
+        window.close();
+        return;
+      }
+
+      window.location.href = target;
+    })();
   }, []);
 
   return <div style={{ padding: 24 }}>Finishing...</div>;

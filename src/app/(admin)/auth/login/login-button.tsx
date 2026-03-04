@@ -5,21 +5,26 @@ import GoogleSVG from "@assets/google.svg";
 import * as Styles from "./style.css";
 
 export default function LoginButton() {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
   const handleLogin = async () => {
     const supabase = createSupabaseBrowserClient();
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(
-          location.pathname + location.search,
-        )}`,
+        redirectTo: `${window.location.origin}/auth/callback`,
         skipBrowserRedirect: true, // ✅ 자동 페이지 이동 막기
       },
     });
 
     if (error || !data?.url) {
       console.error(error);
+      return;
+    }
+
+    if (isMobile) {
+      window.location.href = data.url;
       return;
     }
 
