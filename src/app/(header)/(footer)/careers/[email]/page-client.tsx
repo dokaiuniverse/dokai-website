@@ -7,7 +7,6 @@ import PrivateMark from "@components/ui/PrivateMark/PrivateMark";
 import * as Styles from "./style.css";
 import { useAppQuery } from "@controllers/common";
 import { careersQueriesClient } from "@controllers/careers/query.client";
-import { authQueriesClient } from "@controllers/auth/query.client";
 import FloatingButton, {
   FloatingButtonContainer,
 } from "@components/ui/Button/FloatingButton/FloatingButton";
@@ -17,18 +16,9 @@ import { encodeEmailParam } from "@utils/Email";
 const CareersDetailPageClient = ({ email }: { email: string }) => {
   const router = useRouter();
   const { data } = useAppQuery(careersQueriesClient.profileDetail(email));
-  const { data: sessionStatus } = useAppQuery(
-    authQueriesClient.sessionStatus(),
-  );
   if (!data) return null;
 
   const { data: profileDetail, isPublished } = data;
-
-  const editable =
-    sessionStatus &&
-    sessionStatus.loggedIn &&
-    (sessionStatus.role === "admin" ||
-      sessionStatus.email === profileDetail.email);
 
   const handleEditProfile = () => {
     router.push(
@@ -50,15 +40,13 @@ const CareersDetailPageClient = ({ email }: { email: string }) => {
         />
         <CareerExperiences experiences={profileDetail.experiences} />
       </div>
-      {editable && (
-        <FloatingButtonContainer>
-          <FloatingButton
-            type="EDIT"
-            onClick={handleEditProfile}
-            text="Edit Profile"
-          />
-        </FloatingButtonContainer>
-      )}
+      <FloatingButtonContainer email={email}>
+        <FloatingButton
+          type="EDIT"
+          onClick={handleEditProfile}
+          text="Edit Profile"
+        />
+      </FloatingButtonContainer>
     </>
   );
 };

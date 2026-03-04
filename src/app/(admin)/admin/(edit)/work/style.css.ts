@@ -21,13 +21,3 @@ export const HeaderContainer = style({
 export const HeaderPrivateMark = style({
   top: "0 !important",
 });
-
-export const FloatingButtonContainer = style({
-  position: "fixed",
-  bottom: "2rem",
-  right: "2rem",
-  display: "flex",
-  flexDirection: "column",
-  gap: "1rem",
-  color: "black",
-});

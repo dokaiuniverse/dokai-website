@@ -36,12 +36,11 @@ export async function GET(req: NextRequest) {
   const user = data.user;
 
   if (error || !user) {
-    return NextResponse.json({ loggedIn: false, email: null, role: null });
+    return NextResponse.json(null);
   }
 
   const userEmail = user.email?.toLowerCase() ?? null;
 
-  // RLS가 본인 row만 보여줌
   const { data: roleRow } = await supabase
     .from("allowed_users")
     .select("role, email")
@@ -51,11 +50,18 @@ export async function GET(req: NextRequest) {
   const role = (roleRow?.role as Role) ?? null;
   const email = roleRow?.email ?? userEmail ?? null;
 
+  const { data: profile } = await supabase
+    .from("career_profiles")
+    .select("email")
+    .eq("email", email)
+    .maybeSingle();
+
   return applyCookies(
     NextResponse.json({
       email,
       role,
       loggedIn: true,
+      hasProfile: !!profile,
     }),
   );
 }

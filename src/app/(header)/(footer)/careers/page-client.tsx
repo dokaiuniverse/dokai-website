@@ -13,16 +13,11 @@ import CareersPageProfileList from "@components/pages/careers/ProfileList";
 
 const CareersPageClient = () => {
   const router = useRouter();
-  const { data } = useAppQuery(careersQueriesClient.profileList());
-  const { data: sessionStatus } = useAppQuery(
-    authQueriesClient.sessionStatus(),
-  );
-  const { data: hasProfile } = useAppQuery(careersQueriesClient.hasProfile(), {
-    enabled: sessionStatus?.loggedIn,
-  });
   const { data: pageDetail } = useAppQuery(
     careersQueriesClient.careerPageDetail(),
   );
+  const { data } = useAppQuery(careersQueriesClient.profileList());
+  const { data: session } = useAppQuery(authQueriesClient.sessionStatus());
   const careersPageDetail = pageDetail?.data;
 
   const handleAddProfile = () => {
@@ -30,9 +25,8 @@ const CareersPageClient = () => {
   };
 
   const handleEditProfile = () => {
-    router.push(
-      `/admin/careers?email=${encodeURIComponent(hasProfile?.email ?? "")}`,
-    );
+    if (!session?.email || !session.hasProfile) return;
+    router.push(`/admin/careers?email=${encodeURIComponent(session.email)}`);
   };
 
   const handleEditCareersPage = () => {
@@ -51,43 +45,41 @@ const CareersPageClient = () => {
         ))}
         <CareersPageProfileList profiles={profiles} />
       </div>
-      {sessionStatus?.loggedIn && (
-        <FloatingButtonContainer>
-          {sessionStatus?.role === "admin" ? (
-            <>
-              <FloatingButton
-                type="EDIT"
-                onClick={handleEditCareersPage}
-                text="Edit Careers Page"
-              />
-              {hasProfile?.hasProfile && (
-                <FloatingButton
-                  type="EDIT"
-                  onClick={handleEditProfile}
-                  text="Edit My Profile"
-                />
-              )}
-              <FloatingButton
-                type="ADD"
-                onClick={handleAddProfile}
-                text="Add Profile"
-              />
-            </>
-          ) : hasProfile?.hasProfile ? (
+      <FloatingButtonContainer>
+        {session?.role === "admin" ? (
+          <>
             <FloatingButton
               type="EDIT"
-              onClick={handleEditProfile}
-              text="Edit My Profile"
+              onClick={handleEditCareersPage}
+              text="Edit Careers Page"
             />
-          ) : (
+            {session?.hasProfile && (
+              <FloatingButton
+                type="EDIT"
+                onClick={handleEditProfile}
+                text="Edit My Profile"
+              />
+            )}
             <FloatingButton
               type="ADD"
               onClick={handleAddProfile}
               text="Add Profile"
             />
-          )}
-        </FloatingButtonContainer>
-      )}
+          </>
+        ) : session?.hasProfile ? (
+          <FloatingButton
+            type="EDIT"
+            onClick={handleEditProfile}
+            text="Edit My Profile"
+          />
+        ) : (
+          <FloatingButton
+            type="ADD"
+            onClick={handleAddProfile}
+            text="Add Profile"
+          />
+        )}
+      </FloatingButtonContainer>
     </>
   );
 };

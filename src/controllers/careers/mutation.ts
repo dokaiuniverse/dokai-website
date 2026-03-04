@@ -1,3 +1,4 @@
+import { authQueryKeys } from "@controllers/auth/queryKeys";
 import {
   fetchCareerPageUpdate,
   fetchProfileCreate,
@@ -23,25 +24,47 @@ export const careersMutations = {
   createProfile: () => ({
     mutationKey: careersMutationKeys.createProfile(),
     mutationFn: (body: ProfileUpsertRequest) => fetchProfileCreate(body),
+    invalidateQueries: [
+      careersQueryKeys.profileList(),
+      authQueryKeys.session(),
+    ],
   }),
   updateProfile: (id: string) => ({
     mutationKey: careersMutationKeys.updateProfile(),
     mutationFn: (body: ProfileUpsertRequest) => fetchProfileUpdate(id, body),
+    invalidateQueries: [
+      careersQueryKeys.profileList(),
+      careersQueryKeys.profileDetail(id),
+    ],
   }),
   deleteProfile: (id: string) => ({
     mutationKey: careersMutationKeys.deleteProfile(),
     mutationFn: () => fetchProfileDelete(id),
+    invalidateQueries: [
+      careersQueryKeys.profileList(),
+      careersQueryKeys.profileDetail(id),
+      authQueryKeys.session(),
+    ],
   }),
-  createProject: () => ({
+  createProject: (email: string) => ({
     mutationKey: careersMutationKeys.createProject(),
     mutationFn: (body: ProjectUpsertRequest) => fetchProjectCreate(body),
+    invalidateQueries: [careersQueryKeys.profileDetail(email)],
   }),
-  updateProject: (id: string) => ({
+  updateProject: (email: string, id: string) => ({
     mutationKey: careersMutationKeys.updateProject(),
     mutationFn: (body: ProjectUpsertRequest) => fetchProjectUpdate(id, body),
+    invalidateQueries: [
+      careersQueryKeys.profileDetail(email),
+      careersQueryKeys.projectDetail(id),
+    ],
   }),
-  deleteProject: (id: string) => ({
+  deleteProject: (email: string, id: string) => ({
     mutationKey: careersMutationKeys.deleteProject(),
     mutationFn: () => fetchProjectDelete(id),
+    invalidateQueries: [
+      careersQueryKeys.profileDetail(email),
+      careersQueryKeys.projectDetail(id),
+    ],
   }),
 };

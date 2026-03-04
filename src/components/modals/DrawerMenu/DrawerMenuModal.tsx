@@ -15,8 +15,9 @@ import ExternalLinks from "@ts/external_links";
 import { IMAGE_SIZES } from "@ts/image";
 import CloseLink from "@components/ui/Link/CloseLink";
 import { fetchLogout } from "@controllers/auth/fetch";
-import { useAppQuery } from "@controllers/common";
+import { useAppMutation, useAppQuery } from "@controllers/common";
 import { authQueriesClient } from "@controllers/auth/query.client";
+import { authMutations } from "@controllers/auth/mutation";
 
 const drawerNavItems = [
   { label: "Work", href: "/work", private: false },
@@ -35,13 +36,12 @@ type Props = {
 };
 
 const DrawerMenu = ({ handleCloseAll, isOpen, closeModal }: Props) => {
-  const { data: sessionStatus } = useAppQuery(
-    authQueriesClient.sessionStatus(),
-  );
+  const { data: session } = useAppQuery(authQueriesClient.sessionStatus());
   const router = useRouter();
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [count, setCount] = useState(0);
+  const { mutateAsync: mutateLogout } = useAppMutation(authMutations.logout());
 
   const { push } = useModalStackStore();
 
@@ -55,6 +55,12 @@ const DrawerMenu = ({ handleCloseAll, isOpen, closeModal }: Props) => {
       router.push("/auth/login");
     }
     setCount((prev) => prev + 1);
+  };
+
+  const handleClickLogout = async () => {
+    handleCloseAll();
+    await mutateLogout();
+    router.push("/auth/login");
   };
 
   useLayoutEffect(() => {
@@ -99,7 +105,7 @@ const DrawerMenu = ({ handleCloseAll, isOpen, closeModal }: Props) => {
             </button>
             {drawerNavItems.map(
               (item) =>
-                (!item.private || sessionStatus?.role) && (
+                (!item.private || session) && (
                   <CloseLink
                     key={`DRAWER_MENU_${item.label}`}
                     href={item.href}
@@ -112,14 +118,10 @@ const DrawerMenu = ({ handleCloseAll, isOpen, closeModal }: Props) => {
                 ),
             )}
 
-            {sessionStatus?.role && (
+            {session && (
               <button
                 className={Styles.NavLink}
-                onClick={async () => {
-                  handleCloseAll();
-                  await fetchLogout();
-                  window.location.href = "/auth/login";
-                }}
+                onClick={handleClickLogout}
                 style={{
                   marginTop: "1rem",
                 }}

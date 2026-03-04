@@ -21,7 +21,9 @@ import ErrorText from "@components/ui/Edit/ErrorText/ErrorText";
 import EditMediaList from "@components/ui/Edit/EditMediaList/EditMediaList";
 import EditMediaSingle from "@components/ui/Edit/EditMediaSingle/EditMediaSingle";
 import EditPublished from "@components/ui/Edit/EditPublished/EditPublished";
-import FloatingButton from "@components/ui/Button/FloatingButton/FloatingButton";
+import FloatingButton, {
+  FloatingButtonContainer,
+} from "@components/ui/Button/FloatingButton/FloatingButton";
 import PrivateMark from "@components/ui/PrivateMark/PrivateMark";
 import EditModeToggle from "@components/ui/Edit/EditModeToggle/EditModeToggle";
 import ProjectModalView from "./View";
@@ -218,7 +220,7 @@ const ProjectModal = ({ ownerEmail, isOpen, closeModal }: Props) => {
     rawId === "new" ? null : rawId!,
   );
   const { mutateAsync: mutateCreateProject } = useAppMutation(
-    careersMutations.createProject(),
+    careersMutations.createProject(ownerEmail),
     {
       onSuccess: (data) => {
         setProjectId(data.projectId);
@@ -226,10 +228,10 @@ const ProjectModal = ({ ownerEmail, isOpen, closeModal }: Props) => {
     },
   );
   const { mutateAsync: mutateUpdateProject } = useAppMutation(
-    careersMutations.updateProject(projectId!),
+    careersMutations.updateProject(ownerEmail, projectId!),
   );
   const { mutateAsync: mutateDeleteProject } = useAppMutation(
-    careersMutations.deleteProject(projectId!),
+    careersMutations.deleteProject(ownerEmail, projectId!),
   );
 
   const { push } = useModalStackStore();
@@ -394,7 +396,7 @@ const ProjectModal = ({ ownerEmail, isOpen, closeModal }: Props) => {
           </FormProvider>
         )}
         {isEditableProject && (
-          <div className={Styles.FloatingButtonContainer}>
+          <FloatingButtonContainer>
             {projectId ? (
               <>
                 <FloatingButton
@@ -415,7 +417,7 @@ const ProjectModal = ({ ownerEmail, isOpen, closeModal }: Props) => {
                 onClick={handleCreateProject}
               />
             )}
-          </div>
+          </FloatingButtonContainer>
         )}
       </div>
     </div>

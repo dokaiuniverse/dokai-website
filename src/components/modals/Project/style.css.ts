@@ -317,12 +317,3 @@ export const EditMediaContainer = style({
     },
   },
 });
-
-export const FloatingButtonContainer = style({
-  position: "absolute",
-  bottom: "2rem",
-  right: "2rem",
-  display: "flex",
-  flexDirection: "column",
-  gap: "0.5rem",
-});

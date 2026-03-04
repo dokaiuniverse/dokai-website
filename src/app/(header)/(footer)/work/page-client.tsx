@@ -92,7 +92,7 @@ const WorkPageClient = () => {
           {hasNextPage && <MoreButton onClick={() => fetchNextPage()} />}
         </div>
       </div>
-      <FloatingButtonContainer>
+      <FloatingButtonContainer role={["admin"]}>
         <FloatingButton
           type="ADD"
           onClick={() => router.push("/admin/work")}

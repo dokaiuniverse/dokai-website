@@ -34,7 +34,7 @@ export const useSessionStatusQuery = () => {
 
 export const useSessionOwner = (email: string | null) => {
   const { data } = useSessionStatusQuery();
-  if (!data?.loggedIn) return false;
+  if (!data?.email) return false;
   if (data.role === "admin") return true;
   return data.email === email;
 };

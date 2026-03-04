@@ -9,7 +9,7 @@ export const loadSessionStatus = async (): Promise<SessionStatus> => {
   const user = data.user;
 
   if (error || !user) {
-    return { email: null, role: null, loggedIn: false };
+    return { email: null, role: null, hasProfile: false };
   }
 
   const userEmail = user.email?.toLowerCase() ?? null;
@@ -23,5 +23,11 @@ export const loadSessionStatus = async (): Promise<SessionStatus> => {
   const role = (roleRow?.role as Role) ?? null;
   const email = roleRow?.email ?? userEmail ?? null;
 
-  return { email, role, loggedIn: true };
+  const { data: profile } = await supabase
+    .from("career_profiles")
+    .select("email")
+    .eq("email", email)
+    .maybeSingle();
+
+  return { email, role, hasProfile: !!profile };
 };

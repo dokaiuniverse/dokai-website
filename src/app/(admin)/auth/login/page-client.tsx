@@ -7,9 +7,11 @@ import { useAppQuery } from "@controllers/common";
 import { authQueriesClient } from "@controllers/auth/query.client";
 
 const LoginPageClient = () => {
-  const { data: sessionStatus } = useAppQuery(
+  const { data: session, isLoading } = useAppQuery(
     authQueriesClient.sessionStatus(),
   );
+
+  if (isLoading) return null;
 
   return (
     <main className={Styles.Layout}>
@@ -17,7 +19,7 @@ const LoginPageClient = () => {
         <LogoSVG className={Styles.Logo} />
         <p className={Styles.Title}>Login</p>
 
-        {sessionStatus?.loggedIn ? (
+        {!!session ? (
           <button
             onClick={() => {
               window.location.href = "/";

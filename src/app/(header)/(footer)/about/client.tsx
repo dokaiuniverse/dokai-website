@@ -26,7 +26,7 @@ const AboutPageClient = () => {
           <AboutPageContent key={`ABOUT_CONTENT_${index}`} content={content} />
         ))}
       </div>
-      <FloatingButtonContainer>
+      <FloatingButtonContainer role={["admin"]}>
         <FloatingButton
           type="EDIT"
           onClick={() => {

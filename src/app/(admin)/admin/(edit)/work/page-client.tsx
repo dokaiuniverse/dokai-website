@@ -18,7 +18,9 @@ import WorkEditInfo from "@components/pages/work/EditInfo";
 import WorkEditHeader from "@components/pages/work/EditHeader";
 import WorkEditKeyVisuals from "@components/pages/work/EditKeyVisuals";
 import WorkEditCredits from "@components/pages/work/EditCredits";
-import FloatingButton from "@components/ui/Button/FloatingButton/FloatingButton";
+import FloatingButton, {
+  FloatingButtonContainer,
+} from "@components/ui/Button/FloatingButton/FloatingButton";
 import { useModalStackStore } from "@stores/modalStackStore";
 import { fetchWorkCheckSlug } from "@controllers/works/fetch";
 import { worksMutations } from "@controllers/works/mutation";
@@ -198,7 +200,7 @@ const AdminWorkPageClient = ({ slug }: { slug?: string }) => {
           </FormProvider>
         </>
       )}
-      <div className={Styles.FloatingButtonContainer}>
+      <FloatingButtonContainer>
         {workId ? (
           <>
             <FloatingButton
@@ -219,7 +221,7 @@ const AdminWorkPageClient = ({ slug }: { slug?: string }) => {
             onClick={handleCreateWork}
           />
         )}
-      </div>
+      </FloatingButtonContainer>
     </div>
   );
 };
