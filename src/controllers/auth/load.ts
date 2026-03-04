@@ -2,14 +2,14 @@ import { createSupabaseServerClient } from "@lib/supabase/server";
 import { SessionStatus } from "./types";
 import { Role } from "@lib/auth/types";
 
-export const loadSessionStatus = async (): Promise<SessionStatus> => {
+export const loadSessionStatus = async (): Promise<SessionStatus | null> => {
   const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase.auth.getUser();
   const user = data.user;
 
   if (error || !user) {
-    return { email: null, role: null, hasProfile: false };
+    return null;
   }
 
   const userEmail = user.email?.toLowerCase() ?? null;

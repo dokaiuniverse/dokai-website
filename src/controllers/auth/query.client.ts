@@ -4,7 +4,7 @@ import { fetchSessionStatus } from "./fetch";
 import { authQueryKeys } from "./queryKeys";
 
 export const authQueriesClient = {
-  sessionStatus: (): QueryDef<SessionStatus, readonly ["session"]> => ({
+  sessionStatus: (): QueryDef<SessionStatus | null, readonly ["session"]> => ({
     queryKey: authQueryKeys.session(),
     queryFn: () => fetchSessionStatus(),
   }),
