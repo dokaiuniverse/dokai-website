@@ -11,7 +11,9 @@ export default function LoginButton() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(
+          location.pathname + location.search,
+        )}`,
         skipBrowserRedirect: true, // ✅ 자동 페이지 이동 막기
       },
     });
