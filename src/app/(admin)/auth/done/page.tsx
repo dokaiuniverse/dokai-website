@@ -1,16 +1,18 @@
 "use client";
 
+import { authQueryKeys } from "@controllers/auth/queryKeys";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 export default function AuthDonePage() {
+  const qc = useQueryClient();
+
   useEffect(() => {
+    qc.invalidateQueries({ queryKey: authQueryKeys.session() });
     (async () => {
       const url = new URL(window.location.href);
       const next = url.searchParams.get("next") || "/";
       const error = url.searchParams.get("error");
-      console.log(window.location.href);
-
-      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const target = error
         ? `/auth/login?error=${encodeURIComponent(error)}`

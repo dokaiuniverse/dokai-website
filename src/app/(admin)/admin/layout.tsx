@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import ErrorPage from "./errorPage";
+import AdminHeader from "@components/layout/AdminHeader/Header";
 
 export default async function AdminLayout({
   children,
@@ -22,5 +23,10 @@ export default async function AdminLayout({
     return <ErrorPage code={500} reason={reason} />;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <AdminHeader />
+      {children}
+    </>
+  );
 }

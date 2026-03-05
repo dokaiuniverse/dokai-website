@@ -9,8 +9,6 @@ import Providers from "./providers";
 import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
 import ModalStackRoot from "@components/modals/ModalStackRoot";
-import Script from "next/script";
-import GaPageView from "./GaPageView";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -47,30 +45,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
-
   return (
     <html lang="en">
-      <head>
-        {GA_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga4" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${GA_ID}', {
-                  send_page_view: false
-                });
-              `}
-            </Script>
-          </>
-        )}
-      </head>
       <body className={`${dmSans.variable} ${themeClass}`}>
         <NextTopLoader
           showSpinner={true}
@@ -81,13 +57,9 @@ export default function RootLayout({
           speed={200}
           color="#ed8435"
         />
-        <Suspense fallback={null}>
-          <GaPageView />
-        </Suspense>
         <Providers>
           <Suspense fallback={null}>
             <ModalStackRoot />
-            BUILD: 2026-03-05 04:10
             {children}
           </Suspense>
         </Providers>

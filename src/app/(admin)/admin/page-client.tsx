@@ -3,9 +3,9 @@
 import { useMemo } from "react";
 import { useAdminAnalytics } from "@hooks/useAdminAnalytics";
 import * as Styles from "./style.css";
+import Link from "next/link";
 
 function formatDateYYYYMMDD(s: string) {
-  // GA: YYYYMMDD
   if (!/^\d{8}$/.test(s)) return s;
   const y = s.slice(0, 4);
   const m = s.slice(4, 6);
@@ -28,7 +28,7 @@ function LineChart({
   height?: number;
   padding?: number;
 }) {
-  const width = 520; // responsive는 css로 scale
+  const width = 560; // responsive는 css로 scale
   const max = Math.max(1, ...points.map((p) => p.y));
   const min = Math.min(0, ...points.map((p) => p.y));
   const range = Math.max(1, max - min);
@@ -50,23 +50,14 @@ function LineChart({
   const last = points[points.length - 1];
 
   return (
-    <div className={Styles.ChartWrap}>
+    <div className={Styles.ChartContainer}>
       <svg
         className={Styles.ChartSvg}
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="none"
         aria-label="Daily trend chart"
       >
-        {/* baseline */}
-        <line
-          x1={padding}
-          y1={height - padding}
-          x2={width - padding}
-          y2={height - padding}
-          className={Styles.ChartAxis}
-        />
-        {/* line */}
-        <path d={path} className={Styles.ChartLine} />
+        <path d={path} />
       </svg>
 
       {last && (
@@ -95,15 +86,15 @@ const AdminPageClient = () => {
 
   if (isLoading) {
     return (
-      <div className={Styles.Page}>
-        <div className={Styles.Header}>
-          <h1 className={Styles.Title}>Dashboard</h1>
+      <div className={Styles.Container}>
+        <div className={Styles.HeaderContent}>
+          <p className={Styles.Title}>Dashboard</p>
           <p className={Styles.Subtitle}>Loading analytics…</p>
         </div>
-        <div className={Styles.Grid}>
-          <div className={Styles.Card} />
-          <div className={Styles.Card} />
-          <div className={Styles.Card} />
+        <div className={Styles.KpiRow}>
+          <div className={Styles.KpiCard}></div>
+          <div className={Styles.KpiCard}></div>
+          <div className={Styles.KpiCard}></div>
         </div>
       </div>
     );
@@ -111,9 +102,9 @@ const AdminPageClient = () => {
 
   if (error || !data) {
     return (
-      <div className={Styles.Page}>
-        <div className={Styles.Header}>
-          <h1 className={Styles.Title}>Dashboard</h1>
+      <div className={Styles.Container}>
+        <div className={Styles.HeaderContent}>
+          <p className={Styles.Title}>Dashboard</p>
           <p className={Styles.Error}>
             {error ? error.message : "Failed to load analytics"}
           </p>
@@ -122,158 +113,185 @@ const AdminPageClient = () => {
     );
   }
 
+  const KpiList = [
+    {
+      label: "Today",
+      value: formatK(data.totals.today),
+      hint: "page views",
+    },
+    {
+      label: "Yesterday",
+      value: formatK(data.totals.yesterday),
+      hint: "page views",
+    },
+    {
+      label: "Last 7 days",
+      value: formatK(data.totals.last7days),
+      hint: "page views",
+    },
+  ];
+
   return (
-    <div className={Styles.Page}>
+    <div className={Styles.Container}>
       <div className={Styles.Header}>
-        <div>
-          <h1 className={Styles.Title}>Dashboard</h1>
+        <div className={Styles.HeaderContent}>
+          <p className={Styles.Title}>Dashboard</p>
           <p className={Styles.Subtitle}>
             Today / Yesterday / Last 7 days, Top pages, Trend, Referrers, Device
           </p>
         </div>
-        <a
+        <Link
           className={Styles.GaLink}
           href="https://analytics.google.com/"
           target="_blank"
           rel="noreferrer"
         >
           Open GA
-        </a>
+        </Link>
       </div>
 
       {/* KPI cards */}
       <div className={Styles.KpiRow}>
-        <div className={Styles.KpiCard}>
-          <p className={Styles.KpiLabel}>Today</p>
-          <p className={Styles.KpiValue}>{formatK(data.totals.today)}</p>
-          <p className={Styles.KpiHint}>page views</p>
-        </div>
-        <div className={Styles.KpiCard}>
-          <p className={Styles.KpiLabel}>Yesterday</p>
-          <p className={Styles.KpiValue}>{formatK(data.totals.yesterday)}</p>
-          <p className={Styles.KpiHint}>page views</p>
-        </div>
-        <div className={Styles.KpiCard}>
-          <p className={Styles.KpiLabel}>Last 7 days</p>
-          <p className={Styles.KpiValue}>{formatK(data.totals.last7days)}</p>
-          <p className={Styles.KpiHint}>page views</p>
-        </div>
+        {KpiList.map((kpi) => (
+          <div key={`KPI_CARD_${kpi.label}`} className={Styles.KpiCard}>
+            <p className={Styles.KpiLabel}>{kpi.label}</p>
+            <p className={Styles.KpiValue}>{kpi.value}</p>
+            <p className={Styles.KpiHint}>{kpi.hint}</p>
+          </div>
+        ))}
       </div>
 
-      {/* Main grid */}
-      <div className={Styles.Grid}>
-        {/* Trend */}
-        <section className={Styles.Card}>
-          <div className={Styles.CardHeader}>
-            <h2 className={Styles.CardTitle}>Daily Trend</h2>
-            <span className={Styles.CardSub}>last 30 days</span>
+      <div className={Styles.Content}>
+        <div className={Styles.ContentColumn}>
+          <div className={Styles.Card}>
+            <div className={Styles.CardHeader}>
+              <p className={Styles.CardTitle}>Daily Trend</p>
+              <p className={Styles.CardSub}>last 30 days</p>
+            </div>
+            <LineChart points={trendPoints} />
           </div>
-          <LineChart points={trendPoints} />
-        </section>
-
-        {/* Top pages */}
-        <section className={Styles.Card}>
-          <div className={Styles.CardHeader}>
-            <h2 className={Styles.CardTitle}>Top Pages</h2>
-            <span className={Styles.CardSub}>last 7 days</span>
+          <div
+            className={Styles.Card}
+            style={{
+              flexGrow: "1",
+            }}
+          >
+            <div className={Styles.CardHeader}>
+              <p className={Styles.CardTitle}>Top Pages</p>
+              <p className={Styles.CardSub}>last 7 days</p>
+            </div>
+            <div className={Styles.Table}>
+              <div className={Styles.TableHead}>
+                <span>Page</span>
+                <span>Views</span>
+              </div>
+              <div className={Styles.TableBody}>
+                <div className={Styles.TableScroll}>
+                  {data.topPages.length === 0 ? (
+                    <div className={Styles.Empty}>No data yet</div>
+                  ) : (
+                    data.topPages.map((p) => (
+                      <div
+                        key={`${p.pagePath}-${p.pageTitle}`}
+                        className={Styles.TableRow}
+                      >
+                        <div className={Styles.TableMain}>
+                          <p className={Styles.RowTitle}>
+                            {p.pageTitle || p.pagePath}
+                          </p>
+                          <p className={Styles.RowSub}>{p.pagePath}</p>
+                        </div>
+                        <div className={Styles.TableSub}>
+                          {formatK(p.views)}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-
-          <div className={Styles.Table}>
-            <div className={Styles.TableHead}>
-              <span>Page</span>
-              <span className={Styles.TableRight}>Views</span>
+        </div>
+        <div className={Styles.ContentColumn}>
+          <div
+            className={Styles.Card}
+            style={{
+              flexGrow: "1",
+            }}
+          >
+            <div className={Styles.CardHeader}>
+              <p className={Styles.CardTitle}>Top Referrers</p>
+              <p className={Styles.CardSub}>last 7 days</p>
             </div>
 
-            {data.topPages.length === 0 ? (
-              <div className={Styles.Empty}>No data yet</div>
-            ) : (
-              data.topPages.map((p) => (
-                <div
-                  key={`${p.pagePath}-${p.pageTitle}`}
-                  className={Styles.TableRow}
-                >
-                  <div className={Styles.TableMain}>
-                    <p className={Styles.RowTitle}>
-                      {p.pageTitle || p.pagePath}
-                    </p>
-                    <p className={Styles.RowSub}>{p.pagePath}</p>
-                  </div>
-                  <div className={Styles.TableRight}>{formatK(p.views)}</div>
+            <div className={Styles.Table}>
+              <div className={Styles.TableHead}>
+                <span>Page</span>
+                <span>Views</span>
+              </div>
+              <div className={Styles.TableBody}>
+                <div className={Styles.TableScroll}>
+                  {data.topReferrers.length === 0 ? (
+                    <div className={Styles.Empty}>No data yet</div>
+                  ) : (
+                    data.topReferrers.map((r, i) => (
+                      <div
+                        key={`${r.source}-${r.medium}-${i}`}
+                        className={Styles.TableRow}
+                      >
+                        <div className={Styles.TableMain}>
+                          <p className={Styles.RowTitle}>
+                            {r.source}{" "}
+                            <span className={Styles.Muted}>/ {r.medium}</span>
+                          </p>
+                        </div>
+                        <div className={Styles.TableSub}>
+                          {formatK(r.sessions)}
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
-              ))
-            )}
+              </div>
+            </div>
           </div>
-        </section>
-
-        {/* Referrers */}
-        <section className={Styles.Card}>
-          <div className={Styles.CardHeader}>
-            <h2 className={Styles.CardTitle}>Top Referrers</h2>
-            <span className={Styles.CardSub}>last 7 days</span>
-          </div>
-
-          <div className={Styles.Table}>
-            <div className={Styles.TableHead}>
-              <span>Source / Medium</span>
-              <span className={Styles.TableRight}>Sessions</span>
+          <div className={Styles.Card}>
+            <div className={Styles.CardHeader}>
+              <p className={Styles.CardTitle}>Devices</p>
+              <p className={Styles.CardSub}>last 7 days</p>
             </div>
 
-            {data.topReferrers.length === 0 ? (
-              <div className={Styles.Empty}>No data yet</div>
-            ) : (
-              data.topReferrers.map((r, i) => (
-                <div
-                  key={`${r.source}-${r.medium}-${i}`}
-                  className={Styles.TableRow}
-                >
-                  <div className={Styles.TableMain}>
-                    <p className={Styles.RowTitle}>
-                      {r.source}{" "}
-                      <span className={Styles.Muted}>/ {r.medium}</span>
-                    </p>
-                  </div>
-                  <div className={Styles.TableRight}>{formatK(r.sessions)}</div>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
-
-        {/* Device */}
-        <section className={Styles.Card}>
-          <div className={Styles.CardHeader}>
-            <h2 className={Styles.CardTitle}>Device</h2>
-            <span className={Styles.CardSub}>last 7 days</span>
-          </div>
-
-          <div className={Styles.DeviceList}>
-            {(data.device ?? []).map((d) => {
-              const pct =
-                deviceTotal > 0
-                  ? Math.round((d.sessions / deviceTotal) * 100)
-                  : 0;
-              return (
-                <div key={d.deviceCategory} className={Styles.DeviceRow}>
-                  <div className={Styles.DeviceLeft}>
-                    <p className={Styles.RowTitle}>{d.deviceCategory}</p>
-                    <p className={Styles.RowSub}>
-                      {formatK(d.sessions)} sessions · {pct}%
-                    </p>
-                  </div>
-                  <div className={Styles.Bar}>
-                    <div
-                      className={Styles.BarFill}
-                      style={{ width: `${pct}%` }}
+            <div className={Styles.DeviceContainer}>
+              {(data.device ?? []).map((d) => {
+                const percent =
+                  deviceTotal > 0
+                    ? Math.round((d.sessions / deviceTotal) * 100)
+                    : 0;
+                return (
+                  <div key={d.deviceCategory} className={Styles.DeviceRow}>
+                    <div className={Styles.DeviceHeader}>
+                      <p className={Styles.DeviceTitle}>{d.deviceCategory}</p>
+                      <p className={Styles.DeviceSub}>
+                        {formatK(d.sessions)} sessions · {percent}%
+                      </p>
+                    </div>
+                    <span
+                      className={Styles.DeviceBar}
+                      style={
+                        {
+                          "--percent": `${percent}%`,
+                        } as React.CSSProperties
+                      }
                     />
                   </div>
-                </div>
-              );
-            })}
-            {(data.device ?? []).length === 0 && (
-              <div className={Styles.Empty}>No data yet</div>
-            )}
+                );
+              })}
+              {(data.device ?? []).length === 0 && (
+                <div className={Styles.Empty}>No data yet</div>
+              )}
+            </div>
           </div>
-        </section>
+        </div>
       </div>
     </div>
   );
