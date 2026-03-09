@@ -1,4 +1,3 @@
-import { createSupabaseBrowserClient } from "@lib/supabase/browser";
 import { fetchApi } from "../common";
 import { SessionStatus } from "./types";
 
@@ -7,7 +6,7 @@ export const fetchSessionStatus = () =>
     method: "GET",
   });
 
-export const fetchLogout = async () => {
-  const supabase = createSupabaseBrowserClient();
-  await supabase.auth.signOut();
-};
+export const fetchLogout = () =>
+  fetchApi<void>(`/api/public/auth/logout`, {
+    method: "POST",
+  });

@@ -14,10 +14,10 @@ import LogoPNG from "@assets/dokai.png";
 import ExternalLinks from "@ts/external_links";
 import { IMAGE_SIZES } from "@ts/image";
 import CloseLink from "@components/ui/Link/CloseLink";
-import { fetchLogout } from "@controllers/auth/fetch";
 import { useAppMutation, useAppQuery } from "@controllers/common";
 import { authQueriesClient } from "@controllers/auth/query.client";
 import { authMutations } from "@controllers/auth/mutation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const drawerNavItems = [
   { label: "Work", href: "/work", private: false },
@@ -34,14 +34,20 @@ type Props = {
   isOpen: boolean;
   closeModal: () => void;
 };
-
 const DrawerMenu = ({ handleCloseAll, isOpen, closeModal }: Props) => {
   const { data: session } = useAppQuery(authQueriesClient.sessionStatus());
+  const queryClient = useQueryClient();
   const router = useRouter();
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [count, setCount] = useState(0);
-  const { mutateAsync: mutateLogout } = useAppMutation(authMutations.logout());
+  const { mutateAsync: mutateLogout } = useAppMutation(authMutations.logout(), {
+    onSettled: () => {
+      queryClient.clear();
+      router.replace("/login");
+      router.refresh();
+    },
+  });
 
   const { push } = useModalStackStore();
 
@@ -60,7 +66,6 @@ const DrawerMenu = ({ handleCloseAll, isOpen, closeModal }: Props) => {
   const handleClickLogout = async () => {
     handleCloseAll();
     await mutateLogout();
-    router.push("/auth/login");
   };
 
   useLayoutEffect(() => {
