@@ -44,7 +44,7 @@ const DrawerMenu = ({ handleCloseAll, isOpen, closeModal }: Props) => {
   const { mutateAsync: mutateLogout } = useAppMutation(authMutations.logout(), {
     onSettled: () => {
       queryClient.clear();
-      router.replace("/login");
+      router.replace("/auth/login");
       router.refresh();
     },
   });
