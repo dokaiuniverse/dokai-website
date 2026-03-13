@@ -5,8 +5,11 @@ import * as Styles from "./style.css";
 import LogoSVG from "@assets/dokai.svg";
 import { useAppQuery } from "@controllers/common";
 import { authQueriesClient } from "@controllers/auth/query.client";
+import { useSearchParams } from "next/navigation";
 
 const LoginPageClient = () => {
+  const searchParams = useSearchParams();
+  const error = searchParams.get("error");
   const { data: session, isLoading } = useAppQuery(
     authQueriesClient.sessionStatus(),
   );
@@ -31,6 +34,18 @@ const LoginPageClient = () => {
           </button>
         ) : (
           <LoginButton />
+        )}
+
+        {error && (
+          <p style={{ color: "red", fontSize: "0.75rem" }}>
+            {error === "oauth"
+              ? "로그인에 실패했습니다. 다시 시도해주세요."
+              : error === "not_allowed"
+                ? "허용되지 않은 이메일입니다."
+                : error === "no_email"
+                  ? "이메일이 없습니다."
+                  : ""}
+          </p>
         )}
 
         <p className={Styles.Description}>

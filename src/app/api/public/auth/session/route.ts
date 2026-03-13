@@ -2,33 +2,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseRouteClient } from "@lib/supabase/route";
 import { Role } from "@lib/auth/types";
 
-/**
- * @openapi
- * /api/public/auth/session:
- *   get:
- *     tags: [Auth]
- *     summary: Get current session status (logged-in or not)
- *     responses:
- *       200:
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               required: [loggedIn]
- *               properties:
- *                 loggedIn: { type: boolean }
- *                 email: { type: string, nullable: true }
- *                 role:
- *                   type: string
- *                   nullable: true
- *                   description: "admin | staff | null"
- *       500:
- *         description: Server Error
- *         content:
- *           application/json:
- *             schema: { $ref: '#/components/schemas/ErrorResponse' }
- */
 export async function GET(req: NextRequest) {
   const { supabase, applyCookies } = createSupabaseRouteClient(req);
 
@@ -36,7 +9,7 @@ export async function GET(req: NextRequest) {
   const user = data.user;
 
   if (error || !user) {
-    return NextResponse.json(null);
+    return applyCookies(NextResponse.json(null));
   }
 
   const userEmail = user.email?.toLowerCase() ?? null;
@@ -46,6 +19,8 @@ export async function GET(req: NextRequest) {
     .select("role, email")
     .eq("user_id", user.id)
     .maybeSingle();
+
+  if (!roleRow) return applyCookies(NextResponse.json(null));
 
   const role = (roleRow?.role as Role) ?? null;
   const email = roleRow?.email ?? userEmail ?? null;

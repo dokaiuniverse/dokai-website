@@ -110,7 +110,7 @@ const DrawerMenu = ({ handleCloseAll, isOpen, closeModal }: Props) => {
             </button>
             {drawerNavItems.map(
               (item) =>
-                (!item.private || session) && (
+                (!item.private || session?.role === "admin") && (
                   <CloseLink
                     key={`DRAWER_MENU_${item.label}`}
                     href={item.href}
@@ -124,16 +124,13 @@ const DrawerMenu = ({ handleCloseAll, isOpen, closeModal }: Props) => {
             )}
 
             {session && (
-              <button
-                className={Styles.NavLink}
-                onClick={handleClickLogout}
-                style={{
-                  marginTop: "1rem",
-                }}
-              >
-                <ArrowRightSVG className={Styles.NavArrowIcon} />
-                <p>LOGOUT</p>
-              </button>
+              <div className={Styles.NavAuth}>
+                <button className={Styles.NavLink} onClick={handleClickLogout}>
+                  <ArrowRightSVG className={Styles.NavArrowIcon} />
+                  <p>LOGOUT</p>
+                </button>
+                <p className={Styles.NavEmail}>{session?.email}</p>
+              </div>
             )}
           </div>
         </nav>

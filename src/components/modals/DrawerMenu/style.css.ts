@@ -84,6 +84,30 @@ export const NavGrid = style({
   },
 });
 
+export const NavAuth = style({
+  display: "flex",
+  flexDirection: "column",
+  marginTop: "1rem",
+});
+
+export const NavEmail = style({
+  overflow: "hidden",
+  display: "flex",
+
+  fontSize: vars.fontSize.md,
+  fontWeight: "400",
+  lineHeight: "1.4",
+  letterSpacing: "0.03em",
+  gap: "0.5rem",
+  textTransform: "none",
+
+  "@media": {
+    [media.mobile]: {
+      fontSize: vars.fontSize.sm,
+    },
+  },
+});
+
 export const NavColumn = style({
   gridColumn: "2 / -1",
   overflow: "hidden",
