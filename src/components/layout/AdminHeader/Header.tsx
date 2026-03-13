@@ -1,16 +1,15 @@
 "use client";
 
-import { authQueriesClient } from "@controllers/auth/query.client";
-import { useAppQuery } from "@controllers/common";
 import { useState } from "react";
 import ArrowLeftSVG from "@assets/icons/arrow-left.svg";
 import ToggleUpSVG from "@assets/icons/toggle-up.svg";
 import Link from "next/link";
 import * as Styles from "./style.css";
+import useAuthUser from "@hooks/useAuthUser";
 
 const AdminHeader = () => {
   const [isShowNav, setIsShowNav] = useState(true);
-  const { data: session } = useAppQuery(authQueriesClient.sessionStatus());
+  const [session] = useAuthUser();
 
   return (
     <header data-is-show-nav={isShowNav} className={Styles.Container}>

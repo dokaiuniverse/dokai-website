@@ -34,7 +34,7 @@ import { useAppMutation, useAppQuery } from "@controllers/common";
 import { careersQueriesClient } from "@controllers/careers/query.client";
 import { careersMutations } from "@controllers/careers/mutation";
 import { encodeEmailParam } from "@utils/Email";
-import { authQueriesClient } from "@controllers/auth/query.client";
+import useAuthUser from "@hooks/useAuthUser";
 
 const TRANSITION_DURATION = 200;
 
@@ -207,7 +207,7 @@ const ProjectModalEdit = () => {
 };
 
 const ProjectModal = ({ ownerEmail, isOpen, closeModal }: Props) => {
-  const { data: session } = useAppQuery(authQueriesClient.sessionStatus());
+  const [session] = useAuthUser();
   const isOwner = session?.role === "admin" || session?.email === ownerEmail;
   const router = useRouter();
   const searchParams = useSearchParams();

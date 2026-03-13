@@ -5,8 +5,7 @@ import EditPublished from "@components/ui/Edit/EditPublished/EditPublished";
 import TitleInput from "@components/ui/Edit/TitleInput/TitleInput";
 import * as Styles from "./style.css";
 import { fetchProfileCheckEmail } from "@controllers/careers/fetch";
-import { useAppQuery } from "@controllers/common";
-import { authQueriesClient } from "@controllers/auth/query.client";
+import useAuthUser from "@hooks/useAuthUser";
 
 type CheckState = "idle" | "checking" | "ok";
 
@@ -15,7 +14,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const normalizeEmail = (v: string) => v.trim().toLowerCase();
 
 const CareerEditInfo = ({ email }: { email?: string }) => {
-  const { data: session } = useAppQuery(authQueriesClient.sessionStatus());
+  const [session] = useAuthUser();
   const form = useFormContext<ProfileFormInput>();
   const emailEditable = session?.role === "admin";
 

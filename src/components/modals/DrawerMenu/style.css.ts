@@ -74,7 +74,7 @@ export const NavGrid = style({
   display: "grid",
   gridTemplateColumns: "repeat(2, minmax(0px, 1fr))",
 
-  marginTop: "5rem",
+  marginTop: "4rem",
   transition: "margin-top 250ms ease",
 
   "@media": {
@@ -116,7 +116,7 @@ export const NavColumn = style({
 
   fontSize: vars.fontSize.xxl,
   fontWeight: "300",
-  lineHeight: "1.4",
+  lineHeight: "1.33",
   letterSpacing: "0.03em",
   textTransform: "uppercase",
   gap: "0.5rem",

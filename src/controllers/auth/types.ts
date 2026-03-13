@@ -1,7 +1,7 @@
 import { Role } from "@lib/auth/types";
 
 export type SessionStatus = {
-  email: string | null;
+  email: string;
   role: Role;
   hasProfile: boolean;
 };

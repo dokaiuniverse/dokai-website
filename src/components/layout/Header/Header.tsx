@@ -13,6 +13,7 @@ import HamburgerXSVG from "@assets/icons/hamburger-x.svg";
 import MenuBGSVG from "@assets/icons/menu-bg.svg";
 import CloseLink from "@components/ui/Link/CloseLink";
 import { usePathname, useSearchParams } from "next/navigation";
+import useAuthUser from "@hooks/useAuthUser";
 
 const navList = [
   { label: "Work", href: "/work" },
@@ -25,6 +26,7 @@ const Header = () => {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  useAuthUser();
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsOpenMenu(false);

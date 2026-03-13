@@ -5,13 +5,13 @@ import MediaHoverOverlay from "@components/ui/Media/HoverOverlay/HoverOverlay";
 import Link from "next/link";
 import PlusSVG from "@assets/icons/plus.svg";
 import { useQueryClient } from "@tanstack/react-query";
-import { prefetchAppQuery, useAppQuery } from "@controllers/common";
+import { prefetchAppQuery } from "@controllers/common";
 import { useSearchParams } from "next/navigation";
 import { useModalStackStore } from "@stores/modalStackStore";
 import { useEffect } from "react";
 import { ProjectListItem } from "@domain/careers";
-import { authQueriesClient } from "@controllers/auth/query.client";
 import { careersQueriesClient } from "@controllers/careers/query.client";
+import useAuthUser from "@hooks/useAuthUser";
 
 const CareerProjects = ({
   projects,
@@ -25,7 +25,7 @@ const CareerProjects = ({
   const qc = useQueryClient();
   const searchParams = useSearchParams();
   const { replaceTop } = useModalStackStore();
-  const { data: session } = useAppQuery(authQueriesClient.sessionStatus());
+  const [session] = useAuthUser();
   const editable = session?.role === "admin" || session?.email === email;
 
   const handleClickProject = async (project: ProjectListItem) => {

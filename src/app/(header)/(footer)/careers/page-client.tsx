@@ -2,7 +2,6 @@
 
 import * as Styles from "./style.css";
 import { useAppQuery } from "@controllers/common";
-import { authQueriesClient } from "@controllers/auth/query.client";
 import { careersQueriesClient } from "@controllers/careers/query.client";
 import { useRouter } from "nextjs-toploader/app";
 import FloatingButton, {
@@ -10,6 +9,7 @@ import FloatingButton, {
 } from "@components/ui/Button/FloatingButton/FloatingButton";
 import CareersPageContent from "@components/pages/careers/Content";
 import CareersPageProfileList from "@components/pages/careers/ProfileList";
+import useAuthUser from "@hooks/useAuthUser";
 
 const CareersPageClient = () => {
   const router = useRouter();
@@ -17,7 +17,7 @@ const CareersPageClient = () => {
     careersQueriesClient.careerPageDetail(),
   );
   const { data } = useAppQuery(careersQueriesClient.profileList());
-  const { data: session } = useAppQuery(authQueriesClient.sessionStatus());
+  const [session] = useAuthUser();
   const careersPageDetail = pageDetail?.data;
 
   const handleAddProfile = () => {

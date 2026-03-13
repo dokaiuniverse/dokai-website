@@ -29,7 +29,7 @@ import { useAppMutation, useAppQuery } from "@controllers/common";
 import { careersQueriesClient } from "@controllers/careers/query.client";
 import { careersMutations } from "@controllers/careers/mutation";
 import { encodeEmailParam } from "@utils/Email";
-import { authQueriesClient } from "@controllers/auth/query.client";
+import useAuthUser from "@hooks/useAuthUser";
 
 const AdminCareersPageClient = ({ email }: { email?: string }) => {
   const router = useRouter();
@@ -37,7 +37,7 @@ const AdminCareersPageClient = ({ email }: { email?: string }) => {
   const { data } = useAppQuery(careersQueriesClient.profileDetail(email!), {
     enabled: !!email,
   });
-  const { data: session } = useAppQuery(authQueriesClient.sessionStatus());
+  const [session] = useAuthUser();
   const [profileId, setProfileId] = useState<string | null>(null);
 
   const { mutateAsync: mutateCreateProfile } = useAppMutation(

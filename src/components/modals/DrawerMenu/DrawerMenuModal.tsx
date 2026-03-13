@@ -14,10 +14,10 @@ import LogoPNG from "@assets/dokai.png";
 import ExternalLinks from "@ts/external_links";
 import { IMAGE_SIZES } from "@ts/image";
 import CloseLink from "@components/ui/Link/CloseLink";
-import { useAppMutation, useAppQuery } from "@controllers/common";
-import { authQueriesClient } from "@controllers/auth/query.client";
+import { useAppMutation } from "@controllers/common";
 import { authMutations } from "@controllers/auth/mutation";
 import { useQueryClient } from "@tanstack/react-query";
+import useAuthUser from "@hooks/useAuthUser";
 
 const drawerNavItems = [
   { label: "Work", href: "/work", private: false },
@@ -35,7 +35,7 @@ type Props = {
   closeModal: () => void;
 };
 const DrawerMenu = ({ handleCloseAll, isOpen, closeModal }: Props) => {
-  const { data: session } = useAppQuery(authQueriesClient.sessionStatus());
+  const [session] = useAuthUser();
   const queryClient = useQueryClient();
   const router = useRouter();
   const overlayRef = useRef<HTMLDivElement | null>(null);

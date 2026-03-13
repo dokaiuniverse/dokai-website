@@ -3,9 +3,8 @@ import EditSVG from "@assets/icons/edit.svg";
 import SaveSVG from "@assets/icons/save.svg";
 import TrashSVG from "@assets/icons/trash.svg";
 import * as Styles from "./style.css";
-import { authQueriesClient } from "@controllers/auth/query.client";
-import { useAppQuery } from "@controllers/common";
 import { Role } from "@lib/auth/types";
+import useAuthUser from "@hooks/useAuthUser";
 
 const FloatingButton = ({
   type,
@@ -45,7 +44,7 @@ export const FloatingButtonContainer = ({
   role?: Role[];
   email?: string;
 }) => {
-  const { data: session } = useAppQuery(authQueriesClient.sessionStatus());
+  const [session] = useAuthUser();
 
   if (
     !session ||

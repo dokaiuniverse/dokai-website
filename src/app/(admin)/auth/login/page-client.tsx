@@ -3,19 +3,13 @@
 import LoginButton from "./login-button";
 import * as Styles from "./style.css";
 import LogoSVG from "@assets/dokai.svg";
-import { useAppQuery } from "@controllers/common";
-import { authQueriesClient } from "@controllers/auth/query.client";
 import { useSearchParams } from "next/navigation";
+import useAuthUser from "@hooks/useAuthUser";
 
 const LoginPageClient = () => {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
-  const { data: session, isLoading } = useAppQuery(
-    authQueriesClient.sessionStatus(),
-  );
-
-  console.log(session);
-  if (isLoading) return null;
+  const [session] = useAuthUser();
 
   return (
     <main className={Styles.Layout}>
