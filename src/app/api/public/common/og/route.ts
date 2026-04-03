@@ -1,13 +1,5 @@
 import { NextResponse } from "next/server";
-
-function pick(content: string, name: string) {
-  const r = new RegExp(
-    `<meta[^>]+(?:property|name)=["']${name}["'][^>]+content=["']([^"']+)["'][^>]*>`,
-    "i",
-  );
-  const m = content.match(r);
-  return m?.[1];
-}
+import urlMetadata from "url-metadata";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -25,28 +17,18 @@ export async function GET(req: Request) {
   }
 
   try {
-    const res = await fetch(parsed.toString(), {
-      redirect: "follow",
-      headers: {
-        // 일부 사이트가 UA 없으면 막음
-        "user-agent":
-          "Mozilla/5.0 (compatible; DokaiEditor/1.0; +https://example.com)",
-        accept: "text/html,*/*",
+    const res: urlMetadata.Result = await urlMetadata(url, {
+      cache: "force-cache",
+      requestHeaders: {
+        "User-Agent": "Googlebot",
       },
     });
 
-    const html = await res.text();
-
-    const title =
-      pick(html, "og:title") ??
-      pick(html, "twitter:title") ??
-      pick(html, "title");
+    const title = res["og:title"] || res["twitter:title"] || res["title"];
     const description =
-      pick(html, "og:description") ??
-      pick(html, "twitter:description") ??
-      pick(html, "description");
-    const image = pick(html, "og:image") ?? pick(html, "twitter:image");
-    const canonical = pick(html, "og:url") ?? parsed.toString();
+      res["og:description"] || res["twitter:description"] || res["description"];
+    const image = res["og:image"] || res["twitter:image"] || res["image"];
+    const canonical = res["og:url"] || res["url"] || parsed.toString();
 
     return NextResponse.json({
       title,
