@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unsupported mime" }, { status: 400 });
   if (!isSha256Hex(hash))
     return NextResponse.json({ error: "Invalid hash" }, { status: 400 });
-  if (typeof size !== "number" || size > 10 * 1024 * 1024) {
+  if (typeof size !== "number" || size > 32 * 1024 * 1024) {
     return NextResponse.json({ error: "File too large" }, { status: 400 });
   }
 
