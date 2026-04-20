@@ -39,7 +39,6 @@ const AdminWorkPageClient = ({ slug }: { slug?: string }) => {
     {
       onSuccess: (data) => {
         setWorkId(data.workId);
-        // queryClient.invalidateQueries({ queryKey: ["careers", "profileList"] })
       },
     },
   );
@@ -91,9 +90,9 @@ const AdminWorkPageClient = ({ slug }: { slug?: string }) => {
     } = formValues;
     const nextWork = rest as Work;
 
-    if (slug && nextSlug !== slug) {
+    if (slug && nextSlug.trim() !== slug) {
       try {
-        const result = await fetchWorkCheckSlug(nextSlug);
+        const result = await fetchWorkCheckSlug(nextSlug.trim());
 
         const isTaken = result.exists;
         if (isTaken) {
@@ -123,12 +122,12 @@ const AdminWorkPageClient = ({ slug }: { slug?: string }) => {
         title: "Create New Work",
         onFetch: async () =>
           mutateCreateWork({
-            slug: nextSlug,
+            slug: nextSlug.trim(),
             isPublished: nextIsPublished,
             data: nextWork,
           }),
         onConfirm: () => {
-          router.replace(`/work/${nextSlug}`);
+          router.replace(`/work/${encodeURIComponent(nextSlug.trim())}`);
         },
         isRouteAfterConfirm: true,
       });
@@ -139,12 +138,12 @@ const AdminWorkPageClient = ({ slug }: { slug?: string }) => {
         title: "Update Work",
         onFetch: async () =>
           mutateUpdateWork({
-            slug: nextSlug,
+            slug: nextSlug.trim(),
             isPublished: nextIsPublished,
             data: nextWork,
           }),
         onConfirm: () => {
-          router.replace(`/work/${nextSlug}`);
+          router.replace(`/work/${encodeURIComponent(nextSlug.trim())}`);
         },
         isRouteAfterConfirm: true,
       });

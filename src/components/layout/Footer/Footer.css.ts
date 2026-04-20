@@ -28,7 +28,7 @@ export const Content = style({
 
 export const ContentTitle = style({
   gridColumn: "span 2",
-  fontSize: vars.fontSize.xl,
+  fontSize: vars.fontSize.xxl,
   fontWeight: "500",
   lineHeight: "1em",
   letterSpacing: "0em",
@@ -36,9 +36,6 @@ export const ContentTitle = style({
 
   "@media": {
     [media.desktop]: {
-      gridColumn: "2 / -2",
-    },
-    [media.tablet]: {
       gridColumn: "1 / -1",
     },
   },
@@ -52,7 +49,7 @@ export const ContentWrapper = style({
 
   "@media": {
     [media.desktop]: {
-      gridColumn: "2 / -2",
+      gridColumn: "1 / -2",
       gap: "2.25rem",
     },
     [media.tablet]: {
@@ -70,11 +67,11 @@ export const ItemContainer = style({
   gap: "0.875rem",
   fontSize: vars.fontSize.md,
 
-  "@media": {
-    [media.tablet]: {
-      fontSize: vars.fontSize.sm,
-    },
-  },
+  // "@media": {
+  //   [media.tablet]: {
+  //     fontSize: vars.fontSize.sm,
+  //   },
+  // },
 });
 
 export const ItemTitle = style({

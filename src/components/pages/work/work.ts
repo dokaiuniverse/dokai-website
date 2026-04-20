@@ -62,6 +62,17 @@ export const workSchema = z.object({
   meta: z
     .array(workMetaFieldSchema)
     .min(1, "At least one meta is required")
+    .refine(
+      (v) =>
+        v.every(
+          (meta) =>
+            !!meta.name &&
+            meta.name.trim().length > 0 &&
+            meta.values.length > 0 &&
+            meta.values.every((value) => value.trim().length > 0),
+        ),
+      "Invalid meta",
+    )
     .default([]),
   isShortForm: z.boolean(),
   mainMedia: mediaSourceSchema
@@ -74,6 +85,23 @@ export const workSchema = z.object({
   credits: z
     .array(creditSchema)
     .min(1, "At least one credit is required")
+    .refine(
+      (v) =>
+        v.every(
+          (credit) =>
+            !!credit.team &&
+            credit.team.trim().length > 0 &&
+            credit.members.length > 0 &&
+            credit.members.every(
+              (member) =>
+                !!member.role &&
+                member.role.trim().length > 0 &&
+                member.names.length > 0 &&
+                member.names.every((name) => name.trim().length > 0),
+            ),
+        ),
+      "Invalid credit",
+    )
     .default([]),
   isPublished: z.boolean(),
   slug: z.string().min(1, "Slug is required"),
@@ -89,11 +117,50 @@ export const initalWork: WorkInput = {
   summary: "",
   productionDate: null,
   productionType: "",
-  meta: [],
+  meta: [
+    {
+      name: "CLIENT",
+      values: [],
+    },
+    {
+      name: "AGENCY",
+      values: [],
+    },
+    {
+      name: "CREATIVE STUDIO",
+      values: [],
+    },
+    {
+      name: "CAPABILITIES",
+      values: [],
+    },
+  ],
   isShortForm: false,
   mainMedia: null,
   keyVisuals: [],
-  credits: [],
+  credits: [
+    {
+      team: "DOKAI",
+      members: [
+        {
+          role: "Executive Producer",
+          names: [],
+        },
+        {
+          role: "Director",
+          names: [],
+        },
+        {
+          role: "Creative Director",
+          names: [],
+        },
+        {
+          role: "Art Director",
+          names: [],
+        },
+      ],
+    },
+  ],
   isPublished: false,
   slug: "",
 };

@@ -11,7 +11,7 @@ globalStyle("html, body", {
 });
 
 globalStyle("html", {
-  fontSize: "clamp(16px, 1.333333vw, 32px)",
+  fontSize: "clamp(20px, 1.48889vw, 32px)",
 });
 
 globalStyle("body", {
@@ -67,14 +67,14 @@ globalStyle("button", {
 globalStyle("main", {
   display: "flex",
   flexDirection: "column",
-  minHeight: "calc(100dvh - 10rem)",
+  minHeight: "calc(100dvh - 9rem)",
 
   "@media": {
     [media.tablet]: {
-      minHeight: "calc(100dvh - 4rem - 48px)",
+      minHeight: "calc(100dvh - 3rem - 48px)",
     },
     [media.mobile]: {
-      minHeight: "calc(100dvh - 3rem - 40px)",
+      minHeight: "calc(100dvh - 2rem - 40px)",
     },
   },
 });

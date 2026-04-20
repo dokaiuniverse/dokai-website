@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   const { data, error } = await routeSupabase
     .from("works")
     .select(
-      "id, slug, data->title, data->thumbnail, data->category, data->summary, is_published",
+      "id, slug, data->title, data->thumbnail, data->category, data->summary, data->isShortForm, is_published",
     )
     .order("fixed_order", { ascending: true, nullsFirst: false })
     .order("published_at", { ascending: false })
@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
         thumbnail: row.thumbnail,
         category: row.category,
         summary: row.summary,
+        isShortForm: row.isShortForm,
       },
     })) ?? [];
 

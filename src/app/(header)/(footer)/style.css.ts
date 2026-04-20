@@ -8,8 +8,8 @@ export const Container = style({
   gridTemplateRows: "auto 1fr auto",
   rowGap: "6rem",
   columnGap: "1rem",
-  marginBottom: "10rem",
-  marginTop: "-10rem",
+  marginBottom: "6rem",
+  marginTop: "-9rem",
   flexGrow: "1",
 
   "@media": {
@@ -26,7 +26,7 @@ export const Container = style({
 
 export const Title = style({
   gridColumn: "2 / span 4",
-  fontSize: vars.fontSize.lg,
+  fontSize: vars.fontSize.xl,
   fontWeight: "300",
   lineHeight: "1.33",
 
@@ -58,65 +58,46 @@ export const WorksContainer = style({
   },
 });
 
-export const ItemContainer = recipe({
-  base: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    gap: "1rem",
-    cursor: "pointer",
-    height: "fit-content",
-    transition: "opacity 0.2s ease-in-out",
+export const ItemContainer = style({
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+  cursor: "pointer",
+  height: "fit-content",
+  transition: "opacity 0.2s ease-in-out",
 
-    selectors: {
-      "&:hover": { opacity: 0.5 },
-    },
-
-    "@media": {
-      [media.tablet]: {
-        gridColumn: "span 4",
-        gap: "0.5rem",
-      },
-      [media.mobile]: {
-        gridColumn: "1 / -1",
-      },
-    },
+  selectors: {
+    "&:hover": { opacity: 0.5 },
   },
 
-  variants: {
-    row: {
-      odd: {},
-      even: {},
+  "@media": {
+    [media.tablet]: {
+      gridColumn: "span 4 !important",
+      gap: "0.5rem",
     },
-    width: {
-      narrow: {},
-      wide: {},
+    [media.mobile]: {
+      gridColumn: "1 / -1 !important",
+      gridRow: "span 1 !important",
     },
   },
-
-  compoundVariants: [
-    {
-      variants: { row: "odd", width: "narrow" },
-      style: { gridColumn: "1 / span 3" },
-    },
-    {
-      variants: { row: "odd", width: "wide" },
-      style: { gridColumn: "1 / span 5" },
-    },
-    {
-      variants: { row: "even", width: "narrow" },
-      style: { gridColumn: "6 / span 3" },
-    },
-    {
-      variants: { row: "even", width: "wide" },
-      style: { gridColumn: "4 / span 5" },
-    },
-  ],
 });
 
-export const ItemMedia = style({
-  width: "100%",
-  aspectRatio: "16 / 9",
+export const ItemMedia = recipe({
+  base: {
+    width: "100%",
+  },
+  variants: {
+    isShortForm: {
+      true: { aspectRatio: "9 / 16" },
+      false: {
+        aspectRatio: "16 / 9",
+      },
+    },
+  },
+  defaultVariants: {
+    isShortForm: false,
+  },
 });
 
 export const PrivateIcon = style({
@@ -151,6 +132,7 @@ export const ItemTextContainer = recipe({
   variants: {
     width: {
       wide: { gridTemplateColumns: "repeat(1, 1fr)" },
+      middle: { gridTemplateColumns: "repeat(2, 1fr)" },
       narrow: { gridTemplateColumns: "repeat(2, 1fr)" },
     },
   },

@@ -202,13 +202,13 @@ const VimeoPlayer = ({ videoId, loop, onLoad, onError }: Props) => {
           top: "-1px",
           left: "-1px",
           pointerEvents: "auto",
-          background: "transparent",
           opacity: ready ? 1 : 0,
           transition: "opacity 300ms ease-in-out",
           transform: "scale(1.0)",
           transformOrigin: "center",
           outline: "none",
           border: "none",
+          background: "black",
         }}
         frameBorder={0}
         allow={

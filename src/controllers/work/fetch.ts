@@ -1,4 +1,5 @@
 import { Work, WorkCard, WorkCategory } from "@domain/work";
+import { Category } from "@ts/categories";
 
 export type WorkListResponse = {
   items: WorkCard[];
@@ -14,7 +15,7 @@ export type FetchWorksParams = {
   mode?: WorkMode;
   page?: number; // 1-based
   pageSize?: number;
-  category?: WorkCategory | "EVERYTHING";
+  category?: Category;
   q?: string[]; // repeatable
 };
 
@@ -25,7 +26,7 @@ export async function fetchWorkList(
     mode = "main",
     page = 1,
     pageSize = 12,
-    category = "EVERYTHING",
+    category = "Everything",
     q = [],
   }: FetchWorksParams = {},
   opts: FetchOptions = {},

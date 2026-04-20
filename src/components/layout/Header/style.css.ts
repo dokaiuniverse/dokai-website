@@ -20,7 +20,7 @@ export const LogoContainer = style({
 export const LogoImage = style({
   position: "relative",
   zIndex: "103",
-  width: "6rem",
+  width: "5rem",
   height: "auto",
   aspectRatio: "1 / 1",
 

@@ -1,3 +1,4 @@
+import { Category } from "@ts/categories";
 import type { MediaSource } from "./media";
 
 export type WorkCategory =
@@ -43,7 +44,7 @@ export type Work = {
 
 export type WorkListItem = Pick<
   Work,
-  "title" | "thumbnail" | "category" | "summary"
+  "title" | "thumbnail" | "category" | "summary" | "isShortForm"
 >;
 
 export type WorkCard = {
@@ -51,6 +52,6 @@ export type WorkCard = {
   title: string;
   thumbnail: MediaSource | null;
   summary: string;
-  category: WorkCategory;
+  category: Category;
   fixedAt: string | null;
 };

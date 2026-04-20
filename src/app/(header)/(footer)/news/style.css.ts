@@ -2,12 +2,12 @@ import { media, vars } from "@styles/theme.css";
 import { style } from "@vanilla-extract/css";
 
 export const Container = style({
-  display: "grid",
-  gridTemplateColumns: "repeat(8, 1fr)",
-  rowGap: "6rem",
+  display: "flex",
+  flexDirection: "column",
   columnGap: "1rem",
 
-  marginBottom: "10rem",
+  marginBottom: "6rem",
+  flexGrow: "1",
 
   "@media": {
     [media.mobile]: {
@@ -24,6 +24,8 @@ export const Content = style({
   gridTemplateColumns: "repeat(3, 1fr)",
   rowGap: "2rem",
   columnGap: "2rem",
+  flexGrow: "1",
+  alignItems: "start",
 
   "@media": {
     [media.tablet]: {
@@ -59,7 +61,7 @@ export const NewsItemContent = style({
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
-  gap: "1rem",
+  gap: "1.5rem",
   flexGrow: "1",
 });
 
@@ -69,7 +71,7 @@ export const NewsItemHeader = style({
 });
 
 export const NewsItemCategory = style({
-  fontSize: vars.fontSize.sm,
+  fontSize: "0.9rem",
   fontWeight: "500",
 });
 
@@ -85,14 +87,16 @@ export const NewsItemFooter = style({
 });
 
 export const NewsItemDate = style({
-  fontSize: vars.fontSize.xs,
+  fontSize: vars.fontSize.sm,
+  fontWeight: "500",
 });
 
 export const NewsItemView = style({
   display: "flex",
   alignItems: "center",
   gap: "0.25rem",
-  fontSize: vars.fontSize.xs,
+  fontWeight: "600",
+  fontSize: vars.fontSize.sm,
 });
 
 export const NewsItemViewIcon = style({

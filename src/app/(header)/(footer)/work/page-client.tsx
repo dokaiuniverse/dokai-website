@@ -19,8 +19,8 @@ import MediaCard from "@components/ui/Media/MediaCard/MediaCard";
 const WorkPageClient = () => {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState<
-    WorkCategory | "EVERYTHING"
-  >("EVERYTHING");
+    WorkCategory | "Everything"
+  >("Everything");
 
   const {
     data: works,
@@ -34,7 +34,7 @@ const WorkPageClient = () => {
       Array.from(
         { length: Math.ceil(categories.length / 4) },
         (_, i) =>
-          categories.slice(i * 4, i * 4 + 4) as (WorkCategory | "EVERYTHING")[],
+          categories.slice(i * 4, i * 4 + 4) as (WorkCategory | "Everything")[],
       ),
     [],
   );

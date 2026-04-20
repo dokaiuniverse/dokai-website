@@ -4,10 +4,10 @@ import { globalStyle, style } from "@vanilla-extract/css";
 export const Container = style({
   display: "grid",
   gridTemplateColumns: "repeat(8, 1fr)",
-  rowGap: "6rem",
+  rowGap: "5rem",
   columnGap: "1rem",
   paddingBottom: "6rem",
-  marginBottom: "4rem",
+  marginBottom: "2rem",
   position: "relative",
 
   "@media": {
@@ -87,7 +87,7 @@ export const WorkItemsContainer = style({
   display: "grid",
   gridTemplateColumns: "repeat(2, 1fr)",
   columnGap: "1rem",
-  rowGap: "6rem",
+  rowGap: "4.5rem",
 
   "@media": {
     [media.mobile]: {
@@ -102,7 +102,7 @@ export const WorkItem = style({
   cursor: "pointer",
   display: "flex",
   flexDirection: "column",
-  gap: "1rem",
+  gap: "0.5rem",
 });
 
 export const WorkItemMedia = style({
@@ -129,15 +129,15 @@ export const WorkItemMediaOverlay = style({
   fontWeight: "500",
   letterSpacing: "0.04rem",
   textAlign: "left",
-  lineHeight: "1.5em",
+  lineHeight: "1.33em",
   padding: "1rem",
   color: "white",
   paddingRight: "3rem",
 });
 
 export const WorkItemText = style({
-  fontSize: vars.fontSize.sm,
-  fontWeight: "300",
+  fontSize: vars.fontSize.md,
+  fontWeight: "400",
   letterSpacing: "0.04rem",
   transition: "opacity 0.2s ease-in-out",
   textAlign: "left",

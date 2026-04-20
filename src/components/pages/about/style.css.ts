@@ -278,7 +278,9 @@ export const TeamNames = style({
   flexWrap: "wrap",
   gridColumn: "3",
   fontWeight: "300",
-  columnGap: "0.5rem",
+  columnGap: "1rem",
+  lineHeight: "1.667",
+  marginTop: "0.25rem",
 
   "@media": {
     [media.mobile]: {

@@ -12,7 +12,7 @@ export function useWorksInfiniteQuery(params: UseWorksInfiniteParams) {
     enabled = true,
     mode = "main",
     pageSize = 12,
-    category = "EVERYTHING",
+    category = "Everything",
     q = [],
   } = params;
 

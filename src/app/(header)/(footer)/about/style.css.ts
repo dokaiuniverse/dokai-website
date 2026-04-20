@@ -5,9 +5,10 @@ import { recipe } from "@vanilla-extract/recipes";
 export const Container = style({
   display: "grid",
   gridTemplateColumns: "repeat(8, 1fr)",
-  rowGap: "4rem",
+  rowGap: "3rem",
   columnGap: "1rem",
   marginBottom: "10rem",
+  paddingTop: "0 !important",
 });
 
 export const Content = recipe({

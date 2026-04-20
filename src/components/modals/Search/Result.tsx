@@ -1,23 +1,12 @@
 import * as Styles from "./style.css";
-import categories from "@ts/categories";
+import categories, { Category } from "@ts/categories";
 import { toTitleCase } from "@utils/Text";
 import MediaHoverOverlay from "@components/ui/Media/HoverOverlay/HoverOverlay";
 import { useWorksInfiniteQuery } from "@controllers/work/query";
 import { useMemo, useState } from "react";
-import { WorkCard, WorkCategory } from "@domain/work";
+import { WorkCard } from "@domain/work";
 import Link from "next/link";
 import CloseLink from "@components/ui/Link/CloseLink";
-
-const CATEGORY_ORDER: (WorkCategory | "EVERYTHING")[] = [
-  "EVERYTHING",
-  "ANIMATE",
-  "BRANDING",
-  "CHARACTER",
-  "AWARD",
-  "FILM",
-  "COMMERCIAL",
-  "SOCIAL_CONTENTS",
-];
 
 const SearchResult = ({
   queries,
@@ -26,9 +15,8 @@ const SearchResult = ({
   queries: string[];
   handleClose: () => void;
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<
-    WorkCategory | "EVERYTHING"
-  >("EVERYTHING");
+  const [selectedCategory, setSelectedCategory] =
+    useState<Category>("Everything");
   const { data: works, isLoading } = useWorksInfiniteQuery({
     mode: "main",
     category: selectedCategory,
@@ -40,16 +28,18 @@ const SearchResult = ({
   const categorizedSearchResult = useMemo(() => {
     if (!searchResults?.length) return [];
 
-    const map = new Map<WorkCategory | "EVERYTHING", WorkCard[]>();
+    const map = new Map<Category, WorkCard[]>();
     for (const item of searchResults) {
-      const key = item.category as WorkCategory | "EVERYTHING";
+      const key = item.category as Category;
       (map.get(key) ?? map.set(key, []).get(key)!).push(item);
     }
 
-    return CATEGORY_ORDER.filter((c) => map.has(c)).map((category) => ({
-      category,
-      items: map.get(category)!,
-    }));
+    return categories
+      .filter((c) => map.has(c))
+      .map((category) => ({
+        category,
+        items: map.get(category)!,
+      }));
   }, [searchResults]);
 
   if (!queries.length) return;
@@ -59,9 +49,9 @@ const SearchResult = ({
     <div className={Styles.ResultContainer}>
       <p className={Styles.FilterTitle}>Filter by</p>
       <div className={Styles.FilterGroup}>
-        {(categories as (WorkCategory | "EVERYTHING")[]).map((filter, idx) => {
+        {(categories as Category[]).map((filter, idx) => {
           const count =
-            filter === "EVERYTHING"
+            filter === "Everything"
               ? searchResults?.length
               : searchResults?.filter((r) => r.category === filter).length || 0;
           const defaultChecked = idx === 0;

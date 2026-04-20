@@ -52,7 +52,7 @@ globalStyle(`${Container}:hover .${Media}`, {
 });
 
 globalStyle(`${Container}:hover .${OverlayBackground}`, {
-  opacity: 1,
+  opacity: 0.85,
 });
 
 globalStyle(`${Container}:hover .${OverlayContent}`, {

@@ -9,27 +9,28 @@ export const HeaderContainer = style({
   display: "grid",
   gridTemplateColumns: "repeat(8, 1fr)",
   rowGap: "2rem",
-  columnGap: "1rem",
+  columnGap: "3rem",
 
   "@media": {
     [media.tablet]: {
       rowGap: "1rem",
+      columnGap: "1rem",
     },
   },
 });
 
 export const HeaderTitle = style({
   gridColumn: "1 / span 7",
-  fontSize: vars.fontSize.xl,
-  color: vars.color.border,
-  fontWeight: "300",
+  fontSize: vars.fontSize.xxl,
+  fontWeight: "400",
   lineHeight: "1.33",
 
   "@media": {
     [media.tablet]: {
-      fontSize: vars.fontSize.lg,
+      fontSize: vars.fontSize.xl,
     },
     [media.mobile]: {
+      fontSize: vars.fontSize.lg,
       gridColumn: "1 / -1",
     },
   },
@@ -86,13 +87,13 @@ export const HeaderInfo = style({
   flexDirection: "column",
   fontSize: vars.fontSize.md,
   fontWeight: "500",
-  flexShrink: "0",
 
   "@media": {
     [media.mobile]: {
       justifyContent: "center",
       alignItems: "center",
       flexGrow: "1",
+      textAlign: "center",
     },
   },
 
@@ -111,7 +112,7 @@ export const HeaderMetaList = recipe({
   base: {
     display: "flex",
     flexDirection: "column",
-    gap: "1rem",
+    gap: "0.5rem",
     fontSize: vars.fontSize.sm,
 
     "@media": {
@@ -277,7 +278,7 @@ export const CreditsContainer = style({
   gridColumn: "3 / -1",
   display: "flex",
   flexDirection: "column",
-  gap: "1rem",
+  gap: "0.25rem",
 
   "@media": {
     [media.tablet]: {
@@ -303,7 +304,7 @@ export const CreditsContent = style({
   fontWeight: "300",
   lineHeight: "1.83",
   letterSpacing: "-0.03em",
-  alignItems: "flex-end",
+  alignItems: "flex-start",
 
   "@media": {
     [media.tablet]: {
@@ -362,7 +363,9 @@ export const CreditsNames = style({
   gridColumn: "4",
   display: "flex",
   flexWrap: "wrap",
-  gap: "0.25rem",
+  columnGap: "1rem",
+  lineHeight: "1.667",
+  marginTop: "0.25rem",
 });
 
 // EditInfo

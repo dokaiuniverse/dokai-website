@@ -252,7 +252,7 @@ export async function GET(req: NextRequest) {
   const { supabase, applyCookies } = createSupabaseRouteClient(req);
   const { searchParams } = new URL(req.url);
 
-  const category = searchParams.get("category");
+  const category = (searchParams.get("category") ?? "Everything").toUpperCase();
   const limit = Math.min(
     Number(searchParams.get("limit") ?? DEFAULT_LIMIT),
     MAX_LIMIT,

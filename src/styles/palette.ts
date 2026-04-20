@@ -8,15 +8,14 @@ export const grayscale = {
 } as const;
 
 export const accentColors = {
-  burgundy: "#822320",
-  rosewood: "#B1615A",
-  blush: "#D8B9BE",
-  pine: "#172C25",
-  teal: "#377669",
-  olive: "#686556",
-  pearl: "#EAECE5",
-  midnight: "#1B2046",
-  gold: "#DDC676",
+  darkRedOchre: "#822320",
+  deepGreen: "#172C25",
+  navyBlue: "#1B2046",
+  yellowOchre: "#FFA103",
+  orangeYellow: "#ED8435",
+  vermilion: "#D14D3E",
+  jadeBlue: "#74C1B1",
+  bluishPurple: "#7D91D0",
   butter: "#F5DF74",
-  linen: "#F3F0DE",
+  pearl: "#F4F1DE",
 } as const;

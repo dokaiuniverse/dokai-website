@@ -5,6 +5,7 @@ export const SearchBarContainer = style({
   gridColumn: "1 / -1",
   display: "flex",
   justifyContent: "center",
+  marginBottom: "8rem",
 
   selectors: {
     "&[data-disabled='true']": {
@@ -12,16 +13,28 @@ export const SearchBarContainer = style({
       opacity: "0.5",
     },
   },
+
+  "@media": {
+    [media.mobile]: {
+      marginBottom: "4rem",
+    },
+  },
 });
 
 export const SearchBarLabel = style({
   background: "#E8E8E8",
-  padding: "0.75rem 1.5rem",
+  padding: "0.75rem 1.25rem",
   borderRadius: "999px",
   display: "flex",
   alignItems: "center",
   maxWidth: "560px",
   width: "100%",
+
+  "@media": {
+    [media.mobile]: {
+      padding: "0.5rem 1rem",
+    },
+  },
 });
 
 export const SearchBarInput = style({
@@ -36,7 +49,7 @@ export const SearchBarInput = style({
 
 export const SearchBarIcon = style({
   stroke: "#646363",
-  width: "2rem",
+  width: "1.5rem",
   height: "auto",
   aspectRatio: "1 / 1",
   flexShrink: "0",
@@ -51,6 +64,13 @@ export const Header = style({
   alignItems: "center",
   borderBottom: "1px solid #9B9B9B",
   paddingBottom: "0.75rem",
+  fontWeight: "500",
+
+  "@media": {
+    [media.mobile]: {
+      fontSize: vars.fontSize.sm,
+    },
+  },
 });
 
 export const HeaderCategory = style({
@@ -59,13 +79,12 @@ export const HeaderCategory = style({
 });
 
 export const HeaderCategoryItem = style({
-  fontSize: vars.fontSize.md,
   color: "#9B9B9B",
 
   selectors: {
     "&[data-active='true']": {
       color: "#000000",
-      fontWeight: "500",
+      fontWeight: "600",
     },
   },
 
@@ -82,8 +101,7 @@ export const HeaderCategoryItem = style({
 
 export const HeaderInfo = style({
   display: "flex",
-  gap: "0.75rem",
-  fontSize: vars.fontSize.md,
+  gap: "1rem",
   color: "#9B9B9B",
 });
 
@@ -96,10 +114,16 @@ export const HeaderInfoView = style({
 });
 
 export const HeaderInfoViewIcon = style({
-  width: "1.75rem",
+  width: "1.5rem",
   height: "auto",
   aspectRatio: "1 / 1",
   flexShrink: "0",
+
+  "@media": {
+    [media.mobile]: {
+      width: "1rem",
+    },
+  },
 });
 
 //
@@ -127,6 +151,9 @@ export const BodyTitle = style({
 
   "@media": {
     [media.tablet]: {
+      fontSize: vars.fontSize.xl,
+    },
+    [media.mobile]: {
       fontSize: vars.fontSize.lg,
     },
   },
@@ -148,8 +175,14 @@ export const BodyChapter = style({
 });
 
 export const BodyChapterTitle = style({
-  fontSize: vars.fontSize.lg,
+  fontSize: vars.fontSize.xl,
   fontWeight: "500",
+
+  "@media": {
+    [media.mobile]: {
+      fontSize: vars.fontSize.md,
+    },
+  },
 });
 
 export const BodyChapterContent = style({
@@ -287,10 +320,15 @@ export const Footer = style({
   borderBottom: "1px solid #9B9B9B",
   padding: "1rem 0",
   flexWrap: "wrap",
+
+  "@media": {
+    [media.mobile]: {
+      fontSize: vars.fontSize.sm,
+    },
+  },
 });
 
 export const FooterItem = style({
-  fontSize: vars.fontSize.md,
   display: "flex",
   alignItems: "center",
   gap: "1.5rem",
@@ -308,6 +346,7 @@ export const ListButtonContainer = style({
   display: "flex",
   justifyContent: "center",
   gridColumn: "1 / -1",
+  marginTop: "6rem",
 });
 
 export const ListButton = style({

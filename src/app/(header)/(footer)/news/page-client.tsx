@@ -107,6 +107,7 @@ const NewsPageClient = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            marginTop: "3rem",
           }}
         >
           <span className={Styles.Rect} onClick={handlePagePrevClick}>

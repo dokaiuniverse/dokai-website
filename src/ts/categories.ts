@@ -1,22 +1,22 @@
 export type Category =
-  | "EVERYTHING"
-  | "ANIMATE"
-  | "BRANDING"
-  | "CHARACTER"
-  | "AWARD"
-  | "FILM"
-  | "COMMERCIAL"
-  | "SOCIAL CONTENTS";
+  | "Everything"
+  | "Branding"
+  | "Exhibition"
+  | "OOH"
+  | "Animate"
+  | "Award"
+  | "Film"
+  | "Social Contents";
 
 const categories: Category[] = [
-  "EVERYTHING",
-  "ANIMATE",
-  "BRANDING",
-  "CHARACTER",
-  "AWARD",
-  "FILM",
-  "COMMERCIAL",
-  "SOCIAL CONTENTS",
+  "Everything",
+  "Branding",
+  "Exhibition",
+  "OOH",
+  "Animate",
+  "Award",
+  "Film",
+  "Social Contents",
 ];
 
 export const NewsCategories = ["NEWS", "BRANDING"];
