@@ -73,7 +73,7 @@ const AdminWorkPageClient = ({ slug }: { slug?: string }) => {
       },
       slug: data.slug,
       isPublished: data.isPublished,
-    });
+    } as WorkInput);
   }, [data, reset]);
 
   const { push } = useModalStackStore();

@@ -1,13 +1,13 @@
 import z from "zod";
 
 export const WorkCategoryList = [
-  "ANIMATE",
   "BRANDING",
-  "CHARACTER",
+  "EXHIBITION",
+  "OOH",
+  "ANIMATE",
   "AWARD",
   "FILM",
-  "COMMERCIAL",
-  "SOCIAL_CONTENTS",
+  "SOCIAL CONTENTS",
 ] as const;
 
 const mediaSourceSchema = z.unknown();
