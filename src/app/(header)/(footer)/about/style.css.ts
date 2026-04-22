@@ -4,7 +4,7 @@ import { recipe } from "@vanilla-extract/recipes";
 
 export const Container = style({
   display: "grid",
-  gridTemplateColumns: "repeat(8, 1fr)",
+  gridTemplateColumns: "repeat(6, 1fr)",
   rowGap: "3rem",
   columnGap: "1rem",
   marginBottom: "10rem",

@@ -18,6 +18,7 @@ const AboutPageContent = ({ content }: AboutPageContentProps) => {
           content.type === "MEDIAS" && content.align === "LEFT"
             ? "LEFT"
             : "RIGHT",
+        size: content.type === "MEDIAS" ? content.size : "NORMAL",
       })}
     >
       {content.type === "MEDIAS" ? (

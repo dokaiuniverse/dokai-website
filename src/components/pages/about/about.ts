@@ -83,6 +83,8 @@ export const aboutContentTeamSchema = z.object({
 export const aboutContentMediasSchema = z.object({
   type: z.literal("MEDIAS"),
   align: z.enum(["LEFT", "RIGHT"]).default("LEFT"),
+  size: z.enum(["NORMAL", "FULL"]).default("NORMAL"),
+  name: z.string().trim(),
   medias: z.array(mediaSourceSchema).min(1, "At least one media is required"),
 });
 

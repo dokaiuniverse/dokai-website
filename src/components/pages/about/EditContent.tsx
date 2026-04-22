@@ -24,6 +24,7 @@ const AboutPageEditContent = ({ index }: { index: number }) => {
   const content = watch(`contents.${index}`) as AboutContentMedias;
 
   const align = type === "MEDIAS" ? content.align : "RIGHT";
+  const size = type === "MEDIAS" ? content.size : "NORMAL";
 
   const handleMoveUp = () => {
     if (index <= 0) return;
@@ -44,6 +45,7 @@ const AboutPageEditContent = ({ index }: { index: number }) => {
     <div
       className={Styles.Content({
         align,
+        size,
       })}
     >
       {type === "MEDIAS" ? (
@@ -57,17 +59,19 @@ const AboutPageEditContent = ({ index }: { index: number }) => {
       ) : type === "TEAM" ? (
         <AboutPageEditTeam index={index} />
       ) : null}
-      <div className={Styles.EditContentButtonContainer({ align })}>
-        <button className={Styles.EditContentButton} onClick={handleMoveUp}>
-          <CaretUpSVG className={Styles.EditContentButtonIcon} />
-        </button>
-        <button className={Styles.EditContentButton} onClick={handleDelete}>
-          <TrashSVG className={Styles.EditContentButtonIcon} />
-        </button>
-        <button className={Styles.EditContentButton} onClick={handleMoveDown}>
-          <CaretDownSVG className={Styles.EditContentButtonIcon} />
-        </button>
-      </div>
+      {size === "NORMAL" && (
+        <div className={Styles.EditContentButtonContainer({ align })}>
+          <button className={Styles.EditContentButton} onClick={handleMoveUp}>
+            <CaretUpSVG className={Styles.EditContentButtonIcon} />
+          </button>
+          <button className={Styles.EditContentButton} onClick={handleDelete}>
+            <TrashSVG className={Styles.EditContentButtonIcon} />
+          </button>
+          <button className={Styles.EditContentButton} onClick={handleMoveDown}>
+            <CaretDownSVG className={Styles.EditContentButtonIcon} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,17 +1,15 @@
-import { media } from "@styles/theme.css";
 import { style } from "@vanilla-extract/css";
-import { recipe } from "@vanilla-extract/recipes";
 
 export const Container = style({
   display: "grid",
-  gridTemplateColumns: "repeat(8, 1fr)",
+  gridTemplateColumns: "repeat(6, 1fr)",
   rowGap: "4rem",
   columnGap: "1rem",
   marginBottom: "10rem",
 });
 
 export const HeaderContainer = style({
-  gridColumn: "3 / -3",
+  gridColumn: "2 / -1",
   display: "flex",
   flexDirection: "row",
   alignItems: "center",

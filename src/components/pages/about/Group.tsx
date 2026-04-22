@@ -8,7 +8,7 @@ type AboutPageGroupProps = {
 const AboutPageGroup = ({ content }: AboutPageGroupProps) => {
   return (
     <div className={Styles.ContentContainer}>
-      <p className={Styles.ContentName}>{content.name}</p>
+      <p className={Styles.ContentName()}>{content.name}</p>
       <div
         className={`${Styles.ContentText} rich-text`}
         dangerouslySetInnerHTML={{ __html: content.text }}

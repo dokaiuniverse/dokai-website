@@ -60,7 +60,7 @@ const AboutPageEditCard = ({ index }: { index: number }) => {
         title="Name"
         form={form}
         name={`contents.${index}.name`}
-        className={Styles.ContentName}
+        className={Styles.ContentName()}
       />
       <TitleRichText
         title="Text"

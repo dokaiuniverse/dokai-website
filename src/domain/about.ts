@@ -46,6 +46,8 @@ export type AboutContentText = {
 export type AboutContentMedias = {
   type: "MEDIAS";
   align: "LEFT" | "RIGHT";
+  size: "NORMAL" | "FULL";
+  name: string;
   medias: MediaSource[];
 };
 

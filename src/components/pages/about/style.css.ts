@@ -3,7 +3,7 @@ import { style } from "@vanilla-extract/css";
 import { recipe } from "@vanilla-extract/recipes";
 
 export const IntroContainer = style({
-  gridColumn: "3 / span 4",
+  gridColumn: "2 / -2",
   whiteSpace: "pre-line",
 
   fontWeight: "300",
@@ -12,10 +12,13 @@ export const IntroContainer = style({
 
   "@media": {
     [media.desktop]: {
-      gridColumn: "3 / -2",
+      gridColumn: "2 / -2",
     },
     [media.tablet]: {
       gridColumn: "1 / -2",
+    },
+    [media.mobile]: {
+      gridColumn: "1 / -1",
     },
   },
 });
@@ -25,7 +28,7 @@ export const IntroContainer = style({
 export const Content = recipe({
   base: {
     position: "relative",
-    gridColumnEnd: "span 6",
+    gridColumnEnd: "span 5",
 
     "@media": {
       [media.tablet]: {
@@ -36,17 +39,22 @@ export const Content = recipe({
   variants: {
     align: {
       LEFT: { gridColumnStart: "1" },
-      RIGHT: { gridColumnStart: "3" },
+      RIGHT: { gridColumnStart: "2" },
+    },
+    size: {
+      NORMAL: { gridColumnEnd: "span 5" },
+      FULL: { gridColumn: "1 / -1" },
     },
   },
   defaultVariants: {
     align: "RIGHT",
+    size: "NORMAL",
   },
 });
 
 export const ContentContainer = style({
   display: "grid",
-  gridTemplateColumns: "repeat(8, 1fr)",
+  gridTemplateColumns: "repeat(5, 1fr)",
   rowGap: "3rem",
   columnGap: "1rem",
 
@@ -65,29 +73,57 @@ export const ContentContainer = style({
   },
 });
 
-export const ContentName = style({
-  gridColumn: "1 / span 2",
-  lineHeight: "1.833",
+export const ContentName = recipe({
+  base: {
+    gridRowStart: "1",
+    gridColumn: "span 1",
+    lineHeight: "1.833",
+  },
+  variants: {
+    align: {
+      LEFT: { gridColumnStart: "5" },
+      RIGHT: { gridColumnStart: "1" },
+    },
+  },
+  defaultVariants: {
+    align: "RIGHT",
+  },
 });
 
 export const ContentText = style({
-  gridColumn: "3 / -1",
+  gridColumn: "2 / -1",
   lineHeight: "1.667",
 });
 
 // Medias
 
-export const MediasMedia = style({
-  width: "100%",
-  height: "100%",
-  aspectRatio: "16 / 9",
+export const MediasMedia = recipe({
+  base: {
+    width: "100%",
+    height: "100%",
+    gridRowStart: "1",
+  },
+  variants: {
+    align: {
+      LEFT: { gridColumnStart: "1" },
+      RIGHT: { gridColumnStart: "2" },
+    },
+    size: {
+      NORMAL: { gridColumnEnd: "span 4", aspectRatio: "16 / 9" },
+      FULL: { gridColumn: "1 / -1", aspectRatio: "21 / 9" },
+    },
+  },
+  defaultVariants: {
+    align: "RIGHT",
+    size: "NORMAL",
+  },
 });
 
 // Group
 
 export const GroupContainer = style({
   position: "relative",
-  gridColumn: "3 / -1",
+  gridColumn: "2 / -1",
   display: "grid",
   gridTemplateColumns: "repeat(2, 1fr)",
   width: "100%",
@@ -155,7 +191,7 @@ export const GroupValues = style({
 // Card
 
 export const CardContainer = style({
-  gridColumn: "1 / -1",
+  gridColumn: "2 / -1",
   display: "flex",
   flexDirection: "column",
   gap: "1rem",
@@ -170,7 +206,7 @@ export const CardContainer = style({
 export const CardContent = style({
   gridColumn: "span 1",
   display: "grid",
-  gridTemplateColumns: "repeat(8, 1fr)",
+  gridTemplateColumns: "repeat(4, 1fr)",
   columnGap: "1rem",
   rowGap: "0.5rem",
   alignItems: "center",
@@ -185,11 +221,11 @@ export const CardContent = style({
 });
 
 export const CardIconContainer = style({
-  gridColumn: "1 / span 2",
+  gridColumn: "1 / span 1",
   position: "relative",
   width: "100%",
   height: "auto",
-  aspectRatio: "2 / 1",
+  aspectRatio: "5 / 3",
   overflow: "hidden",
 
   "@media": {
@@ -205,7 +241,7 @@ export const CardIcon = style({
 
 export const CardTextContainer = style({
   position: "relative",
-  gridColumn: "3 / -1",
+  gridColumn: "2 / -1",
   display: "flex",
   flexDirection: "column",
   fontSize: vars.fontSize.md,
@@ -235,7 +271,7 @@ export const CardText = style({
 
 export const TeamContainer = style({
   position: "relative",
-  gridColumn: "3 / -1",
+  gridColumn: "2 / -1",
   display: "grid",
   gridTemplateColumns: "auto 1px auto",
   columnGap: "2rem",
@@ -360,9 +396,20 @@ export const GroupAddButtonContainer = style({
   flexDirection: "column",
 });
 
-export const EditMediasContainer = style({
-  position: "relative",
-  aspectRatio: "16 / 9",
+export const EditMediasContainer = recipe({
+  base: {
+    position: "relative",
+    gridRowStart: "1",
+  },
+  variants: {
+    size: {
+      NORMAL: { gridColumn: "span 4" },
+      FULL: { gridColumn: "1 / -1" },
+    },
+  },
+  defaultVariants: {
+    size: "NORMAL",
+  },
 });
 
 export const EditMediasAddMediaButton = style({
@@ -398,34 +445,46 @@ export const EditMediasAddMediaButtonIcon = style({
   stroke: "white",
 });
 
-export const EditMediasAlignButton = recipe({
+export const EditMediasButtonContainer = recipe({
   base: {
     position: "absolute",
-    padding: "0.25rem",
-    borderRadius: "0.5rem",
-    background: "white",
-    opacity: "0.5",
-    transition: "opacity 0.2s ease-in-out, outline-color 0.2s ease-in-out",
-    border: "1px solid #999",
-    outline: `1px solid transparent`,
-    backdropFilter: "blur(1rem)",
     top: "0.5rem",
-    selectors: {
-      "&:hover": {
-        opacity: "1",
-        outlineColor: "#999",
-      },
-    },
+    left: "0.5rem",
+    right: "0.5rem",
+    display: "flex",
+    gap: "0.5rem",
+    justifyContent: "space-between",
   },
   variants: {
     align: {
-      LEFT: { transform: "rotate(0deg)", right: "0.5rem" },
-      RIGHT: { transform: "rotate(180deg)", left: "0.5rem" },
+      LEFT: { flexDirection: "row" },
+      RIGHT: { flexDirection: "row-reverse" },
+    },
+  },
+  defaultVariants: {
+    align: "RIGHT",
+  },
+});
+
+export const EditMediasTopButton = style({
+  padding: "0.25rem",
+  borderRadius: "0.5rem",
+  background: "white",
+  opacity: "0.5",
+  transition: "opacity 0.2s ease-in-out, outline-color 0.2s ease-in-out",
+  border: "1px solid #999",
+  outline: `1px solid transparent`,
+  backdropFilter: "blur(1rem)",
+  top: "0.5rem",
+  selectors: {
+    "&:hover": {
+      opacity: "1",
+      outlineColor: "#999",
     },
   },
 });
 
-export const EditMediasAlignButtonIcon = style({
+export const EditMediasTopButtonIcon = style({
   width: "1.25rem",
   height: "auto",
   aspectRatio: "1 / 1",
