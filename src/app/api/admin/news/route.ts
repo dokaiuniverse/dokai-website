@@ -1,53 +1,18 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { NewsUpsertRequest } from "@controllers/news/types";
 import {
   createSupabaseRouteClient,
   supabaseErrorToStatus,
 } from "@lib/supabase/route";
-import { ProfileUpsertRequest } from "@controllers/careers/types";
 
-/**
- * @openapi
- * /api/admin/career/profiles:
- *   post:
- *     tags:
- *       - Careers-Profile
- *     summary: Create profile (admin/staff; staff can create only own)
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CareerCreateProfileRequest'
- *     responses:
- *       '201':
- *         description: Created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/CareerProfileDetailResponse'
- *       '401':
- *         description: Unauthorized
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
- *       '403':
- *         description: Forbidden
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
- */
 export async function POST(req: NextRequest) {
   const { supabase, applyCookies } = createSupabaseRouteClient(req);
 
-  let body: ProfileUpsertRequest;
+  let body: NewsUpsertRequest;
   try {
-    body = (await req.json()) as ProfileUpsertRequest;
+    body = (await req.json()) as NewsUpsertRequest;
   } catch {
-    return applyCookies(
-      NextResponse.json({ message: "Invalid JSON body" }, { status: 400 }),
-    );
+    return NextResponse.json({ message: "Invalid JSON" }, { status: 400 });
   }
 
   const { data: userRes, error: userErr } = await supabase.auth.getUser();
@@ -57,19 +22,19 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const email = (body.data.email ?? "").toString();
-  if (!email) {
+  const slug = (body.slug ?? "").toString();
+  if (!slug) {
     return applyCookies(
-      NextResponse.json({ message: "email is required" }, { status: 400 }),
+      NextResponse.json({ message: "slug is required" }, { status: 400 }),
     );
   }
 
   const { data, error } = await supabase
-    .from("career_profiles")
+    .from("news")
     .insert({
-      email,
+      slug: body.slug,
       data: body.data,
-      is_published: !!body.isPublished,
+      is_published: body.isPublished,
     })
     .select("id")
     .single();
@@ -86,7 +51,7 @@ export async function POST(req: NextRequest) {
   return applyCookies(
     NextResponse.json(
       {
-        profileId: data.id,
+        newsId: data.id,
       },
       { status: 201 },
     ),

@@ -47,6 +47,7 @@ export const SelectMediaButtonIcon = style({
   aspectRatio: "1 / 1",
   objectFit: "contain",
   fill: "#555",
+  stroke: "#555",
 });
 
 export const SelectMediaButtonText = style({

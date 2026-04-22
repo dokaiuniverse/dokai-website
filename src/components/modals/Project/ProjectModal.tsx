@@ -233,7 +233,6 @@ const ProjectModal = ({
     {
       onSuccess: (data) => {
         setProjectId(data.projectId);
-        console.log(data);
       },
     },
   );

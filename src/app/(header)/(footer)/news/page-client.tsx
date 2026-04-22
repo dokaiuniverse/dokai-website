@@ -21,7 +21,6 @@ const NewsPageClient = () => {
   const { data: newsList } = useAppQuery(
     newsQueriesClient.newsList(currentPage),
   );
-  console.log(newsList);
 
   const maxPage = newsList?.totalPages ?? 1;
 
@@ -63,7 +62,7 @@ const NewsPageClient = () => {
   };
 
   const handleNewsItemClick = (slug: string) => {
-    router.push(`/news/${slug}`);
+    router.push(`/news/${encodeURIComponent(slug)}`);
   };
 
   return (

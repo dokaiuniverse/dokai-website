@@ -44,8 +44,8 @@ export type NewsDetailResponse = {
 
 // ===== Requests =====
 
-// export type WorkUpsertRequest = {
-//   slug: string;
-//   isPublished: boolean;
-//   data: Work;
-// };
+export type NewsUpsertRequest = {
+  slug: string;
+  isPublished: boolean;
+  data: News;
+};

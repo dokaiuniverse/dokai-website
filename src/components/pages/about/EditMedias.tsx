@@ -21,7 +21,6 @@ const AboutPageEditMedias = ({ index }: { index: number }) => {
   const content = watch(`contents.${index}`) as AboutContentMedias;
   const align = content.align;
   const size = content.size;
-  console.log(size);
 
   const handleEditMedias = () => {
     push("EDIT_MEDIA_LIST", {

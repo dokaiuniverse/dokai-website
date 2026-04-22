@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ImageSVG from "@assets/icons/image.svg";
 import * as Styles from "./style.css";
-import PlusSVG from "@assets/icons/plus.svg";
+import EditSVG from "@assets/icons/edit.svg";
 import ModalLayout from "@components/modals/ModalLayout";
 import { NewsChapterContent } from "@domain/news";
 import AddButton from "@components/ui/Edit/AddButton/AddButton";
@@ -51,6 +51,7 @@ const AddNewsContentModal = ({
           className={Styles.SelectMediaButton}
           data-selected={selectedType === "TEXT"}
         >
+          <EditSVG className={Styles.SelectMediaButtonIcon} />
           <p className={Styles.SelectMediaButtonText}>Text</p>
         </button>
         <button

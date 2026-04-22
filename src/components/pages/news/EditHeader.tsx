@@ -7,12 +7,6 @@ import EditCalendar from "@components/ui/Edit/EditCalendar/EditCalendar";
 const NewsEditHeader = () => {
   const form = useFormContext<NewsInput>();
 
-  const {
-    watch,
-    setValue,
-    formState: { errors },
-  } = form;
-
   return (
     <div className={Styles.EditHeaderContainer}>
       <TitleInput

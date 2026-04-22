@@ -6,24 +6,12 @@ import * as Styles from "./style.css";
 import EditModeToggle from "@components/ui/Edit/EditModeToggle/EditModeToggle";
 import PrivateMark from "@components/ui/PrivateMark/PrivateMark";
 import { ApiError, useAppMutation, useAppQuery } from "@controllers/common";
-import { worksQueriesClient } from "@controllers/works/query.client";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { initalWork, WorkInput, workSchema } from "@components/pages/work/work";
-import { Work } from "@domain/work";
-import WorkHeader from "@components/pages/work/Header";
-import WorkKeyVisuals from "@components/pages/work/KeyVisuals";
-import WorkCredits from "@components/pages/work/Credits";
-import WorkEditInfo from "@components/pages/work/EditInfo";
-import WorkEditHeader from "@components/pages/work/EditHeader";
-import WorkEditKeyVisuals from "@components/pages/work/EditKeyVisuals";
-import WorkEditCredits from "@components/pages/work/EditCredits";
 import FloatingButton, {
   FloatingButtonContainer,
 } from "@components/ui/Button/FloatingButton/FloatingButton";
 import { useModalStackStore } from "@stores/modalStackStore";
-import { fetchWorkCheckSlug } from "@controllers/works/fetch";
-import { worksMutations } from "@controllers/works/mutation";
 import { newsQueriesClient } from "@controllers/news/query.client";
 import {
   initialNews,
@@ -39,31 +27,35 @@ import { News } from "@domain/news";
 import NewsEditInfo from "@components/pages/news/EditInfo";
 import NewsEditHeader from "@components/pages/news/EditHeader";
 import NewsEditChapter from "@components/pages/news/EditChapter";
+import NewsEditExternalLink from "@components/pages/news/EditExternalLink";
+import NewsEditFooter from "@components/pages/news/EditFooter";
+import { fetchNewsCheckSlug } from "@controllers/news/fetch";
+import { newsMutations } from "@controllers/news/mutation";
 
 const AdminNewsPageClient = ({ slug }: { slug?: string }) => {
   const router = useRouter();
   const [mode, setMode] = useState<"VIEW" | "EDIT">("EDIT");
-  const [workId, setWorkId] = useState<string | null>(null);
+  const [newsId, setNewsId] = useState<string | null>(null);
 
   const { data } = useAppQuery(newsQueriesClient.newsDetail(slug!), {
     enabled: !!slug,
   });
 
-  const { mutateAsync: mutateCreateWork } = useAppMutation(
-    worksMutations.createWork(),
+  const { mutateAsync: mutateCreateNews } = useAppMutation(
+    newsMutations.createNews(),
     {
       onSuccess: (data) => {
-        setWorkId(data.workId);
+        setNewsId(data.newsId);
       },
     },
   );
 
-  const { mutateAsync: mutateUpdateWork } = useAppMutation(
-    worksMutations.updateWork(workId!),
+  const { mutateAsync: mutateUpdateNews } = useAppMutation(
+    newsMutations.updateNews(newsId!),
   );
 
-  const { mutateAsync: mutateDeleteWork } = useAppMutation(
-    worksMutations.deleteWork(workId!),
+  const { mutateAsync: mutateDeleteNews } = useAppMutation(
+    newsMutations.deleteNews(newsId!),
   );
 
   const form = useForm<NewsInput>({
@@ -78,114 +70,117 @@ const AdminNewsPageClient = ({ slug }: { slug?: string }) => {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     if (!data) return;
-    setWorkId(data.id);
+    setNewsId(data.id);
     reset({
       ...initialNews,
       ...data.data,
       slug: data.slug,
       isPublished: data.isPublished,
+      publishedAt: data.data.publishedAt
+        ? new Date(data.data.publishedAt)
+        : new Date(),
     } as NewsInput);
   }, [data, reset]);
 
   const { push } = useModalStackStore();
 
-  // const validateAndPush = async (mode: "create" | "update") => {
-  //   const valid = await trigger();
-  //   if (!valid) return;
+  const validateAndPush = async (mode: "create" | "update") => {
+    const valid = await trigger();
+    if (!valid) return;
 
-  //   const formValues = getValues();
-  //   const {
-  //     isPublished: nextIsPublished,
-  //     slug: nextSlug,
-  //     ...rest
-  //   } = formValues;
-  //   const nextWork = rest as Work;
+    const formValues = getValues();
+    const {
+      isPublished: nextIsPublished,
+      slug: nextSlug,
+      ...rest
+    } = formValues;
+    const nextNews = rest as News;
 
-  //   if (slug && nextSlug !== slug) {
-  //     try {
-  //       const result = await fetchWorkCheckSlug(nextSlug);
+    if (slug && nextSlug !== slug) {
+      try {
+        const result = await fetchNewsCheckSlug(nextSlug);
 
-  //       const isTaken = result.exists;
-  //       if (isTaken) {
-  //         setError("slug", {
-  //           type: "manual",
-  //           message: "This slug is already in use",
-  //         });
-  //         return;
-  //       }
-  //     } catch (error) {
-  //       if (error instanceof ApiError) {
-  //         setError("slug", {
-  //           type: "manual",
-  //           message: error.userMessage || "Request failed",
-  //         });
-  //       }
-  //       setError("slug", {
-  //         type: "manual",
-  //         message: "Unknown error",
-  //       });
-  //       return;
-  //     }
-  //   }
+        const isTaken = result.exists;
+        if (isTaken) {
+          setError("slug", {
+            type: "manual",
+            message: "This slug is already in use",
+          });
+          return;
+        }
+      } catch (error) {
+        if (error instanceof ApiError) {
+          setError("slug", {
+            type: "manual",
+            message: error.userMessage || "Request failed",
+          });
+        }
+        setError("slug", {
+          type: "manual",
+          message: "Unknown error",
+        });
+        return;
+      }
+    }
 
-  //   if (mode === "create") {
-  //     push("API", {
-  //       title: "Create New Work",
-  //       onFetch: async () =>
-  //         mutateCreateWork({
-  //           slug: nextSlug,
-  //           isPublished: nextIsPublished,
-  //           data: nextWork,
-  //         }),
-  //       onConfirm: () => {
-  //         router.replace(`/work/${nextSlug}`);
-  //       },
-  //       isRouteAfterConfirm: true,
-  //     });
-  //   } else {
-  //     if (!workId) return;
+    if (mode === "create") {
+      push("API", {
+        title: "Create New News",
+        onFetch: async () =>
+          mutateCreateNews({
+            slug: nextSlug,
+            isPublished: nextIsPublished,
+            data: nextNews,
+          }),
+        onConfirm: () => {
+          router.replace(`/news/${encodeURIComponent(nextSlug)}`);
+        },
+        isRouteAfterConfirm: true,
+      });
+    } else {
+      if (!newsId) return;
 
-  //     push("API", {
-  //       title: "Update Work",
-  //       onFetch: async () =>
-  //         mutateUpdateWork({
-  //           slug: nextSlug,
-  //           isPublished: nextIsPublished,
-  //           data: nextWork,
-  //         }),
-  //       onConfirm: () => {
-  //         router.replace(`/work/${nextSlug}`);
-  //       },
-  //       isRouteAfterConfirm: true,
-  //     });
-  //   }
-  // };
+      push("API", {
+        title: "Update News",
+        onFetch: async () =>
+          mutateUpdateNews({
+            slug: nextSlug,
+            isPublished: nextIsPublished,
+            data: nextNews,
+          }),
+        onConfirm: () => {
+          router.replace(`/news/${encodeURIComponent(nextSlug)}`);
+        },
+        isRouteAfterConfirm: true,
+      });
+    }
+  };
 
-  // const handleCreateWork = async () => {
-  //   await validateAndPush("create");
-  // };
+  const handleCreateNews = async () => {
+    await validateAndPush("create");
+  };
 
-  // const handleUpdateWork = async () => {
-  //   await validateAndPush("update");
-  // };
+  const handleUpdateNews = async () => {
+    await validateAndPush("update");
+  };
 
-  // const handleDeleteWork = async () => {
-  //   if (!workId) return;
-  //   push("CONFIRM", {
-  //     title: "Delete Work",
-  //     content: "Are you sure to delete this work?",
-  //     onConfirm: () => {
-  //       push("API", {
-  //         title: "Delete Work",
-  //         onFetch: async () => mutateDeleteWork(),
-  //         onConfirm: () => {
-  //           router.replace(`/work`);
-  //         },
-  //         isRouteAfterConfirm: true,
-  //       });
-  //     },
-  //   });
-  // };
+  const handleDeleteNews = async () => {
+    if (!newsId) return;
+    push("CONFIRM", {
+      title: "Delete News",
+      content: "Are you sure to delete this news?",
+      onConfirm: () => {
+        push("API", {
+          title: "Delete News",
+          onFetch: async () => mutateDeleteNews(),
+          onConfirm: () => {
+            router.replace(`/news`);
+          },
+          isRouteAfterConfirm: true,
+        });
+      },
+    });
+  };
 
   return (
     <div className={`${Styles.Container} page-wrapper layout-wrapper`}>
@@ -213,32 +208,34 @@ const AdminNewsPageClient = ({ slug }: { slug?: string }) => {
             <NewsEditHeader />
             <div className={Styles.Body}>
               <NewsEditChapter />
+              <NewsEditExternalLink />
             </div>
+            <NewsEditFooter />
           </FormProvider>
         </>
       )}
-      {/* <FloatingButtonContainer>
-        {workId ? (
+      <FloatingButtonContainer>
+        {newsId ? (
           <>
             <FloatingButton
               type="SAVE"
-              text="Update Work"
-              onClick={handleUpdateWork}
+              text="Update News"
+              onClick={handleUpdateNews}
             />
             <FloatingButton
               type="REMOVE"
-              text="Delete Work"
-              onClick={handleDeleteWork}
+              text="Delete News"
+              onClick={handleDeleteNews}
             />
           </>
         ) : (
           <FloatingButton
             type="SAVE"
-            text="Create Work"
-            onClick={handleCreateWork}
+            text="Create News"
+            onClick={handleCreateNews}
           />
         )}
-      </FloatingButtonContainer> */}
+      </FloatingButtonContainer>
     </div>
   );
 };

@@ -287,10 +287,17 @@ export const ExternalLinkContentFooter = style({
   alignItems: "center",
 });
 
-export const ExternalLinkContentFooterIcon = style({
+export const ExternalLinkContentFooterIconContainer = style({
+  position: "relative",
   width: "1.25rem",
-  height: "auto",
-  aspectRatio: "1 / 1",
+  height: "1.25rem",
+  flexShrink: "0",
+});
+
+export const ExternalLinkContentFooterIcon = style({
+  width: "100%",
+  height: "100%",
+  objectFit: "contain",
   flexShrink: "0",
 });
 
@@ -302,12 +309,20 @@ export const ExternalLinkContentFooterUrl = style({
   textOverflow: "ellipsis",
 });
 
-export const ExternalLinkImage = style({
+export const ExternalLinkImageContainer = style({
   gridColumn: "span 3",
+  position: "relative",
+  width: "100%",
+  height: "100%",
+
+  aspectRatio: "16 / 9",
+});
+
+export const ExternalLinkImage = style({
   width: "100%",
   height: "100%",
   objectFit: "cover",
-  aspectRatio: "16 / 9",
+  flexShrink: "0",
 });
 
 //
@@ -478,4 +493,61 @@ export const ChapterWrapper = style({
 
 export const ContentWrapper = style({
   position: "relative",
+});
+
+//
+
+export const EditExternalLink = style({
+  position: "relative",
+  gridColumn: "1 / -1",
+});
+
+export const AddExternalLinkContainer = style({
+  marginTop: "3rem",
+  gridColumn: "1 / -1",
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.5rem",
+});
+
+export const AddExternalLinkLabel = style({
+  fontSize: vars.fontSize.lg,
+  fontWeight: "600",
+});
+
+export const AddExternalLinkButton = style({
+  aspectRatio: "53 / 9",
+
+  "@media": {
+    [media.desktop]: {
+      aspectRatio: "43 / 9",
+    },
+    [media.tablet]: {
+      aspectRatio: "38 / 9",
+    },
+    [media.mobile]: {
+      aspectRatio: "16 / 9",
+    },
+  },
+});
+
+export const EditExternalLinkButton = style({
+  position: "absolute",
+  top: "0.25rem",
+  right: "0.25rem",
+});
+
+//
+
+export const EditFooterContainer = style({
+  gridColumn: "1 / -1",
+  display: "grid",
+  gridTemplateColumns: "repeat(8, 1fr)",
+  gap: "1rem",
+});
+
+export const EditFooterInput = style({
+  gridColumn: "1 / -2",
+  fontSize: vars.fontSize.lg,
+  fontWeight: "600",
 });

@@ -17,7 +17,7 @@ const NewsDetailPageClient = ({ slug }: { slug: string }) => {
   const router = useRouter();
 
   const handleEditNews = () => {
-    router.push(`/admin/news?slug=${slug}`);
+    router.push(`/admin/news?slug=${encodeURIComponent(slug)}`);
   };
 
   const { data: newsDetail } = useAppQuery(newsQueriesClient.newsDetail(slug));

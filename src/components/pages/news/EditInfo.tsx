@@ -6,10 +6,10 @@ import EditPublished from "@components/ui/Edit/EditPublished/EditPublished";
 import * as Styles from "./style.css";
 import EditMediaSingle from "@components/ui/Edit/EditMediaSingle/EditMediaSingle";
 import { MediaSource } from "@domain/media";
-import { fetchWorkCheckSlug } from "@controllers/works/fetch";
 import { ApiError } from "@controllers/common";
 import ErrorText from "@components/ui/Edit/ErrorText/ErrorText";
 import { NewsCategoryList, NewsInput } from "./news";
+import { fetchNewsCheckSlug } from "@controllers/news/fetch";
 
 const NewsEditInfo = () => {
   const form = useFormContext<NewsInput>();
@@ -28,7 +28,7 @@ const NewsEditInfo = () => {
 
   const handleCheckSlug = async (value: string) => {
     try {
-      const result = await fetchWorkCheckSlug(value);
+      const result = await fetchNewsCheckSlug(value);
 
       const isTaken = result.exists;
       return {

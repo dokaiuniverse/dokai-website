@@ -58,7 +58,6 @@ const EditImage = ({
 
   useEffect(() => {
     window.addEventListener("paste", handlePasteImage);
-    console.log(123);
 
     return () => {
       window.removeEventListener("paste", handlePasteImage);
