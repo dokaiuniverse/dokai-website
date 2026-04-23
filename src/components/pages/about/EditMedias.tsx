@@ -49,10 +49,19 @@ const AboutPageEditMedias = ({ index }: { index: number }) => {
       />
       <div className={Styles.EditMediasContainer({ size })}>
         {content.medias.length ? (
-          <MediaSlider
-            mediaList={content.medias}
-            className={Styles.MediasMedia({ align, size })}
-          />
+          <div
+            className={Styles.MediasMediaContainer({
+              align: content.align,
+              size: content.size,
+            })}
+          >
+            <MediaSlider
+              mediaList={content.medias}
+              className={Styles.MediasMedia({
+                size: content.size,
+              })}
+            />
+          </div>
         ) : (
           <button
             className={Styles.EditMediasAddMediaButton}

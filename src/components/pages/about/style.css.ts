@@ -103,7 +103,7 @@ export const ContentText = style({
 
 // Medias
 
-export const MediasMedia = recipe({
+export const MediasMediaContainer = recipe({
   base: {
     width: "100%",
     height: "100%",
@@ -118,18 +118,20 @@ export const MediasMedia = recipe({
       NORMAL: { gridColumnEnd: "span 4", aspectRatio: "16 / 9" },
       FULL: {
         gridColumn: "1 / -1",
-        aspectRatio: "21 / 9",
         marginLeft: "-2rem",
         width: "calc(100% + 4rem)",
+        aspectRatio: "21 / 9",
 
         "@media": {
           [media.mobile]: {
             marginLeft: "-24px",
             width: "calc(100% + 48px)",
+            aspectRatio: "21 / 9",
           },
           [media.desktop]: {
             marginLeft: "-20px",
             width: "calc(100% + 40px)",
+            aspectRatio: "21 / 9",
           },
         },
       },
@@ -137,6 +139,24 @@ export const MediasMedia = recipe({
   },
   defaultVariants: {
     align: "RIGHT",
+    size: "NORMAL",
+  },
+});
+
+export const MediasMedia = recipe({
+  base: {
+    width: "100%",
+    height: "100%",
+  },
+  variants: {
+    size: {
+      NORMAL: { aspectRatio: "16 / 9" },
+      FULL: {
+        aspectRatio: "21 / 9",
+      },
+    },
+  },
+  defaultVariants: {
     size: "NORMAL",
   },
 });

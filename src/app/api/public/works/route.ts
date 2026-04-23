@@ -252,7 +252,7 @@ export async function GET(req: NextRequest) {
   const { supabase, applyCookies } = createSupabaseRouteClient(req);
   const { searchParams } = new URL(req.url);
 
-  const category = (searchParams.get("category") ?? "Everything").toUpperCase();
+  const category = searchParams.get("category") ?? "Everything";
   const limit = Math.min(
     Number(searchParams.get("limit") ?? DEFAULT_LIMIT),
     MAX_LIMIT,
@@ -276,7 +276,7 @@ export async function GET(req: NextRequest) {
     .order("published_at", { ascending: false })
     .range(from, to);
 
-  if (category && category !== "EVERYTHING") {
+  if (category && category !== "Everything") {
     query = query.eq("category", category);
   }
 

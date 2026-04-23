@@ -14,13 +14,19 @@ const AboutPageMedias = ({ content }: AboutPageMediasProps) => {
           {content.name}
         </p>
       )}
-      <MediaSlider
-        mediaList={content.medias}
-        className={Styles.MediasMedia({
+      <div
+        className={Styles.MediasMediaContainer({
           align: content.align,
           size: content.size,
         })}
-      />
+      >
+        <MediaSlider
+          mediaList={content.medias}
+          className={Styles.MediasMedia({
+            size: content.size,
+          })}
+        />
+      </div>
     </div>
   );
 };

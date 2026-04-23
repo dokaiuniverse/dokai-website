@@ -61,7 +61,7 @@ const WorkPageClient = () => {
                     checked={selectedCategory === category}
                     onChange={() => setSelectedCategory(category)}
                   />
-                  <p>{toTitleCase(category)}</p>
+                  <p>{category}</p>
                 </label>
               ))}
             </div>

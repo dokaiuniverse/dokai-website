@@ -48,6 +48,8 @@ export const ButtonContainer = style({
   justifyContent: "center",
   transition: "opacity 150ms ease",
   opacity: "0",
+  marginBottom: "3rem",
+  paddingTop: "3rem",
 
   selectors: {
     "&:hover": {
