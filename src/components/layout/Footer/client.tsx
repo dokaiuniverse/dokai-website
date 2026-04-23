@@ -77,12 +77,12 @@ const FooterClient = ({ initialColor }: { initialColor: string }) => {
               {email.value}
             </Link>
           </div>
-          <div className={Styles.ItemContainer}>
+          {/* <div className={Styles.ItemContainer}>
             <p className={Styles.ItemTitle}>{tel.label}</p>
             <Link href={`tel:${tel.number}`} className={`${Styles.ItemSub}`}>
               {tel.value}
             </Link>
-          </div>
+          </div> */}
           <div className={Styles.ItemContainer}>
             <p className={Styles.ItemTitle}>{address.label}</p>
             <Link

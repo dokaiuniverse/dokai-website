@@ -126,6 +126,7 @@ export const InputForm = style({
   background: vars.color.input,
   padding: "0.5rem 1rem",
   paddingLeft: "0.5rem",
+  borderRadius: "999px",
 });
 
 export const InputLabel = style({
@@ -159,8 +160,8 @@ globalStyle(`${InputContainer}[data-has-query="true"] ${Input}`, {
 });
 
 export const InputSearchIcon = style({
-  width: "2rem",
-  height: "2rem",
+  width: "1.75rem",
+  height: "1.75rem",
   stroke: vars.color.fg,
   flexShrink: "0",
   cursor: "pointer",

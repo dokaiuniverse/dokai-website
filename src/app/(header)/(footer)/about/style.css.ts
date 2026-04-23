@@ -5,10 +5,16 @@ import { recipe } from "@vanilla-extract/recipes";
 export const Container = style({
   display: "grid",
   gridTemplateColumns: "repeat(6, 1fr)",
-  rowGap: "3rem",
+  rowGap: "6rem",
   columnGap: "1rem",
   marginBottom: "10rem",
   paddingTop: "0 !important",
+
+  "@media": {
+    [media.mobile]: {
+      rowGap: "4rem",
+    },
+  },
 });
 
 export const Content = recipe({

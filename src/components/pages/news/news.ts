@@ -55,7 +55,7 @@ export const newsSchema = z.object({
   externalUrl: z
     .string()
     .url("External URL must be a valid URL")
-    .or(z.literal("")),
+    .refine((v) => v.trim().length > 0, "External URL is required"),
   projectManager: z.string().min(1, "Project manager is required"),
   contentsNumero: z.string().min(1, "Contents numero is required"),
   isPublished: z.boolean(),

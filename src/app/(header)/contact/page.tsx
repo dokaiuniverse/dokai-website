@@ -53,7 +53,7 @@ const ContactPage = () => {
               {email.value}
             </Link>
           </div>
-          <div className={FooterStyles.ItemContainer}>
+          {/* <div className={FooterStyles.ItemContainer}>
             <p className={FooterStyles.ItemTitle}>{tel.label}</p>
             <Link
               href={`tel:${tel.number}`}
@@ -61,7 +61,7 @@ const ContactPage = () => {
             >
               {tel.value}
             </Link>
-          </div>
+          </div> */}
           <div className={FooterStyles.ItemContainer}>
             <p className={FooterStyles.ItemTitle}>{address.label}</p>
             <Link

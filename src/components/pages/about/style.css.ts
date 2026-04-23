@@ -66,7 +66,7 @@ export const ContentContainer = style({
 
   "@media": {
     [media.mobile]: {
-      rowGap: "2rem",
+      rowGap: "1rem",
       display: "flex",
       flexDirection: "column",
     },
@@ -78,6 +78,12 @@ export const ContentName = recipe({
     gridRowStart: "1",
     gridColumn: "span 1",
     lineHeight: "1.833",
+
+    "@media": {
+      [media.mobile]: {
+        fontWeight: "500",
+      },
+    },
   },
   variants: {
     align: {

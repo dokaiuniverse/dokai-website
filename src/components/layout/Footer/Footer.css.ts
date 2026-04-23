@@ -99,7 +99,7 @@ export const ItemSub = style({
 });
 
 export const ItemMapContainer = style({
-  marginTop: "1rem",
+  marginTop: "3rem",
   width: "100%",
   aspectRatio: "8 / 3",
 
