@@ -109,7 +109,7 @@ export const CategoryEditInput = style({
 
 export const CategoryItemButton = style({
   border: "none !important",
-  background: "none !important",
+  background: "transparent !important",
   width: "1.5rem !important",
   padding: "0rem !important",
   outline: "none !important",
@@ -121,10 +121,6 @@ export const CategoryItemButton = style({
     "&:hover": {
       opacity: "1",
     },
-
-    [`${darkThemeClass} &`]: {
-      filter: "invert(1)",
-    },
   },
 });
 
@@ -132,4 +128,5 @@ export const CategoryItemButtonIcon = style({
   width: "1.25rem",
   height: "auto",
   aspectRatio: "1 / 1",
+  stroke: vars.color.fg,
 });

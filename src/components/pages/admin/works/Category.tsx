@@ -101,6 +101,7 @@ const SortableCategoryItem = ({
             value={draftValue}
             autoFocus
             onChange={(e) => setDraftValue(e.target.value)}
+            onBlur={handleSave}
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSave();
               if (e.key === "Escape") handleCancel();
@@ -118,7 +119,11 @@ const SortableCategoryItem = ({
       ) : (
         <span
           className={Styles.CategoryName}
-          onClick={() => setIsEditing(true)}
+          onClick={(e) => {
+            e.preventDefault();
+
+            setIsEditing(true);
+          }}
         >
           {category}
         </span>

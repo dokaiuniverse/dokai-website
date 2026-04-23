@@ -29,6 +29,6 @@ export const worksMutations = {
   categoriesUpdate: () => ({
     mutationKey: worksMutationKeys.categoriesUpdate(),
     mutationFn: (list: string[]) => fetchWorkCategoriesUpdate(list),
-    invalidateQueryKeys: [worksQueryKeys.all()],
+    invalidateQueryKeys: [worksQueryKeys.workCategories()],
   }),
 };
