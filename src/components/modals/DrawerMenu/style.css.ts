@@ -41,7 +41,7 @@ export const Layout = recipe({
     display: "flex",
     flexDirection: "column",
     gap: "0.5rem",
-    transition: `transform ${TransitionDurationVar} ease-in-out, opacity ${TransitionDurationVar} ease-in-out, border-radius ${TransitionDurationVar} ease-in-out`,
+    transition: `transform ${TransitionDurationVar} ease-in-out, opacity ${TransitionDurationVar} ease-in-out, border-radius ${TransitionDurationVar} ease-in-out, background-color 0.2s ease-in-out`,
     overflow: "auto",
     height: "100%",
     justifyContent: "space-between",
@@ -258,19 +258,9 @@ export const SocialLink = style({
 });
 
 export const FooterIconButton = style({
-  gridColumn: "8",
-  position: "relative",
-  marginLeft: "auto",
-  marginTop: "auto",
-
-  "@media": {
-    [media.tablet]: {
-      gridColumn: "7 / -1",
-    },
-    [media.mobile]: {
-      gridRow: "1 / span 2",
-    },
-  },
+  position: "absolute",
+  right: "0rem",
+  bottom: "0rem",
 });
 
 export const FooterIcon = style({
@@ -281,6 +271,97 @@ export const FooterIcon = style({
   selectors: {
     [`${darkThemeClass} &`]: {
       filter: "invert(1)",
+    },
+  },
+});
+
+//
+
+export const ThemeToggleButtonContainer = style({
+  display: "grid",
+  gridTemplateColumns: "repeat(2, minmax(0px, 1fr))",
+
+  "@media": {
+    [media.tablet]: {
+      position: "absolute",
+      display: "block",
+      bottom: "calc(24px + 3.25rem)",
+      left: "24px",
+      zIndex: "1",
+    },
+    [media.mobile]: {
+      bottom: "calc(20px + 3.75rem)",
+      left: "auto",
+      right: "20px",
+      zIndex: "1",
+    },
+  },
+});
+
+export const ThemeToggleButton = style({
+  gridColumn: "2 / -1",
+  border: "1px solid",
+  borderColor: vars.color.fg,
+  borderRadius: "999px",
+  height: "3rem",
+
+  position: "relative",
+  width: "11rem",
+  textAlign: "right",
+  padding: "0 1rem",
+  textTransform: "uppercase",
+  fontSize: vars.fontSize.lg,
+  letterSpacing: "-0.03em",
+  marginRight: "50%",
+
+  selectors: {
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      left: "0",
+      top: "0",
+      margin: "0.2rem",
+      height: "calc(100% - 0.4rem)",
+      aspectRatio: "1 / 1",
+      background: vars.color.fg,
+      borderRadius: "999px",
+
+      transition: "transform 0.2s ease",
+    },
+
+    '&[data-is-dark="true"]': {
+      textAlign: "left",
+    },
+
+    '&[data-is-dark="true"]::before': {
+      transform: "translateX(8rem)",
+    },
+  },
+
+  "@media": {
+    [media.tablet]: {
+      marginRight: "0",
+      width: "9.25rem",
+      height: "2.5rem",
+      fontSize: vars.fontSize.md,
+
+      selectors: {
+        '&[data-is-dark="true"]::before': {
+          transform: "translateX(6.75rem)",
+        },
+      },
+    },
+    [media.mobile]: {
+      width: "7.25rem",
+      height: "2rem",
+      fontSize: vars.fontSize.sm,
+      padding: "0 0.75rem",
+
+      selectors: {
+        '&[data-is-dark="true"]::before': {
+          transform: "translateX(5.25rem)",
+        },
+      },
     },
   },
 });

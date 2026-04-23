@@ -1,13 +1,13 @@
 import z from "zod";
 
 export const WorkCategoryList = [
-  "BRANDING",
-  "EXHIBITION",
+  "Branding",
+  "Exhibition",
   "OOH",
-  "ANIMATE",
-  "AWARD",
-  "FILM",
-  "SOCIAL CONTENTS",
+  "Animate",
+  "Award",
+  "Film",
+  "Social Contents",
 ] as const;
 
 const mediaSourceSchema = z.unknown();
@@ -113,7 +113,7 @@ export type WorkOutput = z.output<typeof workSchema>; // ✅ year: number
 export const initalWork: WorkInput = {
   title: "",
   thumbnail: null,
-  category: "ANIMATE",
+  category: "Animate",
   summary: "",
   productionDate: null,
   productionType: "",

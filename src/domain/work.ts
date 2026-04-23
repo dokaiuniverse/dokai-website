@@ -2,13 +2,13 @@ import { Category } from "@ts/categories";
 import type { MediaSource } from "./media";
 
 export type WorkCategory =
-  | "ANIMATE"
-  | "BRANDING"
-  | "CHARACTER"
-  | "AWARD"
-  | "FILM"
-  | "COMMERCIAL"
-  | "SOCIAL_CONTENTS";
+  | "Branding"
+  | "Exhibition"
+  | "OOH"
+  | "Animate"
+  | "Award"
+  | "Film"
+  | "Social Contents";
 
 export type WorkMetaField = {
   name: string;
