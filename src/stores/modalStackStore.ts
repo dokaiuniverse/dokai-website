@@ -78,10 +78,9 @@ export type ModalMap = {
     applyDate: (nextDate: Date, nextText: string) => void;
   };
 
-  EDIT_META_INFO: {
-    initial?: WorkMetaField;
-    applyMeta: (next: WorkMetaField) => void;
-    deleteMeta?: () => void;
+  EDIT_META_INFO_LIST: {
+    initial?: WorkMetaField[];
+    applyMetaList: (next: WorkMetaField[]) => void;
   };
 
   EDIT_CREDIT: {

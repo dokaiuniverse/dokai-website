@@ -7,6 +7,7 @@ export const Container = style({
   gap: "1rem",
   padding: "1rem",
   paddingTop: "0rem",
+  overflowY: "auto",
 });
 
 export const Content = style({
@@ -67,8 +68,73 @@ export const ValueRemoveButton = style({
   marginRight: "0.25rem",
 });
 
+export const AddValueButton = style({
+  marginTop: "0.25rem",
+  height: "2rem",
+});
+
 export const ButtonContainer = style({
   display: "flex",
   justifyContent: "flex-end",
   gap: "0.5rem",
+});
+
+export const MetaList = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem",
+});
+
+export const MetaCard = style({
+  display: "flex",
+  flexDirection: "row",
+  gap: "0.5rem",
+  alignItems: "flex-start",
+  position: "relative",
+});
+
+export const MetaDragHandle = style({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "0.5rem 0",
+  cursor: "grab",
+  background: "none",
+  border: "none",
+  color: "#94a3b8",
+  fontSize: "1.25rem",
+  selectors: {
+    "&:active": {
+      cursor: "grabbing",
+    },
+  },
+});
+
+export const MetaCardBody = style({
+  display: "flex",
+  flexDirection: "column",
+  padding: "1rem",
+  border: "1px solid #e2e8f0",
+  borderRadius: "0.5rem",
+  backgroundColor: "#fff",
+  flex: 1,
+  gap: "1rem",
+  minWidth: 0,
+});
+
+export const MetaRemoveButton = style({
+  position: "absolute",
+  top: "0.5rem",
+  right: "0.5rem",
+  width: "1.5rem",
+  height: "1.5rem",
+});
+
+export const MetaAddButtonContainer = style({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "0.5rem",
+  marginTop: "1rem",
 });

@@ -64,8 +64,12 @@ export const ValueInput = style({
 });
 
 export const ValueRemoveButton = style({
+  position: "absolute",
   border: "none !important",
-  marginRight: "0.25rem",
+  background: "none !important",
+  backdropFilter: "none !important",
+  right: "0.25rem",
+  top: "0.125rem",
 });
 
 export const ButtonContainer = style({
@@ -84,9 +88,33 @@ export const RoleContainer = style({
   display: "flex",
   flexDirection: "column",
   gap: "0.25rem",
+  position: "relative",
   padding: "0.5rem",
   borderRadius: "0.5rem",
   border: "1px solid #999",
+});
+
+export const MemberDragHandle = style({
+  position: "absolute",
+  left: "50%",
+  transform: "translateX(-50%)",
+  top: 0,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "0.5rem 0",
+  cursor: "grab",
+  background: "none",
+  border: "none",
+  color: "#94a3b8",
+  fontSize: "1.25rem",
+  selectors: {
+    "&:active": {
+      cursor: "grabbing",
+    },
+  },
+  rotate: "90deg",
+  transformOrigin: "center center",
 });
 
 export const MemberAddForm = style({

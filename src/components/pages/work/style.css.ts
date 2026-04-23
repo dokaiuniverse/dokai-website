@@ -110,6 +110,7 @@ export const HeaderInfo = style({
 
 export const HeaderMetaList = recipe({
   base: {
+    position: "relative",
     display: "flex",
     flexDirection: "column",
     gap: "0.5rem",
@@ -402,18 +403,25 @@ export const EditInfoPublished = style({
 
 //
 
+export const EditHeaderMetaTitle = style({
+  color: "black",
+  fontSize: "1.25rem",
+  lineHeight: "1.2",
+  letterSpacing: "0.04em",
+});
+
+export const EditHeaderMetaEditButton = style({
+  position: "absolute",
+
+  top: "0",
+  right: "0",
+});
+
 export const EditHeaderMetaItemContainer = style({
   display: "flex",
   gap: "0.5rem",
   justifyContent: "space-between",
   alignItems: "flex-start",
-});
-
-export const EditHeaderMetaEditButton = style({
-  position: "relative",
-
-  top: "0",
-  right: "0",
 });
 
 export const EditHeaderMetaAddButtonContainer = style({

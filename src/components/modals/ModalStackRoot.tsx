@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import useLockBodyScroll from "@hooks/useLockBodyScroll";
 import EditCalendarModal from "./Edit/EditCalendar/EditCalendarModal";
 import AddNewsContentModal from "./Edit/AddNewsContent/AddNewsContentModal";
+import EditMetaInfoListModal from "./Edit/EditMetaInfo/EditMetaInfoModal";
+import EditCreditModal from "./Edit/EditCredit/EditCreditModal";
 
 const ApiModal = dynamic(() => import("./Api/ApiModal"), { ssr: false });
 const ConfirmModal = dynamic(() => import("./Confirm/ConfirmModal"), {
@@ -63,14 +65,10 @@ const AddAboutSectionModal = dynamic(
   () => import("./Edit/AddAboutSection/AddAboutSectionModal"),
   { ssr: false },
 );
-const EditMetaInfoModal = dynamic(
-  () => import("./Edit/EditMetaInfo/EditMetaInfoModal"),
-  { ssr: false },
-);
-const EditCreditModal = dynamic(
-  () => import("./Edit/EditCredit/EditCreditModal"),
-  { ssr: false },
-);
+// const EditCreditModal = dynamic(
+//   () => import("./Edit/EditCredit/EditCreditModal"),
+//   { ssr: false },
+// );
 
 const ModalStackRoot = () => {
   const pathname = usePathname();
@@ -128,8 +126,10 @@ const ModalStackRoot = () => {
             return <EditCalendarModal key={m.id} {...common} {...m.props} />;
           case "EDIT_DATE_PICKER":
             return <EditDatePickerModal key={m.id} {...common} {...m.props} />;
-          case "EDIT_META_INFO":
-            return <EditMetaInfoModal key={m.id} {...common} {...m.props} />;
+          case "EDIT_META_INFO_LIST":
+            return (
+              <EditMetaInfoListModal key={m.id} {...common} {...m.props} />
+            );
           case "EDIT_CREDIT":
             return <EditCreditModal key={m.id} {...common} {...m.props} />;
           case "UPLOAD_IMAGE":
