@@ -113,8 +113,19 @@ export const MediasMedia = recipe({
       FULL: {
         gridColumn: "1 / -1",
         aspectRatio: "21 / 9",
-        marginLeft: "-20px",
-        width: "calc(100% + 40px)",
+        marginLeft: "-2rem",
+        width: "calc(100% + 4rem)",
+
+        "@media": {
+          [media.mobile]: {
+            marginLeft: "-24px",
+            width: "calc(100% + 48px)",
+          },
+          [media.desktop]: {
+            marginLeft: "-20px",
+            width: "calc(100% + 40px)",
+          },
+        },
       },
     },
   },
