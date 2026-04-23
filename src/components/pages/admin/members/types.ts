@@ -7,3 +7,9 @@ export type AdminMemberItem = {
   isFixed: boolean;
   fixedOrder: number | null;
 };
+
+export type AdminMemberDiffPayload = {
+  created: AdminMemberItem[];
+  updated: AdminMemberItem[];
+  deleted: AdminMemberItem[];
+};

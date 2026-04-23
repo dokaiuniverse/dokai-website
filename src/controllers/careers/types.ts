@@ -70,10 +70,16 @@ export type TogglePublishResponse = {
 
 // ===== AdminMemberListUpdateRequest =====
 
+export type MemberPatchItem = {
+  memberId: string;
+  email: string;
+  role: "admin" | "staff" | null;
+  isFixed: boolean;
+  fixedOrder: number | null;
+};
+
 export type AdminMemberListUpdateRequest = {
-  items: {
-    email: string;
-    role: AdminMemberRole | null;
-    fixedOrder: number | null;
-  }[];
+  created?: MemberPatchItem[];
+  updated?: MemberPatchItem[];
+  deleted?: MemberPatchItem[];
 };

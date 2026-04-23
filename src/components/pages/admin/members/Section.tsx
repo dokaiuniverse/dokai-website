@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   FormProvider,
   useFieldArray,
@@ -22,15 +22,22 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+
 import * as Styles from "./style.css";
-import { adminMembersSchema, type AdminMembersInput } from "./schema";
 import { AdminMemberItem } from "./types";
-import RemoveButton from "@components/ui/Edit/RemoveButton/RemoveButton";
-import PinSVG from "@assets/icons/pin.svg";
-import PinCrossSVG from "@assets/icons/pin_cross.svg";
+import { AdminMembersInput, adminMembersSchema } from "./schema";
+import {
+  createTempMemberId,
+  diffMembers,
+  normalizeMembers,
+  reorderFixedMembers,
+} from "./util";
 import { useAppMutation, useAppQuery } from "@controllers/common";
 import { careersQueriesClient } from "@controllers/careers/query.client";
 import { careersMutations } from "@controllers/careers/mutation";
+import RemoveButton from "@components/ui/Edit/RemoveButton/RemoveButton";
+import PinSVG from "@assets/icons/pin.svg";
+import PinCrossSVG from "@assets/icons/pin_cross.svg";
 import { useModalStackStore } from "@stores/modalStackStore";
 
 const SortableFixedMemberItem = ({
@@ -69,50 +76,9 @@ const SortableFixedMemberItem = ({
   );
 };
 
-const makeTempId = () =>
-  `member_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-
-const normalizeFixedOrder = (members: AdminMemberItem[]) => {
-  const fixed = members.filter((member) => member.isFixed);
-  const notFixed = members.filter((member) => !member.isFixed);
-
-  const normalizedFixed = fixed.map((member, index) => ({
-    ...member,
-    fixedOrder: index,
-  }));
-
-  const normalizedNotFixed = notFixed.map((member) => ({
-    ...member,
-    fixedOrder: null,
-  }));
-
-  return [...normalizedFixed, ...normalizedNotFixed];
-};
-
-const reorderFixedMembers = (
-  members: AdminMemberItem[],
-  activeId: string,
-  overId: string,
-) => {
-  const fixed = members.filter((member) => member.isFixed);
-  const notFixed = members.filter((member) => !member.isFixed);
-
-  const oldIndex = fixed.findIndex((member) => member.memberId === activeId);
-  const newIndex = fixed.findIndex((member) => member.memberId === overId);
-
-  if (oldIndex < 0 || newIndex < 0 || oldIndex === newIndex) return members;
-
-  const nextFixed = [...fixed];
-  const [moved] = nextFixed.splice(oldIndex, 1);
-  nextFixed.splice(newIndex, 0, moved);
-
-  return normalizeFixedOrder([...nextFixed, ...notFixed]);
-};
-
 const MembersSection = () => {
-  const { data: memberListData } = useAppQuery(
-    careersQueriesClient.memberList(),
-  );
+  const { data: memberList } = useAppQuery(careersQueriesClient.memberList());
+  const initialItems = useMemo(() => memberList?.items ?? [], [memberList]);
   const { mutateAsync: updateMemberList } = useAppMutation(
     careersMutations.updateMemberList(),
   );
@@ -130,44 +96,41 @@ const MembersSection = () => {
     register,
     reset,
     getValues,
-    setValue,
     handleSubmit,
-    formState: { isDirty, errors, isSubmitting },
+    formState: { isDirty, isSubmitting, errors },
   } = form;
 
-  const { append } = useFieldArray({
+  const initialMembersRef = useRef<AdminMemberItem[]>([]);
+
+  const { fields, append, remove, replace } = useFieldArray({
     control,
     name: "members",
   });
 
   const members = useWatch({ control, name: "members" }) ?? [];
 
-  // TODO: 실제 query로 교체
   useEffect(() => {
-    const tmp = memberListData?.items?.map((item) => {
-      return {
-        memberId: makeTempId(),
+    const nextMembers = normalizeMembers(
+      initialItems.map((item) => ({
+        memberId: createTempMemberId(),
         email: item.email,
         role: item.role,
         isFixed: item.fixedOrder !== null,
         fixedOrder: item.fixedOrder,
-      };
-    });
+      })),
+    );
 
-    reset({
-      members: normalizeFixedOrder(tmp ?? []),
-    });
-  }, [reset, memberListData]);
+    initialMembersRef.current = nextMembers;
+    reset({ members: nextMembers });
+    replace(nextMembers);
+  }, [initialItems, reset, replace]);
 
   const fixedMembers = useMemo(
-    () =>
-      members
-        .filter((member) => member.isFixed)
-        .sort((a, b) => b.fixedOrder! - a.fixedOrder!),
+    () => members.filter((member) => member.isFixed),
     [members],
   );
 
-  const nonFixedMembers = useMemo(
+  const normalMembers = useMemo(
     () => members.filter((member) => !member.isFixed),
     [members],
   );
@@ -178,9 +141,12 @@ const MembersSection = () => {
     }),
   );
 
+  const getFieldIndexByMemberId = (memberId: string) =>
+    fields.findIndex((field) => field.memberId === memberId);
+
   const handleAddMember = () => {
     append({
-      memberId: makeTempId(),
+      memberId: createTempMemberId(),
       email: "",
       role: "staff",
       isFixed: false,
@@ -188,22 +154,32 @@ const MembersSection = () => {
     });
   };
 
-  const handleToggleFixed = (targetId: string, checked: boolean) => {
-    const next = (getValues("members") ?? []).map((member) =>
-      member.memberId === targetId
-        ? {
-            ...member,
-            isFixed: checked,
-            fixedOrder: checked ? fixedMembers.length : null,
-          }
-        : member,
+  const handleDeleteMember = (memberId: string) => {
+    const index = getFieldIndexByMemberId(memberId);
+    if (index >= 0) remove(index);
+  };
+
+  const handleToggleFixed = (memberId: string, checked: boolean) => {
+    const next = normalizeMembers(
+      (getValues("members") ?? []).map((member) =>
+        member.memberId === memberId
+          ? {
+              ...member,
+              isFixed: checked,
+              fixedOrder: checked ? 0 : null,
+            }
+          : member,
+      ) as AdminMemberItem[],
     );
 
-    setValue("members", normalizeFixedOrder(next as AdminMemberItem[]), {
-      shouldDirty: true,
-      shouldTouch: true,
-      shouldValidate: true,
-    });
+    reset(
+      { members: next },
+      {
+        keepDirty: true,
+        keepTouched: true,
+      },
+    );
+    replace(next);
   };
 
   const handleFixedDragEnd = (event: DragEndEvent) => {
@@ -216,35 +192,55 @@ const MembersSection = () => {
       String(over.id),
     );
 
-    setValue("members", next, {
-      shouldDirty: true,
-      shouldTouch: true,
-    });
+    reset(
+      { members: next },
+      {
+        keepDirty: true,
+        keepTouched: true,
+      },
+    );
+    replace(next);
   };
 
   const { push } = useModalStackStore();
 
-  const handleSave = handleSubmit(async (data) => {
-    const nextMembers = normalizeFixedOrder(
-      data.members.map((member) => ({
-        ...member,
-        email: member.email.trim().toLowerCase(),
-      })) as AdminMemberItem[],
+  const onSubmitMembers = async (formValues: AdminMembersInput) => {
+    const normalizedCurrent = normalizeMembers(
+      formValues.members.map((member) => ({
+        memberId: member.memberId,
+        email: member.email,
+        role: member.role ?? null,
+        isFixed: member.isFixed ?? false,
+        fixedOrder: member.fixedOrder ?? null,
+      })),
     );
 
-    const membersForUpdate = nextMembers.map((member) => ({
-      email: member.email,
-      fixedOrder: member.fixedOrder,
-      role: member.role,
-    }));
+    const initialMembers = initialMembersRef.current;
+    const payload = diffMembers(initialMembers, normalizedCurrent);
+
+    console.log(payload);
+
+    if (
+      payload.created.length === 0 &&
+      payload.updated.length === 0 &&
+      payload.deleted.length === 0
+    ) {
+      return;
+    }
 
     push("API", {
       title: "Update Members",
-      onFetch: async () => updateMemberList({ items: membersForUpdate }),
+      onFetch: async () => updateMemberList(payload),
     });
 
-    reset({ members: nextMembers });
-  });
+    initialMembersRef.current = normalizedCurrent;
+    reset({ members: normalizedCurrent });
+    replace(normalizedCurrent);
+  };
+
+  const handleSave = async () => {
+    await handleSubmit(onSubmitMembers)();
+  };
 
   return (
     <FormProvider {...form}>
@@ -253,7 +249,7 @@ const MembersSection = () => {
           <div>
             <p className={Styles.SectionTitle}>Members</p>
             <p className={Styles.SectionSub}>
-              Add, delete, update roles, and reorder fixed members.
+              Add, remove, update role, and reorder fixed members.
             </p>
           </div>
 
@@ -269,7 +265,7 @@ const MembersSection = () => {
               type="button"
               className={Styles.PrimaryButton}
               onClick={handleSave}
-              disabled={!isDirty || isSubmitting}
+              // disabled={!isDirty || isSubmitting}
             >
               Save
             </button>
@@ -290,9 +286,7 @@ const MembersSection = () => {
             >
               <div className={Styles.MemberList}>
                 {fixedMembers.map((member) => {
-                  const index = members.findIndex(
-                    (m) => m.memberId === member.memberId,
-                  );
+                  const index = getFieldIndexByMemberId(member.memberId);
                   if (index < 0) return null;
 
                   return (
@@ -320,6 +314,7 @@ const MembersSection = () => {
                             className={Styles.MemberSelect}
                             {...register(`members.${index}.role` as const)}
                           >
+                            <option value="">none</option>
                             <option value="staff">staff</option>
                             <option value="admin">admin</option>
                           </select>
@@ -340,14 +335,8 @@ const MembersSection = () => {
                           </label>
 
                           <RemoveButton
-                            onClick={() => {
-                              reset({
-                                members: getValues("members")?.filter(
-                                  (m) => m.memberId !== member.memberId,
-                                ),
-                              });
-                            }}
                             className={Styles.DeleteButton}
+                            onClick={() => handleDeleteMember(member.memberId)}
                           />
                         </div>
                       )}
@@ -360,13 +349,11 @@ const MembersSection = () => {
         </div>
 
         <div className={Styles.MemberBlock}>
-          <p className={Styles.BlockTitle}>Normal Members</p>
+          <p className={Styles.BlockTitle}>Members</p>
 
           <div className={Styles.MemberList}>
-            {nonFixedMembers.map((member) => {
-              const index = members.findIndex(
-                (m) => m.memberId === member.memberId,
-              );
+            {normalMembers.map((member) => {
+              const index = getFieldIndexByMemberId(member.memberId);
               if (index < 0) return null;
 
               return (
@@ -383,6 +370,7 @@ const MembersSection = () => {
                     className={Styles.MemberSelect}
                     {...register(`members.${index}.role` as const)}
                   >
+                    <option value="">none</option>
                     <option value="staff">staff</option>
                     <option value="admin">admin</option>
                   </select>
@@ -400,14 +388,8 @@ const MembersSection = () => {
                   </label>
 
                   <RemoveButton
-                    onClick={() => {
-                      reset({
-                        members: getValues("members")?.filter(
-                          (m) => m.memberId !== member.memberId,
-                        ),
-                      });
-                    }}
                     className={Styles.DeleteButton}
+                    onClick={() => handleDeleteMember(member.memberId)}
                   />
                 </div>
               );

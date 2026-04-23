@@ -1,36 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseRouteClient } from "@lib/supabase/route";
+import {
+  AdminMemberListUpdateRequest,
+  MemberPatchItem,
+} from "@controllers/careers/types";
 
-type MemberPayloadItem = {
-  email: string;
-  role: "admin" | "staff" | null;
-  fixedOrder: number | null;
-};
+const normalizeItem = (item: MemberPatchItem) => ({
+  memberId: item.memberId,
+  email: item.email.trim().toLowerCase(),
+  role: item.role ?? null,
+  isFixed: !!item.isFixed,
+  fixedOrder: item.isFixed ? (item.fixedOrder ?? 0) : null,
+});
 
 export async function PATCH(req: NextRequest) {
   const { supabase, applyCookies } = createSupabaseRouteClient(req);
 
-  const body = (await req.json()) as {
-    items?: MemberPayloadItem[];
-  };
+  const body = (await req.json()) as AdminMemberListUpdateRequest;
 
-  const rawItems = body.items ?? [];
+  const created = (body.created ?? []).map(normalizeItem);
+  const updated = (body.updated ?? []).map(normalizeItem);
+  const deleted = (body.deleted ?? []).map(normalizeItem);
 
-  const items = rawItems
-    .map((item) => ({
-      email: item.email.trim().toLowerCase(),
-      role: item.role ?? null,
-      fixedOrder: item.fixedOrder ?? null,
-    }))
-    .filter((item) => item.email.length > 0);
-
-  const uniqueMap = new Map<string, MemberPayloadItem>();
-
-  for (const item of items) {
-    uniqueMap.set(item.email, item);
-  }
-
-  const normalizedItems = [...uniqueMap.values()];
+  const changedItems = [...created, ...updated];
+  const deletedEmails = deleted.map((item) => item.email);
 
   const { data: existingMembers, error: existingMembersError } = await supabase
     .from("allowed_users")
@@ -64,15 +57,12 @@ export async function PATCH(req: NextRequest) {
     ]),
   );
 
-  const existingProfileMap = new Map(
-    (existingProfiles ?? []).map((row) => [
-      (row.email ?? "").toLowerCase(),
-      row,
-    ]),
+  const existingProfileEmailSet = new Set(
+    (existingProfiles ?? []).map((row) => (row.email ?? "").toLowerCase()),
   );
 
-  // 1) allowed_users upsert 대상
-  const upsertMembers = normalizedItems
+  // 1) allowed_users upsert
+  const upsertMembers = changedItems
     .filter((item) => item.role !== null)
     .map((item) => {
       const existing = existingMemberMap.get(item.email);
@@ -84,16 +74,10 @@ export async function PATCH(req: NextRequest) {
       };
     });
 
-  // user_id 없는 row는 allowed_users 구조에 따라 insert 불가할 수 있음
-  // 보통 allowed_users가 user_id required면 신규 초대/가입 전에는 insert 못 함
-  // 그래서 여기서는 existing user만 update 대상으로 제한하는 방식도 가능
-  const safeUpsertMembers = upsertMembers;
-  // .filter((row) => !!row.user_id);
-
-  if (safeUpsertMembers.length > 0) {
+  if (upsertMembers.length > 0) {
     const { error: upsertMembersError } = await supabase
       .from("allowed_users")
-      .upsert(safeUpsertMembers, {
+      .upsert(upsertMembers, {
         onConflict: "email",
       });
 
@@ -107,16 +91,17 @@ export async function PATCH(req: NextRequest) {
     }
   }
 
-  // 2) allowed_users delete 대상
-  const deleteEmails = normalizedItems
-    .filter((item) => item.role === null)
-    .map((item) => item.email);
+  // 2) role이 null로 바뀐 updated + deleted 는 allowed_users 삭제
+  const removeEmailsFromAllowedUsers = [
+    ...updated.filter((item) => item.role === null).map((item) => item.email),
+    ...deletedEmails,
+  ];
 
-  if (deleteEmails.length > 0) {
+  if (removeEmailsFromAllowedUsers.length > 0) {
     const { error: deleteMembersError } = await supabase
       .from("allowed_users")
       .delete()
-      .in("email", deleteEmails);
+      .in("email", removeEmailsFromAllowedUsers);
 
     if (deleteMembersError) {
       return applyCookies(
@@ -128,9 +113,9 @@ export async function PATCH(req: NextRequest) {
     }
   }
 
-  // 3) career_profiles fixed_order update
-  for (const item of normalizedItems) {
-    if (!existingProfileMap.has(item.email)) continue;
+  // 3) fixed_order 반영
+  for (const item of changedItems) {
+    if (!existingProfileEmailSet.has(item.email)) continue;
 
     const { error: updateProfileError } = await supabase
       .from("career_profiles")
@@ -143,6 +128,27 @@ export async function PATCH(req: NextRequest) {
       return applyCookies(
         NextResponse.json(
           { message: updateProfileError.message },
+          { status: 500 },
+        ),
+      );
+    }
+  }
+
+  // 4) deleted 멤버는 profile fixed_order 제거
+  for (const item of deleted) {
+    if (!existingProfileEmailSet.has(item.email)) continue;
+
+    const { error: clearProfileError } = await supabase
+      .from("career_profiles")
+      .update({
+        fixed_order: null,
+      })
+      .eq("email", item.email);
+
+    if (clearProfileError) {
+      return applyCookies(
+        NextResponse.json(
+          { message: clearProfileError.message },
           { status: 500 },
         ),
       );
