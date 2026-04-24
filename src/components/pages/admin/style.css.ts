@@ -390,7 +390,7 @@ export const TabItemActive = style({
       left: 0,
       width: "100%",
       height: "2px",
-      backgroundColor: "#000",
+      backgroundColor: vars.color.fg,
       borderRadius: "2px",
     },
   },

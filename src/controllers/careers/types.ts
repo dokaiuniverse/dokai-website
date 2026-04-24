@@ -1,4 +1,3 @@
-import { AdminMemberRole } from "@components/pages/admin/members/types";
 import type {
   CareerPageDetail,
   Profile,
@@ -22,9 +21,9 @@ export type ProfileListResponse = {
 
 export type AdminMemberListResponse = {
   items: {
+    id: string;
     email: string;
-    fixedOrder: number | null;
-    role: AdminMemberRole | null;
+    role: AdminMemberRole;
   }[];
 };
 
@@ -88,16 +87,21 @@ export type TogglePublishResponse = {
 
 // ===== AdminMemberListUpdateRequest =====
 
-export type MemberPatchItem = {
-  memberId: string;
+export type AdminMemberRole = "admin" | "staff";
+
+export type MemberCreateItem = {
   email: string;
-  role: "admin" | "staff" | null;
-  isFixed: boolean;
-  fixedOrder: number | null;
+  role: AdminMemberRole;
+};
+
+export type MemberUpdateItem = {
+  id: string;
+  email: string;
+  role: AdminMemberRole;
 };
 
 export type AdminMemberListUpdateRequest = {
-  created?: MemberPatchItem[];
-  updated?: MemberPatchItem[];
-  deleted?: MemberPatchItem[];
+  created?: MemberCreateItem[];
+  updated?: MemberUpdateItem[];
+  deleted?: string[];
 };
