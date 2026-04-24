@@ -15,11 +15,9 @@ export const uploadImage = async (file: File) => {
       hash,
       mime: file.type,
       size: file.size,
-      folder: "images/asd/asd",
+      folder: "images",
     }),
   });
-
-  console.log("여기 folder 수정해야함!!");
 
   const presign = await res.json();
 

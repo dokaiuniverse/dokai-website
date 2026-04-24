@@ -7,6 +7,7 @@ function getServiceAccountCredentials() {
 
   const json = Buffer.from(b64, "base64").toString("utf-8");
   const creds = JSON.parse(json);
+  console.log(creds);
 
   // service account JSON 구조: client_email, private_key 등
   return creds as {
