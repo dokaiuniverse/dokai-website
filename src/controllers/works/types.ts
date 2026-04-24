@@ -25,6 +25,23 @@ export type WorkListInfiniteResponse = {
   nextPage: number | null;
 };
 
+export type AdminWorkListItem = {
+  id: string;
+  slug: string;
+  isPublished: boolean;
+  data: WorkListItem;
+  fixedOrder: number | null;
+};
+
+export type AdminWorkListInfiniteResponse = {
+  items: AdminWorkListItem[];
+  page: number;
+  limit: number;
+  totalCount: number;
+  hasNext: boolean;
+  nextPage: number | null;
+};
+
 export type WorkDetailResponse = {
   id: string;
   slug: string;

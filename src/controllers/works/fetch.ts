@@ -1,4 +1,6 @@
 import type {
+  AdminWorkListInfiniteResponse,
+  AdminWorkListItem,
   WorkCategoriesResponse,
   WorkDetailResponse,
   WorkListInfiniteResponse,
@@ -55,6 +57,43 @@ export const fetchWorkSearch = ({
     },
   );
 };
+
+export const fetchAdminWorkSearch = ({
+  query,
+  page = 1,
+  limit = 16,
+}: {
+  query?: string;
+  page?: number;
+  limit?: number;
+}) => {
+  const queryParams = new URLSearchParams();
+  if (query) queryParams.set("searchQueries", JSON.stringify([query]));
+  if (page) queryParams.set("page", page.toString());
+  if (limit) queryParams.set("limit", limit.toString());
+
+  return fetchApi<AdminWorkListInfiniteResponse>(
+    `/api/public/search/admin-works?${queryParams.toString()}`,
+    {
+      method: "GET",
+    },
+  );
+};
+
+export const fetchAdminFixedWorks = () => {
+  return fetchApi<{ items: AdminWorkListItem[] }>(
+    `/api/admin/works/fixed-works`,
+    {
+      method: "GET",
+    },
+  );
+};
+
+export const fetchAdminFixedWorksUpdate = (ids: string[]) =>
+  fetchApi<void, { ids: string[] }>(`/api/admin/works/fixed-works`, {
+    method: "PATCH",
+    body: { ids },
+  });
 
 export const fetchWorkDetail = (slug: string) =>
   fetchApi<WorkDetailResponse>(

@@ -120,7 +120,7 @@ const SearchResult = ({
                 <CloseLink
                   key={`SEARCH_RESULT_ITEM_${item.slug}_${idx}`}
                   className={Styles.ResultItem}
-                  href={`/work/${item.slug}`}
+                  href={`/work/${encodeURIComponent(item.slug)}`}
                   handleClose={handleClose}
                 >
                   <MediaHoverOverlay
@@ -147,7 +147,7 @@ const SearchResult = ({
                 <CloseLink
                   key={`SEARCH_RESULT_ITEM_${item.slug}_${idx}`}
                   className={Styles.ResultItem}
-                  href={`/news/${item.slug}`}
+                  href={`/news/${encodeURIComponent(item.slug)}`}
                   handleClose={handleClose}
                 >
                   <MediaHoverOverlay
@@ -174,7 +174,7 @@ const SearchResult = ({
                 <CloseLink
                   key={`SEARCH_RESULT_ITEM_${item.id}_${idx}`}
                   className={Styles.ResultItem}
-                  href={`/project/${item.id}`}
+                  href={`/careers/${encodeURIComponent(item.data.ownerEmail)}?project=${encodeURIComponent(item.id)}`}
                   handleClose={handleClose}
                 >
                   <MediaHoverOverlay

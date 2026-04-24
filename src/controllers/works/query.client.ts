@@ -1,5 +1,7 @@
 import { InfiniteQueryDef, QueryDef } from "../common";
 import {
+  fetchAdminFixedWorks,
+  fetchAdminWorkSearch,
   fetchMainWorks,
   fetchWorkCategories,
   fetchWorkCheckSlug,
@@ -9,6 +11,8 @@ import {
 } from "./fetch";
 import { worksQueryKeys } from "./keys";
 import {
+  AdminWorkListInfiniteResponse,
+  AdminWorkListItem,
   WorkCategoriesResponse,
   WorkDetailResponse,
   WorkListInfiniteResponse,
@@ -33,6 +37,17 @@ export const worksQueriesClient = {
     queryKey: worksQueryKeys.workSearch(queries),
     queryFn: ({ pageParam }) =>
       fetchWorkSearch({ queries, page: pageParam, limit: 12 }),
+  }),
+  adminWorkSearch: (
+    query?: string,
+  ): InfiniteQueryDef<AdminWorkListInfiniteResponse> => ({
+    queryKey: worksQueryKeys.adminWorkSearch(query),
+    queryFn: ({ pageParam }) =>
+      fetchAdminWorkSearch({ query, page: pageParam, limit: 12 }),
+  }),
+  adminFixedWorks: (): QueryDef<{ items: AdminWorkListItem[] }> => ({
+    queryKey: worksQueryKeys.adminFixedWorks(),
+    queryFn: () => fetchAdminFixedWorks(),
   }),
   workDetail: (slug: string): QueryDef<WorkDetailResponse> => ({
     queryKey: worksQueryKeys.workDetail(slug),

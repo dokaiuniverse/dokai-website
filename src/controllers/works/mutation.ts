@@ -1,4 +1,5 @@
 import {
+  fetchAdminFixedWorksUpdate,
   fetchWorkCategoriesUpdate,
   fetchWorkCreate,
   fetchWorkDelete,
@@ -30,5 +31,11 @@ export const worksMutations = {
     mutationKey: worksMutationKeys.categoriesUpdate(),
     mutationFn: (list: string[]) => fetchWorkCategoriesUpdate(list),
     invalidateQueryKeys: [worksQueryKeys.workCategories()],
+  }),
+
+  adminFixedWorksUpdate: () => ({
+    mutationKey: worksMutationKeys.adminFixedWorksUpdate(),
+    mutationFn: (ids: string[]) => fetchAdminFixedWorksUpdate(ids),
+    invalidateQueryKeys: [worksQueryKeys.adminFixedWorks()],
   }),
 };
