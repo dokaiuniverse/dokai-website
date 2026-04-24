@@ -185,7 +185,7 @@ export const WorkListItem = style({
 
   selectors: {
     "&[data-fixed=true]": {
-      opacity: "0.5",
+      opacity: "0.3",
     },
   },
 });
