@@ -6,6 +6,11 @@ import { worksQueriesServer } from "@controllers/works/query.server";
 import { worksQueryKeys } from "@controllers/works/keys";
 import { notFound } from "next/navigation";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import {
+  createMetaTitle,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+} from "@utils/MetaData";
 
 type Props = {
   params: Promise<{
@@ -33,21 +38,33 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!work) {
     return {
       title: "Work Not Found",
+      openGraph: {
+        title: createMetaTitle("Work Not Found"),
+      },
+      twitter: {
+        title: createMetaTitle("Work Not Found"),
+      },
     };
   }
 
+  const title = work.data.title ?? "Work";
+  const metaTitle = createMetaTitle(title);
+  const description = work.data.summary ?? DEFAULT_DESCRIPTION;
+  const image = work.data.thumbnail?.src ?? DEFAULT_OG_IMAGE;
+
   return {
-    title: work.data.title,
-    description: work.data.summary,
+    title,
+    description,
     openGraph: {
-      title: work.data.title,
-      description: work.data.summary,
-      images: work.data.thumbnail?.src,
+      title: metaTitle,
+      description,
+      images: image,
     },
     twitter: {
-      title: work.data.title,
-      description: work.data.summary,
-      images: work.data.thumbnail?.src,
+      card: "summary_large_image",
+      title: metaTitle,
+      description,
+      images: image,
     },
   };
 }

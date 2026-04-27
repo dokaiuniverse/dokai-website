@@ -6,6 +6,11 @@ import { careersQueriesServer } from "@controllers/careers/query.server";
 import { notFound } from "next/navigation";
 import CareersDetailPageClient from "./page-client";
 import { careersQueryKeys } from "@controllers/careers/keys";
+import {
+  createMetaTitle,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+} from "@utils/MetaData";
 
 type Props = {
   params: Promise<{
@@ -47,10 +52,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!profile) {
     return {
       title: "Career Profile Not Found",
+      openGraph: {
+        title: createMetaTitle("Career Profile Not Found"),
+      },
+      twitter: {
+        title: createMetaTitle("Career Profile Not Found"),
+      },
     };
   }
 
   const name = profile.data?.name ?? profile.name ?? email;
+
   const position =
     profile.data?.position ??
     profile.data?.role ??
@@ -58,29 +70,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     profile.role;
 
   const title = position ? `${name} - ${position}` : name;
+  const metaTitle = createMetaTitle(title);
 
   const description =
-    profile.data?.summary ??
-    profile.data?.description ??
-    "DOKAI UNIVERSE Career Profile";
+    profile.data?.summary ?? profile.data?.description ?? DEFAULT_DESCRIPTION;
 
   const image =
     profile.data?.profileImage?.src ??
     profile.data?.thumbnail?.src ??
     profile.data?.image?.src ??
-    "/dokai-og-image.png";
+    DEFAULT_OG_IMAGE;
 
   return {
     title,
     description,
     openGraph: {
-      title,
+      title: metaTitle,
       description,
       images: image,
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: metaTitle,
       description,
       images: image,
     },

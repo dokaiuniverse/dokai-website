@@ -6,6 +6,11 @@ import { prefetchAppQuery } from "@controllers/common";
 import { newsQueryKeys } from "@controllers/news/keys";
 import { notFound } from "next/navigation";
 import { newsQueriesServer } from "@controllers/news/query.server";
+import {
+  createMetaTitle,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+} from "@utils/MetaData";
 
 type Props = {
   params: Promise<{
@@ -33,25 +38,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!news) {
     return {
       title: "News Not Found",
+      openGraph: {
+        title: createMetaTitle("News Not Found"),
+      },
+      twitter: {
+        title: createMetaTitle("News Not Found"),
+      },
     };
   }
 
   const title = news.data.title ?? "News";
-  const description =
-    news.data.summary ?? "Image Beyond AI. Create with Humanity";
-  const image = news.data.thumbnail?.src ?? "/dokai-og-image.png";
+  const metaTitle = createMetaTitle(title);
+  const description = news.data.summary ?? DEFAULT_DESCRIPTION;
+  const image = news.data.thumbnail?.src ?? DEFAULT_OG_IMAGE;
 
   return {
     title,
     description,
     openGraph: {
-      title,
+      title: metaTitle,
       description,
       images: image,
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: metaTitle,
       description,
       images: image,
     },
