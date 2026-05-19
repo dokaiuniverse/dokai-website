@@ -13,11 +13,11 @@ export const Layout = style({
 export const HeadContent = style({
   position: "absolute",
   zIndex: "-1",
-  fontSize: "9px",
+  // fontSize: "9px",
   width: "100%",
   overflow: "hidden",
   whiteSpace: "nowrap",
-  color: vars.color.bg,
+  // color: vars.color.bg,
 });
 
 // Logo
