@@ -51,7 +51,13 @@ const jsonLd = [
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "DOKAI UNIVERSE",
-    alternateName: ["도카이 유니버스", "도카이", "DOKAI"],
+    alternateName: [
+      "도카이",
+      "도카이 유니버스",
+      "DOKAI",
+      "DOKAI Universe",
+      "DOKAI UNIVERSE",
+    ],
     url: "https://dokaiuniverse.ai",
     logo: "https://dokaiuniverse.ai/dokai.svg",
     description: "Image Beyond AI. Create with Humanity",
@@ -60,7 +66,13 @@ const jsonLd = [
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "DOKAI UNIVERSE",
-    alternateName: ["도카이 유니버스", "도카이", "DOKAI"],
+    alternateName: [
+      "도카이",
+      "도카이 유니버스",
+      "DOKAI",
+      "DOKAI Universe",
+      "DOKAI UNIVERSE",
+    ],
     url: "https://dokaiuniverse.ai",
   },
 ];
@@ -79,6 +91,27 @@ export default function RootLayout({
             __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
           }}
         />
+        <div
+          style={{
+            position: "absolute",
+            zIndex: "-1",
+            fontSize: "2px",
+            opacity: "0",
+          }}
+        >
+          <p>
+            Image Beyond AI. Create with Humanity
+            <br />
+            DOKAI is the only high-end studio delivering major commercial
+            projects end-to-end—from AI planning to global distribution.
+          </p>
+          <p>
+            Image Beyond AI. Create with Humanity
+            <br />
+            DOKAI UNIVERSE (도카이 유니버스)는 AI 기반 비주얼 콘텐츠와 브랜딩을
+            제작하는 크리에이티브 스튜디오입니다.
+          </p>
+        </div>
         <NextTopLoader
           showSpinner={true}
           height={4}

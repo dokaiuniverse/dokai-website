@@ -46,7 +46,7 @@ const FooterClient = ({ initialColor }: { initialColor: string }) => {
 
   const footerRef = useRef<HTMLDivElement>(null);
   const fg = getReadableTextColor(randomColor);
-  const { email, tel, address } = CompanyInfo;
+  const { email, address } = CompanyInfo;
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -62,6 +62,7 @@ const FooterClient = ({ initialColor }: { initialColor: string }) => {
           ["--footer-bg"]: randomColor,
           ["--footer-fg"]: fg,
           ["--footer-logo-invert"]: fg === "black" ? "0" : "1",
+          position: "relative",
         } as React.CSSProperties
       }
     >
@@ -77,12 +78,6 @@ const FooterClient = ({ initialColor }: { initialColor: string }) => {
               {email.value}
             </Link>
           </div>
-          {/* <div className={Styles.ItemContainer}>
-            <p className={Styles.ItemTitle}>{tel.label}</p>
-            <Link href={`tel:${tel.number}`} className={`${Styles.ItemSub}`}>
-              {tel.value}
-            </Link>
-          </div> */}
           <div className={Styles.ItemContainer}>
             <p className={Styles.ItemTitle}>{address.label}</p>
             <Link
