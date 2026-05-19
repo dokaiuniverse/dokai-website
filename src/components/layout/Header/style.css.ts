@@ -10,6 +10,16 @@ export const Layout = style({
   position: "relative",
 });
 
+export const HeadContent = style({
+  position: "absolute",
+  zIndex: "-1",
+  fontSize: "9px",
+  width: "100%",
+  overflow: "hidden",
+  whiteSpace: "nowrap",
+  color: vars.color.bg,
+});
+
 // Logo
 
 export const LogoContainer = style({

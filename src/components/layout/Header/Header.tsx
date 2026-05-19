@@ -3,9 +3,6 @@
 import { useEffect, useState } from "react";
 import * as Styles from "./style.css";
 import Link from "next/link";
-import Image from "next/image";
-import LogoPNG from "@assets/dokai.png";
-import { IMAGE_SIZES } from "@ts/image";
 import useIsPastSentinel from "@hooks/useIsPastSentinel";
 import { useModalStackStore } from "@stores/modalStackStore";
 import SearchSVG from "@assets/icons/search.svg";
@@ -54,6 +51,20 @@ const Header = () => {
 
   return (
     <header className={`${Styles.Layout} layout-wrapper`}>
+      <div className={Styles.HeadContent}>
+        <p>
+          Image Beyond AI. Create with Humanity
+          <br />
+          DOKAI is the only high-end studio delivering major commercial projects
+          end-to-end—from AI planning to global distribution.
+        </p>
+        <p>
+          Image Beyond AI. Create with Humanity
+          <br />
+          DOKAI UNIVERSE (도카이 유니버스)는 AI 기반 비주얼 콘텐츠와 브랜딩을
+          제작하는 크리에이티브 스튜디오입니다.
+        </p>
+      </div>
       <CloseLink
         href="/"
         className={Styles.LogoContainer}
