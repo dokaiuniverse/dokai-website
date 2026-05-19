@@ -11,8 +11,8 @@ export const Layout = style({
 });
 
 export const HeadContent = style({
-  position: "absolute",
-  fontSize: "12px",
+  fontSize: "11px",
+  opacity: 0.6,
   width: "100%",
 });
 
