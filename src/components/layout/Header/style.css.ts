@@ -13,7 +13,7 @@ export const Layout = style({
 export const HeadContent = style({
   fontSize: "11px",
   opacity: 0.6,
-  width: "100%",
+  gridColumn: "1 / -1",
 });
 
 // Logo
