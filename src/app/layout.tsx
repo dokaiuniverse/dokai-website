@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import type { Metadata } from "next";
-import { DM_Sans, Source_Sans_3 } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "@styles/global.css";
 import { lightThemeClass } from "@styles/theme.css";
 import Providers from "./providers";
@@ -44,6 +44,17 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "DOKAI UNIVERSE",
+  alternateName: ["도카이 유니버스", "도카이", "DOKAI", "DOKAI UNIVERSE"],
+  url: "https://dokaiuniverse.ai",
+  logo: "https://dokaiuniverse.ai/dokai.svg",
+  description: "Image Beyond AI. Create with Humanity",
+  sameAs: [],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -52,6 +63,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={lightThemeClass}>
       <body className={`${dmSans.variable}`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+
         <NextTopLoader
           showSpinner={true}
           height={4}
@@ -61,6 +79,7 @@ export default function RootLayout({
           speed={200}
           color="#ed8435"
         />
+
         <Providers>
           <Suspense fallback={null}>
             <ModalStackRoot />
