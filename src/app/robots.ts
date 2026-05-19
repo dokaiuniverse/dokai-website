@@ -2,7 +2,8 @@
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://dokaiuniverse.ai";
 
   return {
     rules: [
@@ -12,6 +13,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin", "/api", "/auth"],
       },
     ],
-    sitemap: `${siteUrl}/sitemap.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

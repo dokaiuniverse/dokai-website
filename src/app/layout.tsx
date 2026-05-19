@@ -18,7 +18,9 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || ""),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL || "https://dokaiuniverse.ai",
+  ),
   title: {
     default: "DOKAI UNIVERSE",
     template: "%s | DOKAI UNIVERSE",
@@ -30,11 +32,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "DOKAI UNIVERSE",
     description: "Image Beyond AI. Create with Humanity",
-    locale: "ko_KR",
-    type: "website",
-    images: "/dokai-og-image.png",
     url: "https://dokaiuniverse.ai",
     siteName: "DOKAI UNIVERSE",
+    type: "website",
+    locale: "ko_KR",
+    images: "/dokai-og-image.png",
   },
   twitter: {
     card: "summary_large_image",
@@ -44,16 +46,24 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "DOKAI UNIVERSE",
-  alternateName: ["도카이 유니버스", "도카이", "DOKAI", "DOKAI UNIVERSE"],
-  url: "https://dokaiuniverse.ai",
-  logo: "https://dokaiuniverse.ai/dokai.svg",
-  description: "Image Beyond AI. Create with Humanity",
-  sameAs: [],
-};
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "DOKAI UNIVERSE",
+    alternateName: ["도카이 유니버스", "도카이", "DOKAI"],
+    url: "https://dokaiuniverse.ai",
+    logo: "https://dokaiuniverse.ai/dokai.svg",
+    description: "Image Beyond AI. Create with Humanity",
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "DOKAI UNIVERSE",
+    alternateName: ["도카이 유니버스", "도카이", "DOKAI"],
+    url: "https://dokaiuniverse.ai",
+  },
+];
 
 export default function RootLayout({
   children,
@@ -69,7 +79,6 @@ export default function RootLayout({
             __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
           }}
         />
-
         <NextTopLoader
           showSpinner={true}
           height={4}
